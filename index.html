@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Veltro — AI Solutions. Tvoríme inteligentných AI agentov, weby a implementáciu AI pre slovenské firmy.">
+  <title>Veltro — AI Solutions | AI agenti pre firmy</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Preskočiť na hlavný obsah</a>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#" class="logo">
+        <img src="logo.png" alt="Veltro — AI Solutions" class="logo-img">
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#o-nas">O nás</a></li>
+        <li><a href="#sluzby">Služby</a></li>
+        <li><a href="#proces">Proces</a></li>
+        <li><a href="#referencie">Referencie</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#rezervacia" class="nav-cta">Rezervovať call</a></li>
+      </ul>
+      <button class="menu-toggle" id="menuToggle" aria-label="Otvoriť menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            AI agenti pre slovenský trh
+          </div>
+          <h1>
+            Je čas efektívne využiť<br>
+            <span class="gradient-text">umelú inteligenciu</span><br>
+            pre rast vášho podnikania.
+          </h1>
+          <p class="hero-desc">
+            Navrhujeme a nasadzujeme AI agentov, moderné weby a implementáciu AI do vašich
+            procesov — aby ste sa mohli sústrediť na biznis, zatiaľ čo technológie pracujú za vás.
+          </p>
+          <div class="hero-actions">
+            <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
+            <button type="button" class="btn btn-secondary" data-open-booking="zoom">Bezplatný Zoom call</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <strong>35+</strong>
+              <span>spokojných klientov</span>
+            </div>
+            <div class="stat">
+              <strong>50+</strong>
+              <span>dokončených projektov</span>
+            </div>
+            <div class="stat">
+              <strong>2 týždne</strong>
+              <span>do prvého nasadenia</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="agent-card">
+            <div class="agent-header">
+              <div class="agent-avatar">AI</div>
+              <div>
+                <strong>Agent podpory</strong>
+                <span class="status online">Online</span>
+              </div>
+            </div>
+            <div class="chat-messages">
+              <div class="msg user">Dobrý deň, kedy mi príde objednávka č. 4821?</div>
+              <div class="msg agent">
+                <span id="agentResponse">Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.</span>
+              </div>
+            </div>
+            <div class="agent-metrics">
+              <div class="metric"><span>⏱</span> 1,2 s odozva</div>
+              <div class="metric"><span>✓</span> 98 % presnosť</div>
+            </div>
+          </div>
+          <div class="floating-chip chip-1">CRM integrácia</div>
+          <div class="floating-chip chip-2">Slovenský jazyk</div>
+          <div class="floating-chip chip-3">GDPR ready</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="o-nas">
+      <div class="container about-grid">
+        <div class="about-text">
+          <span class="section-tag">O nás</span>
+          <h2>
+            <span class="outline-text">Presnosť</span> a<br>
+            <span class="gradient-text">transparentnosť</span>
+          </h2>
+          <p>
+            Robíme len to, v čom sme najlepší — AI agenti, weby a implementácia AI do businessu.
+            Nesnažíme sa byť agentúrou na všetko. Stavíme na jasnom pláne, silných nápadoch
+            a exekúcii, ktorá prináša výsledky.
+          </p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <strong>35+</strong>
+            <span>Spokojných klientov</span>
+          </div>
+          <div class="stat-card">
+            <strong>3+</strong>
+            <span>Roky skúseností</span>
+          </div>
+          <div class="stat-card">
+            <strong>5</strong>
+            <span>Ľudí v tíme</span>
+          </div>
+          <div class="stat-card">
+            <strong>50+</strong>
+            <span>Dokončených projektov</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="partners">
+      <p class="partners-label">Technológie, s ktorými pracujeme</p>
+      <div class="marquee">
+        <div class="marquee-track">
+          <span>OpenAI</span>
+          <span>Claude</span>
+          <span>Google Gemini</span>
+          <span>n8n</span>
+          <span>Cursor</span>
+          <span>GitHub Copilot</span>
+          <span>Anthropic</span>
+          <span>Ollama</span>
+          <span>OpenAI</span>
+          <span>Claude</span>
+          <span>Google Gemini</span>
+          <span>n8n</span>
+          <span>Cursor</span>
+          <span>GitHub Copilot</span>
+          <span>Anthropic</span>
+          <span>Ollama</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="logos">
+      <div class="container">
+        <p>Dôverujú nám firmy z celého Slovenska</p>
+        <div class="logo-row">
+          <span>TechStart SK</span>
+          <span>LogiPro</span>
+          <span>MediCare+</span>
+          <span>RetailHub</span>
+          <span>FinServ</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sluzby">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Služby</span>
+          <h2>Naše služby</h2>
+          <p>Tri pilieré, na ktorých stojí váš digitálny rast s umelou inteligenciou.</p>
+        </div>
+        <div class="cards-grid services-grid">
+          <article class="card">
+            <span class="service-num">001</span>
+            <div class="card-icon">🤖</div>
+            <h3>AI agenti</h3>
+            <p>Navrhujeme autonómnych AI agentov, ktorí prirodzene komunikujú, riešia úlohy a presne sa napájajú na vaše systémy.</p>
+            <ul>
+              <li>Zákaznícka podpora 24/7</li>
+              <li>Predaj a kvalifikácia leadov</li>
+              <li>Interné workflow a reporty</li>
+            </ul>
+          </article>
+          <article class="card card-featured">
+            <div class="card-badge">Najžiadanejšie</div>
+            <span class="service-num">002</span>
+            <div class="card-icon">🌐</div>
+            <h3>Webstránky a e-shopy</h3>
+            <p>Vytvárame moderné, rýchle a funkčné weby a e-shopy s dôrazom na UX/UI dizajn a SEO optimalizáciu.</p>
+            <ul>
+              <li>Responzívny dizajn</li>
+              <li>Rýchlosť a Lighthouse skóre</li>
+              <li>Prepojenie s AI agentmi</li>
+            </ul>
+          </article>
+          <article class="card">
+            <span class="service-num">003</span>
+            <div class="card-icon">⚡</div>
+            <h3>Implementácia AI do businessu</h3>
+            <p>Pomáhame firmám implementovať umelú inteligenciu do obchodných procesov pre vyššiu efektivitu a konkurencieschopnosť.</p>
+            <ul>
+              <li>Audit a stratégia</li>
+              <li>Automatizácia procesov</li>
+              <li>Školenie tímu</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="proces">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Proces</span>
+          <h2>Proces spolupráce</h2>
+          <p>Celý proces je hladký a bezproblémový — vy sa sústredíte na podnikanie, my sa postaráme o AI.</p>
+        </div>
+        <div class="process-cta">
+          <a href="#rezervacia" class="btn btn-primary">Začať spoluprácu</a>
+        </div>
+        <div class="steps steps-5">
+          <div class="step">
+            <div class="step-num">01</div>
+            <h3>Úvodný meeting</h3>
+            <p>V rámci 45-minútového AI workshopu preskúmame vaše ciele, prioritizujeme procesy vhodné na automatizáciu a navrhneme use-case s rýchlou návratnosťou.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <h3>Projekt a zmluva</h3>
+            <p>Upresníme rozsah, výstupy, KPI aj harmonogram a všetko ukotvíme do prehľadnej zmluvy v súlade s vašimi obchodnými cieľmi.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <h3>Predanie prístupov</h3>
+            <p>Bezpečne napojíme vaše aplikácie, CRM a dátové zdroje šifrovanými prístupmi v súlade s GDPR.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">04</div>
+            <h3>Implementácia riešenia</h3>
+            <p>Prototypujeme, testujeme a nasadzujeme AI agentov priamo do workflow s API integráciami pre okamžitý prínos.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">05</div>
+            <h3>Optimalizácia</h3>
+            <p>Sledujeme výkon v dashboardoch, ladíme modely a rozširujeme scenáre, aby riešenie škálovalo s rastom firmy.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="referencie">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Referencie</span>
+          <h2>Reálne výsledky pre našich klientov</h2>
+        </div>
+        <div class="reference-card">
+          <div class="reference-content">
+            <span class="reference-tag">Logistika · Bratislava</span>
+            <h3>Profesionálna logistická firma</h3>
+            <p>AI agent pre zákaznícku podporu a sledovanie zásielok. Integrácia s interným CRM a automatické odpovede v slovenčine.</p>
+            <div class="reference-links">
+              <span>Web</span>
+              <span>Instagram</span>
+            </div>
+          </div>
+          <div class="reference-metrics">
+            <h4>Prehľad dopadu AI</h4>
+            <div class="metrics-table">
+              <div class="metric-row">
+                <span>Zníženie zaťaženia call centra</span>
+                <strong>−60 %</strong>
+              </div>
+              <div class="metric-row">
+                <span>Priemerná doba odpovede</span>
+                <strong>1,2 s</strong>
+              </div>
+              <div class="metric-row">
+                <span>Spokojnosť zákazníkov</span>
+                <strong>+34 %</strong>
+              </div>
+              <div class="metric-row">
+                <span>Úspora mesačných nákladov</span>
+                <strong>4 200 €</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reference-card reference-card-alt">
+          <div class="reference-content">
+            <span class="reference-tag">E-commerce · Košice</span>
+            <h3>Online obchod s módou</h3>
+            <p>Nový web, SEO optimalizácia a predajný AI agent s personalizovanými odporúčaniami produktov.</p>
+          </div>
+          <div class="reference-metrics">
+            <h4>Prehľad dopadu</h4>
+            <div class="metrics-table">
+              <div class="metric-row">
+                <span>Organická návštevnosť za 1. mesiac</span>
+                <strong>+320</strong>
+              </div>
+              <div class="metric-row">
+                <span>Online konverzie</span>
+                <strong>+27 %</strong>
+              </div>
+              <div class="metric-row">
+                <span>Skóre Google Lighthouse</span>
+                <strong>96 / 100</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="pripady">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Odvetvia</span>
+          <h2>Kde AI agenti excelujú</h2>
+        </div>
+        <div class="use-cases">
+          <div class="use-case"><h4>E-commerce</h4><p>Sledovanie objednávok, vrátenia, odporúčania produktov</p></div>
+          <div class="use-case"><h4>Zdravotníctvo</h4><p>Objednávanie termínov, pripomienky, FAQ pre pacientov</p></div>
+          <div class="use-case"><h4>B2B služby</h4><p>Kvalifikácia leadov, cenové ponuky, follow-up</p></div>
+          <div class="use-case"><h4>Logistika</h4><p>Status zásielok, koordinácia, incident management</p></div>
+          <div class="use-case"><h4>Financie</h4><p>Onboarding klientov, KYC asistencia, reporty</p></div>
+          <div class="use-case"><h4>HR a nábor</h4><p>Screening CV, plánovanie pohovorov, onboarding</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tim">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Tím</span>
+          <h2>Kto stojí za Veltro</h2>
+        </div>
+        <div class="team-grid">
+          <article class="team-card">
+            <div class="team-avatar">TH</div>
+            <h3>Tomaš Haban</h3>
+            <span class="team-role">Konateľ a AI architekt</span>
+            <p>Špecializujem sa na návrh a implementáciu AI systémov, automatizácií a inteligentných agentov.</p>
+            <ul class="team-tags">
+              <li>AI agenti</li>
+              <li>Automatizácia</li>
+              <li>Architektúra systémov</li>
+            </ul>
+          </article>
+          <article class="team-card team-card-featured">
+            <div class="team-avatar team-avatar-ai">
+              <img src="logo.png" alt="Veltro AI" class="team-logo-img">
+            </div>
+            <h3>Veltro AI</h3>
+            <span class="team-role">AI jadrový architekt</span>
+            <p>Nikdy nespí. Spracováva dáta, navrhuje workflow a robí rozhodnutia rýchlejšie než mrknutie oka.</p>
+            <ul class="team-tags">
+              <li>Spracovanie dát</li>
+              <li>Prediktívna inteligencia</li>
+              <li>Nekonečný rast</li>
+            </ul>
+          </article>
+          <article class="team-card">
+            <div class="team-avatar">SW</div>
+            <h3>Samuel Woznica</h3>
+            <span class="team-role">Systémový inžinier</span>
+            <p>Zodpovedám za technickú implementáciu, integrácie a optimalizáciu kódu našich AI produktov.</p>
+            <ul class="team-tags">
+              <li>Integrácie</li>
+              <li>Vývoj na mieru</li>
+              <li>Optimalizácia</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="cennik">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Cenník</span>
+          <h2>Transparentné balíky</h2>
+          <p>Všetky ceny sú bez DPH. Individuálne riešenia po úvodnej konzultácii.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">od <strong>990 €</strong><span>/mesiac</span></div>
+            <p>Pre malé firmy a startupy</p>
+            <ul>
+              <li>1 AI agent</li>
+              <li>Do 1 000 konverzácií/mes.</li>
+              <li>E-mail a chat podpora</li>
+              <li>Základné integrácie</li>
+            </ul>
+            <button type="button" class="btn btn-outline btn-full" data-open-booking="zoom">Rezervovať konzultáciu</button>
+          </div>
+          <div class="pricing-card pricing-featured">
+            <div class="card-badge">Odporúčame</div>
+            <h3>Business</h3>
+            <div class="price">od <strong>2 490 €</strong><span>/mesiac</span></div>
+            <p>Pre rastúce firmy</p>
+            <ul>
+              <li>Až 3 AI agenti</li>
+              <li>Neobmedzené konverzácie</li>
+              <li>CRM a ERP integrácie</li>
+              <li>Prioritná podpora</li>
+              <li>Mesačné reporty</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-full" data-open-booking="zoom">Rezervovať konzultáciu</button>
+          </div>
+          <div class="pricing-card">
+            <h3>Enterprise</h3>
+            <div class="price"><strong>Na mieru</strong></div>
+            <p>Pre korporácie</p>
+            <ul>
+              <li>Neobmedzený počet agentov</li>
+              <li>On-premise možnosť</li>
+              <li>SLA dostupnosť</li>
+              <li>Dedikovaný account manager</li>
+            </ul>
+            <button type="button" class="btn btn-outline btn-full" data-open-booking="phone">Zavolať nám</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">FAQ</span>
+          <h2>Časté otázky</h2>
+          <p>Stále máte otázky? <a href="#rezervacia">Rezervujte si meeting zadarmo</a></p>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Koľko stoja vaše služby?</summary>
+            <p>Balíky začínajú od 990 € mesačne (Starter). Business od 2 490 € a Enterprise riešime individuálne. Presnú cenu určíme po 45-minútovom úvodnom workshope podľa rozsahu.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Ako prebieha spolupráca?</summary>
+            <p>Začíname úvodným meetingom, potom projekt a zmluva, bezpečné predanie prístupov, implementácia a priebežná optimalizácia. Celý proces má 5 jasných krokov.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Kedy uvidím prvé výsledky?</summary>
+            <p>Prvý prototyp AI agenta zvyčajne do 2 týždňov. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do 4–6 týždňov po nasadení.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Pracujete s klientmi zo zahraničia?</summary>
+            <p>Áno. Primárne obsluhujeme slovenský a český trh, no vieme komunikovať v angličtine a realizovať projekty aj pre zahraničné firmy.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Čo všetko ponúka vaša agentúra?</summary>
+            <p>AI agentov, webstránky a e-shopy a komplexnú implementáciu AI do business procesov — vrátane auditov, integrácií a školení.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Ako s vami môžem začať spolupracovať?</summary>
+            <p>Rezervujte si bezplatný Zoom call, telefonický hovor alebo vyplňte kontaktný formulár. Do 24 hodín sa vám ozveme s návrhom ďalších krokov.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Ako riešite bezpečnosť pri spolupráci?</summary>
+            <p>Používame šifrované prístupy, dodržiavame GDPR, dáta spracúvame minimálne potrebné množstvo a na požiadanie podpisujeme NDA.</p>
+          </details>
+        </div>
+        <div class="faq-cta">
+          <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt booking-section" id="rezervacia">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Rezervácia</span>
+          <h2>Rezervujte si bezplatnú konzultáciu</h2>
+          <p>Vyberte spôsob, ako sa s nami spojíte. Úvodný AI workshop je vždy zadarmo a bez záväzkov.</p>
+        </div>
+        <div class="booking-grid">
+          <article class="booking-card">
+            <div class="booking-icon">📹</div>
+            <h3>Zoom videohovor</h3>
+            <p>45-minútový AI workshop online. Ideálne pre prvý kontakt a predstavenie use-case.</p>
+            <ul>
+              <li>Bezplatne</li>
+              <li>Flexibilné termíny</li>
+              <li>Zdieľaná obrazovka</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-full" data-open-booking="zoom">Rezervovať Zoom</button>
+          </article>
+          <article class="booking-card booking-featured">
+            <div class="card-badge">Najrýchlejšie</div>
+            <div class="booking-icon">📞</div>
+            <h3>Telefonický hovor</h3>
+            <p>20-minútový hovor s naším konzultantom. Rýchle zodpovedanie vašich otázok.</p>
+            <ul>
+              <li>Bezplatne</li>
+              <li>Do 24 hodín</li>
+              <li>+421 SK linka</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-full" data-open-booking="phone">Rezervovať hovor</button>
+          </article>
+          <article class="booking-card">
+            <div class="booking-icon">🤝</div>
+            <h3>Discovery call</h3>
+            <p>Hlbší 60-minútový call pre firmy s komplexnejšími požiadavkami a viacerými procesmi.</p>
+            <ul>
+              <li>Bezplatne</li>
+              <li>Audit procesov</li>
+              <li>Návrh ROI</li>
+            </ul>
+            <button type="button" class="btn btn-outline btn-full" data-open-booking="discovery">Rezervovať discovery</button>
+          </article>
+        </div>
+        <p class="booking-note">
+          Po rezervácii dostanete potvrdenie e-mailom. Pre vlastný Calendly odkaz upravte premenné v súbore <code>script.js</code>.
+        </p>
+      </div>
+    </section>
+
+    <section class="section cta-section" id="kontakt">
+      <div class="container">
+        <div class="cta-grid">
+          <div class="cta-content">
+            <span class="section-tag">Kontakt</span>
+            <h2>Pripravení na inteligentnejší biznis?</h2>
+            <p>Napíšte nám alebo si rovno rezervujte termín. Odpovedáme do 24 hodín.</p>
+            <div class="contact-info">
+              <a href="mailto:hello@veltro.sk">hello@veltro.sk</a>
+              <a href="tel:+421900123456">+421 900 123 456</a>
+              <span>Bratislava · Košice · Remote</span>
+            </div>
+            <div class="contact-quick">
+              <button type="button" class="btn btn-secondary" data-open-booking="zoom">Zoom call</button>
+              <button type="button" class="btn btn-secondary" data-open-booking="phone">Telefón</button>
+            </div>
+          </div>
+          <form class="contact-form" id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Meno a priezvisko</label>
+                <input type="text" id="name" name="name" required placeholder="Ján Novák">
+              </div>
+              <div class="form-group">
+                <label for="company">Firma</label>
+                <input type="text" id="company" name="company" required placeholder="Vaša firma s.r.o.">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" name="email" required placeholder="jan@firma.sk">
+            </div>
+            <div class="form-group">
+              <label for="phone">Telefón (voliteľné)</label>
+              <input type="tel" id="phone" name="phone" placeholder="+421 900 000 000">
+            </div>
+            <div class="form-group">
+              <label for="message">Čo vás zaujíma?</label>
+              <textarea id="message" name="message" rows="4" placeholder="Popíšte váš use case alebo otázku..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Odoslať správu</button>
+            <p class="form-note">Odpovedáme do 24 hodín. Vaše údaje sú v bezpečí (GDPR).</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo logo-footer">
+          <img src="logo.png" alt="Veltro — AI Solutions" class="logo-img">
+        </a>
+        <p>AI Solutions — agenti, weby a implementácia AI pre moderné slovenské firmy.</p>
+        <a href="mailto:hello@veltro.sk" class="footer-email">hello@veltro.sk</a>
+      </div>
+      <div class="footer-links">
+        <h4>Navigácia</h4>
+        <a href="#sluzby">Služby</a>
+        <a href="#proces">Proces</a>
+        <a href="#referencie">Referencie</a>
+        <a href="#rezervacia">Rezervácia</a>
+        <a href="#kontakt">Kontakt</a>
+      </div>
+      <div class="footer-links">
+        <h4>Právne</h4>
+        <a href="#">Ochrana údajov</a>
+        <a href="#">Obchodné podmienky</a>
+        <a href="#" id="cookieSettings">Nastavenia cookies</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Veltro s.r.o. Všetky práva vyhradené.</p>
+    </div>
+  </footer>
+
+  <!-- Rezervačný modal -->
+  <div class="modal-overlay" id="bookingModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Zavrieť">&times;</button>
+      <h3 id="modalTitle">Rezervovať termín</h3>
+      <p class="modal-subtitle" id="modalSubtitle">Vyplňte formulár a my vám pošleme potvrdenie.</p>
+      <form id="bookingForm">
+        <input type="hidden" id="bookingType" name="type" value="zoom">
+        <div class="form-group">
+          <label for="bookName">Meno a priezvisko</label>
+          <input type="text" id="bookName" required placeholder="Ján Novák">
+        </div>
+        <div class="form-group">
+          <label for="bookEmail">E-mail</label>
+          <input type="email" id="bookEmail" required placeholder="jan@firma.sk">
+        </div>
+        <div class="form-group">
+          <label for="bookPhone">Telefón</label>
+          <input type="tel" id="bookPhone" placeholder="+421 900 000 000">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bookDate">Preferovaný dátum</label>
+            <input type="date" id="bookDate" required>
+          </div>
+          <div class="form-group">
+            <label for="bookTime">Preferovaný čas</label>
+            <select id="bookTime" required>
+              <option value="">Vyberte čas</option>
+              <option value="09:00">09:00</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="13:00">13:00</option>
+              <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bookNote">Poznámka (voliteľné)</label>
+          <textarea id="bookNote" rows="3" placeholder="Stručne popíšte, čo vás zaujíma..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Potvrdiť rezerváciu</button>
+      </form>
+      <p class="modal-calendly">
+        Alebo použite priamy odkaz:
+        <a href="#" id="calendlyLink" target="_blank" rel="noopener">Otvoriť v Calendly</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- AI Chatbot -->
+  <div class="chat-widget" id="chatWidget">
+    <button class="chat-toggle" id="chatToggle" aria-label="Otvoriť AI asistenta">
+      <img src="logo.png" alt="" class="chat-toggle-logo">
+      <span class="chat-toggle-label">AI asistent</span>
+    </button>
+    <div class="chat-panel" id="chatPanel" aria-hidden="true">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <img src="logo.png" alt="" class="chat-avatar-img">
+          <div>
+            <strong>Veltro AI</strong>
+            <span>AI asistent · Online</span>
+          </div>
+        </div>
+        <button class="chat-close" id="chatClose" aria-label="Zavrieť chat">&times;</button>
+      </div>
+      <div class="chat-messages-panel" id="chatMessages">
+        <div class="chat-msg bot">
+          Ahoj! Som Veltro AI, asistent spoločnosti Veltro. Môžem vám odpovedať na otázky o službách, cenách, procese alebo rezervácii callu. Čím vám môžem pomôcť?
+        </div>
+      </div>
+      <div class="chat-quick" id="chatQuick">
+        <button type="button" data-question="Koľko to stojí?">Cenník</button>
+        <button type="button" data-question="Aké služby ponúkate?">Služby</button>
+        <button type="button" data-question="Ako prebieha spolupráca?">Proces</button>
+        <button type="button" data-question="Chcem rezervovať call">Rezervácia</button>
+      </div>
+      <form class="chat-input-form" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Napíšte správu..." autocomplete="off">
+        <button type="submit" aria-label="Odoslať">→</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cookies -->
+  <div class="cookie-banner" id="cookieBanner">
+    <p>Používame cookies na zlepšenie vášho zážitku. <a href="#">Viac informácií</a></p>
+    <div class="cookie-actions">
+      <button type="button" class="btn btn-secondary btn-sm" id="cookieReject">Odmietnuť</button>
+      <button type="button" class="btn btn-primary btn-sm" id="cookieAccept">Súhlasím</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
