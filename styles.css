@@ -109,14 +109,14 @@ body {
 }
 
 .logo-img {
-  height: 58px;
+  height: 62px;
   width: auto;
   display: block;
   object-fit: contain;
 }
 
 .logo-footer .logo-img {
-  height: 72px;
+  height: 76px;
 }
 
 .logo-icon {
@@ -1557,19 +1557,19 @@ body {
 }
 
 .chat-toggle-logo {
-  height: 32px;
+  height: 34px;
   width: auto;
   object-fit: contain;
   border-radius: 4px;
 }
 
 .chat-avatar-img {
-  height: 40px;
+  height: 42px;
   width: auto;
   object-fit: contain;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px 6px;
+  background: transparent;
+  padding: 0;
 }
 
 .chat-header strong {
