@@ -8,21 +8,644 @@
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #040b14;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f0f4f8;
+  --muted: rgba(255, 255, 255, 0.55);
+  --cyan: #00f5ff;
+  --blue: #4d9fff;
+  --purple: #a855f7;
+  --green: #22c55e;
+  --gradient: linear-gradient(135deg, var(--cyan), var(--blue));
+  --gradient-text: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
+  --font: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --radius: 14px;
+  --glow-cyan: 0 0 40px rgba(0, 245, 255, 0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+.mono { font-family: var(--mono); }
+
+/* Background */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.orb {
+  position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0;
+}
+.orb-blue { width: 500px; height: 500px; background: rgba(77, 159, 255, 0.12); top: -120px; right: -80px; }
+.orb-purple { width: 450px; height: 450px; background: rgba(168, 85, 247, 0.1); bottom: 10%; left: -100px; }
+.orb-cyan { width: 400px; height: 400px; background: rgba(0, 245, 255, 0.07); top: 45%; left: 50%; transform: translateX(-50%); }
+
+.skip-link {
+  position: absolute; top: -100px; left: 16px; padding: 10px 18px;
+  background: var(--cyan); color: var(--bg); border-radius: 8px; z-index: 300;
+  text-decoration: none; font-weight: 600;
+}
+.skip-link:focus { top: 16px; }
+
+/* Nav */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(4, 11, 20, 0.75);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+
+.logo-text {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #fff; }
+
+.nav-cta {
+  padding: 9px 18px !important;
+  border: 1px solid var(--cyan) !important;
+  color: var(--cyan) !important;
+  border-radius: 8px;
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+.nav-cta:hover {
+  background: rgba(0, 245, 255, 0.08) !important;
+  box-shadow: var(--glow-cyan);
+  color: var(--cyan) !important;
+}
+
+.menu-toggle {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.menu-toggle span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 13px 26px; border-radius: 10px; font-weight: 600; font-size: 0.92rem;
+  text-decoration: none; border: none; cursor: pointer; font-family: var(--font);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary {
+  background: var(--gradient); color: #040b14;
+  box-shadow: 0 8px 32px rgba(0, 245, 255, 0.25);
+}
+.btn-primary:hover { box-shadow: 0 12px 40px rgba(0, 245, 255, 0.35); }
+.btn-secondary, .btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover, .btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+.btn-outline {
+  background: transparent; color: var(--text); border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 8px 16px; font-size: 0.82rem; }
+
+/* Hero */
+.hero {
+  position: relative; z-index: 1;
+  padding: 140px 0 90px; min-height: 100vh;
+  display: flex; align-items: center;
+}
+
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border: 1px solid var(--cyan); border-radius: 100px;
+  font-family: var(--mono); font-size: 0.75rem; color: var(--cyan);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 22px;
+}
+.badge-dot {
+  width: 7px; height: 7px; background: var(--cyan); border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+
+.hero h1 {
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 700; letter-spacing: -2px; line-height: 1.08; margin-bottom: 20px;
+}
+.gradient-text {
+  display: block;
+  background: var(--gradient-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-desc { color: var(--muted); font-size: 1.05rem; max-width: 480px; margin-bottom: 32px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
+
+.hero-stats {
+  display: flex; gap: 36px; padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.stat strong {
+  display: block; font-size: 1.65rem; font-weight: 700; color: #fff; letter-spacing: -1px;
+}
+.stat span { font-size: 0.82rem; color: var(--muted); }
+
+/* Chat mockup */
+.hero-visual { position: relative; }
+.agent-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  backdrop-filter: blur(16px);
+}
+
+.agent-header {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.agent-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--gradient); display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.75rem; font-weight: 600; color: var(--bg);
+}
+.agent-header strong { display: block; font-size: 0.92rem; }
+.status { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.status.online::before {
+  content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.chat-messages { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.msg {
+  padding: 11px 14px; border-radius: 12px; font-size: 0.88rem; line-height: 1.5; max-width: 92%;
+}
+.msg.user {
+  align-self: flex-end; background: rgba(255,255,255,0.06);
+  border-bottom-right-radius: 4px;
+}
+.msg.agent {
+  align-self: flex-start;
+  background: rgba(0, 245, 255, 0.06);
+  border: 1px solid rgba(0, 245, 255, 0.12);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-family: var(--mono); font-size: 0.68rem; padding: 5px 10px;
+  border-radius: 100px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.tag-cyan { color: var(--cyan); border: 1px solid rgba(0,245,255,0.3); background: rgba(0,245,255,0.06); }
+.tag-blue { color: var(--blue); border: 1px solid rgba(77,159,255,0.3); background: rgba(77,159,255,0.06); }
+.tag-purple { color: var(--purple); border: 1px solid rgba(168,85,247,0.3); background: rgba(168,85,247,0.06); }
+
+/* Sections */
+.section { position: relative; z-index: 1; padding: 90px 0; }
+.section-alt { background: rgba(255,255,255,0.015); }
+
+.section-header { text-align: center; max-width: 620px; margin: 0 auto 50px; }
+.section-tag {
+  display: block; font-family: var(--mono); font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.14em; color: var(--cyan); margin-bottom: 12px;
+}
+.section-tag::before { content: '// '; }
+.section-header h2 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 700;
+  letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px;
+}
+.section-header p { color: var(--muted); font-size: 1rem; }
+.section-header a { color: var(--cyan); }
+
+/* Glass cards */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  position: relative; overflow: hidden;
+}
+.glass::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.glass:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
+.glass:hover::before { opacity: 1; }
+
+/* About */
+.about { position: relative; z-index: 1; padding: 80px 0; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+.about-text h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 18px; }
+.outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.35); }
+.about-text p { color: var(--muted); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.stat-card {
+  padding: 24px; text-align: center;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.stat-card strong { display: block; font-size: 2rem; font-weight: 700; letter-spacing: -1px; }
+.stat-card span { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+
+/* Partners */
+.partners { position: relative; z-index: 1; padding: 28px 0; border-block: 1px solid var(--border); overflow: hidden; }
+.partners-label { text-align: center; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 18px; }
+.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee-track { display: flex; gap: 40px; width: max-content; animation: marquee 28s linear infinite; }
+.marquee-track span { font-family: var(--mono); font-size: 0.9rem; color: rgba(255,255,255,0.25); white-space: nowrap; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.logos { position: relative; z-index: 1; padding: 36px 0; }
+.logos p { text-align: center; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; }
+.logo-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; }
+.logo-row span { font-weight: 600; color: rgba(255,255,255,0.2); }
+
+/* Services */
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card {
+  padding: 28px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  position: relative; overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
+.card:hover::before { opacity: 1; }
+.card-featured { background: rgba(0,245,255,0.04); border-color: rgba(0,245,255,0.2); }
+
+.card-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 4px 9px;
+  background: rgba(0,245,255,0.12); color: var(--cyan); border: 1px solid rgba(0,245,255,0.25);
+  border-radius: 100px;
+}
+
+.service-num { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
+.card-icon {
+  width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; margin-bottom: 14px;
+}
+.card:nth-child(1) .card-icon { background: rgba(0,245,255,0.1); }
+.card:nth-child(2) .card-icon { background: rgba(77,159,255,0.12); }
+.card:nth-child(3) .card-icon { background: rgba(168,85,247,0.1); }
+
+.card h3 { font-size: 1.15rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+.card > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+.card ul { list-style: none; }
+.card ul li {
+  font-size: 0.86rem; color: var(--muted); padding: 5px 0 5px 16px; position: relative;
+}
+.card ul li::before { content: ''; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); }
+
+/* Process */
+.process-cta { text-align: center; margin-bottom: 36px; }
+.process-track {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+  position: relative; padding-top: 20px;
+}
+.process-line {
+  position: absolute; top: 36px; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
+  z-index: 0;
+}
+.step { text-align: center; position: relative; z-index: 1; }
+.step-circle {
+  width: 48px; height: 48px; margin: 0 auto 16px;
+  border-radius: 50%; border: 1px solid var(--cyan);
+  background: var(--bg); font-family: var(--mono); font-size: 0.85rem;
+  color: var(--cyan); display: flex; align-items: center; justify-content: center;
+}
+.step h3 { font-size: 0.95rem; margin-bottom: 8px; }
+.step p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+/* References */
+.reference-card {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+  padding: 32px; margin-bottom: 20px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.reference-card-alt { border-color: rgba(0,245,255,0.15); }
+.reference-tag { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); text-transform: uppercase; }
+.reference-content h3 { font-size: 1.2rem; margin: 10px 0; letter-spacing: -0.5px; }
+.reference-content > p { color: var(--muted); font-size: 0.9rem; }
+.reference-links { display: flex; gap: 14px; margin-top: 12px; }
+.reference-links span { font-size: 0.85rem; color: var(--blue); }
+.reference-metrics h4 { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+.metric-row {
+  display: flex; justify-content: space-between; padding: 10px 14px; margin-bottom: 8px;
+  background: rgba(0,0,0,0.25); border-radius: 8px; font-size: 0.88rem;
+}
+.metric-row span { color: var(--muted); }
+.metric-row strong { color: var(--cyan); font-family: var(--mono); }
+
+/* Use cases */
+.use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.use-case {
+  padding: 20px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; transition: border-color 0.2s;
+}
+.use-case:hover { border-color: rgba(0,245,255,0.2); }
+.use-case h4 { font-size: 0.95rem; color: var(--cyan); margin-bottom: 4px; }
+.use-case p { font-size: 0.82rem; color: var(--muted); }
+
+/* Team */
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.team-card {
+  padding: 28px; text-align: center;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.team-card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
+.team-card-featured { border-color: rgba(0,245,255,0.2); background: rgba(0,245,255,0.03); }
+.team-avatar {
+  width: 68px; height: 68px; margin: 0 auto 14px; border-radius: 50%;
+  background: var(--gradient); display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 600; font-size: 0.9rem; color: var(--bg);
+}
+.team-avatar-ai { background: rgba(0,245,255,0.1); padding: 6px; overflow: hidden; }
+.team-logo-img { width: 100%; height: 100%; object-fit: contain; }
+.team-card h3 { font-size: 1.05rem; margin-bottom: 4px; }
+.team-role { font-family: var(--mono); font-size: 0.72rem; color: var(--cyan); display: block; margin-bottom: 10px; }
+.team-card > p { font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; }
+.team-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.team-tags li {
+  font-family: var(--mono); font-size: 0.65rem; padding: 4px 9px;
+  border: 1px solid var(--border); border-radius: 100px; color: var(--muted);
+}
+
+/* Pricing */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+.pricing-card {
+  padding: 32px; text-align: center; position: relative;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.pricing-card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
+.pricing-featured {
+  border-color: rgba(0,245,255,0.35);
+  box-shadow: 0 0 50px rgba(0,245,255,0.1);
+}
+.pricing-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
+.price { color: var(--muted); margin-bottom: 6px; }
+.price strong { font-size: 2.2rem; color: #fff; font-weight: 700; letter-spacing: -1px; }
+.pricing-card > p { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; }
+.pricing-card ul { list-style: none; text-align: left; margin-bottom: 24px; }
+.pricing-card ul li {
+  font-size: 0.88rem; color: var(--muted); padding: 7px 0 7px 22px; position: relative;
+}
+.pricing-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); font-weight: 700; }
+
+/* FAQ */
+.faq-list { max-width: 720px; margin: 0 auto; }
+.faq-item {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+}
+.faq-item summary {
+  padding: 18px 22px; font-weight: 600; cursor: pointer; list-style: none;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: '+'; font-family: var(--mono); color: var(--cyan); }
+.faq-item[open] summary::after { content: '−'; }
+.faq-item p { padding: 0 22px 18px; color: var(--muted); font-size: 0.92rem; }
+.faq-cta { text-align: center; margin-top: 36px; }
+
+/* Booking */
+.booking-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.booking-card {
+  padding: 28px; text-align: center; position: relative;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.booking-featured { border-color: rgba(0,245,255,0.25); }
+.booking-icon { font-size: 2rem; margin-bottom: 12px; }
+.booking-card h3 { margin-bottom: 10px; }
+.booking-card > p { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+.booking-card ul { list-style: none; text-align: left; margin-bottom: 20px; }
+.booking-card ul li { font-size: 0.86rem; color: var(--muted); padding: 5px 0 5px 18px; position: relative; }
+.booking-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); }
+.booking-note { text-align: center; margin-top: 28px; font-size: 0.82rem; color: var(--muted); }
+.booking-note code { font-family: var(--mono); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
+
+/* CTA banner */
+.cta-banner {
+  position: relative; z-index: 1; margin: 0 24px 40px;
+  padding: 56px 40px; text-align: center;
+  background: var(--bg-card); border: 1px solid rgba(0,245,255,0.25);
+  border-radius: var(--radius); overflow: hidden;
+  max-width: 1132px; margin-inline: auto;
+}
+.cta-banner::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
+}
+.cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -1px; margin-bottom: 12px; }
+.cta-banner p { color: var(--muted); margin-bottom: 24px; }
+.cta-banner-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* Contact */
+.cta-section { padding-bottom: 100px; }
+.cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.cta-content h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -1px; margin-bottom: 12px; }
+.cta-content > p { color: var(--muted); margin-bottom: 24px; }
+.contact-info { display: flex; flex-direction: column; gap: 10px; }
+.contact-info a { color: var(--cyan); text-decoration: none; }
+.contact-quick { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+.contact-form {
+  padding: 28px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 11px 14px; background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+  font-family: var(--font); font-size: 0.92rem;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  outline: none; border-color: var(--cyan);
+}
+.form-note { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 14px; }
+
+/* Footer */
+.footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border); padding: 24px 0;
+}
+.footer-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.footer-copy { font-size: 0.82rem; color: var(--muted); }
+.footer-links-inline { display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-links-inline a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+.footer-links-inline a:hover { color: #fff; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px;
+  opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal {
+  background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; max-width: 460px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;
+}
+.modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
+.modal h3 { font-size: 1.2rem; margin-bottom: 6px; }
+.modal-subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 20px; }
+.modal-calendly { text-align: center; margin-top: 14px; font-size: 0.82rem; color: var(--muted); }
+.modal-calendly a { color: var(--cyan); }
+
+/* Chat widget */
+.chat-widget { position: fixed; bottom: 24px; right: 24px; z-index: 250; }
+.chat-toggle {
+  display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+  background: var(--gradient); color: var(--bg); border: none; border-radius: 100px;
+  cursor: pointer; font-family: var(--font); font-weight: 600; font-size: 0.88rem;
+  box-shadow: 0 8px 32px rgba(0,245,255,0.3);
+}
+.chat-toggle-logo { height: 26px; width: auto; }
+.chat-panel {
+  position: absolute; bottom: 64px; right: 0; width: 360px; max-width: calc(100vw - 48px);
+  height: 500px; max-height: calc(100vh - 120px);
+  background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; transform: translateY(12px);
+  transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+}
+.chat-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); }
+.chat-header-info { display: flex; align-items: center; gap: 10px; }
+.chat-avatar-img { height: 32px; width: auto; }
+.chat-header strong { font-size: 0.9rem; }
+.chat-header span { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+.chat-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+.chat-messages-panel { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.chat-msg { max-width: 88%; padding: 10px 14px; border-radius: 10px; font-size: 0.86rem; line-height: 1.5; }
+.chat-msg.bot { background: rgba(0,245,255,0.06); border: 1px solid rgba(0,245,255,0.1); align-self: flex-start; }
+.chat-msg.user { background: rgba(255,255,255,0.06); align-self: flex-end; }
+.chat-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
+.chat-quick button {
+  font-family: var(--mono); font-size: 0.68rem; padding: 5px 10px;
+  background: transparent; border: 1px solid var(--border); border-radius: 100px;
+  color: var(--muted); cursor: pointer;
+}
+.chat-quick button:hover { border-color: var(--cyan); color: var(--cyan); }
+.chat-input-form { display: flex; gap: 8px; padding: 14px; border-top: 1px solid var(--border); }
+.chat-input-form input {
+  flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font);
+}
+.chat-input-form button {
+  width: 40px; height: 40px; background: var(--gradient); border: none;
+  border-radius: 8px; color: var(--bg); cursor: pointer; font-size: 1rem;
+}
+
+/* Cookies */
+.cookie-banner {
+  position: fixed; bottom: 20px; left: 20px; right: 20px; max-width: 500px; margin: 0 auto;
+  padding: 18px 20px; background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
+  z-index: 200; display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+  transform: translateY(120%); transition: transform 0.4s;
+}
+.cookie-banner.show { transform: translateY(0); }
+.cookie-banner p { font-size: 0.86rem; color: var(--muted); flex: 1; }
+.cookie-banner a { color: var(--cyan); }
+.cookie-actions { display: flex; gap: 8px; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .nav-links {
+    position: fixed; top: 0; right: -100%; width: 260px; height: 100vh;
+    background: rgba(4,11,20,0.98); backdrop-filter: blur(20px);
+    flex-direction: column; align-items: flex-start; padding: 80px 28px 28px;
+    gap: 20px; border-left: 1px solid var(--border); transition: right 0.3s;
+  }
+  .nav-links.open { right: 0; }
+  .menu-toggle { display: flex; z-index: 101; }
+
+  .hero-grid, .cta-grid, .about-grid, .reference-card { grid-template-columns: 1fr; }
+  .hero { padding-top: 110px; min-height: auto; }
+  .cards-grid, .pricing-grid, .booking-grid, .team-grid { grid-template-columns: 1fr; max-width: 440px; margin-inline: auto; }
+  .process-track { grid-template-columns: 1fr; }
+  .process-line { display: none; }
+  .use-cases { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-bar { flex-direction: column; text-align: center; }
+  .chat-toggle-label { display: none; }
+}
+
+@media (max-width: 600px) {
+  .use-cases { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 16px; }
+}
+
+</style>
 </head>
 <body>
   <a href="#main" class="skip-link">Preskočiť na hlavný obsah</a>
 
   <div class="bg-grid"></div>
-  <div class="bg-glow bg-glow-1"></div>
-  <div class="bg-glow bg-glow-2"></div>
+  <div class="orb orb-blue"></div>
+  <div class="orb orb-purple"></div>
+  <div class="orb orb-cyan"></div>
 
   <header class="header" id="header">
     <nav class="nav container">
-      <a href="#" class="logo">
-        <img src="logo.png" alt="Veltro — AI Solutions" class="logo-img">
-      </a>
+      <a href="#" class="logo-text">VELTRO</a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#o-nas">O nás</a></li>
         <li><a href="#sluzby">Služby</a></li>
@@ -62,11 +685,11 @@
           </div>
           <div class="hero-stats">
             <div class="stat">
-              <strong>35+</strong>
+              <strong>20+</strong>
               <span>spokojných klientov</span>
             </div>
             <div class="stat">
-              <strong>50+</strong>
+              <strong>30+</strong>
               <span>dokončených projektov</span>
             </div>
             <div class="stat">
@@ -86,18 +709,16 @@
             </div>
             <div class="chat-messages">
               <div class="msg user">Dobrý deň, kedy mi príde objednávka č. 4821?</div>
-              <div class="msg agent">
-                <span id="agentResponse">Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.</span>
-              </div>
+              <div class="msg agent">Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.</div>
+              <div class="msg user">Môžete mi poslať faktúru k tej objednávke?</div>
+              <div class="msg agent"><span id="agentResponse">Vaša faktúra č. 2024-089 bola schválená. Posielam ju na e-mail do 5 minút.</span></div>
             </div>
-            <div class="agent-metrics">
-              <div class="metric"><span>⏱</span> 1,2 s odozva</div>
-              <div class="metric"><span>✓</span> 98 % presnosť</div>
+            <div class="chat-tags">
+              <span class="tag tag-cyan">CRM integrácia</span>
+              <span class="tag tag-blue">Slovenský jazyk</span>
+              <span class="tag tag-purple">GDPR ready</span>
             </div>
           </div>
-          <div class="floating-chip chip-1">CRM integrácia</div>
-          <div class="floating-chip chip-2">Slovenský jazyk</div>
-          <div class="floating-chip chip-3">GDPR ready</div>
         </div>
       </div>
     </section>
@@ -118,7 +739,7 @@
         </div>
         <div class="stats-grid">
           <div class="stat-card">
-            <strong>35+</strong>
+            <strong>20+</strong>
             <span>Spokojných klientov</span>
           </div>
           <div class="stat-card">
@@ -126,11 +747,11 @@
             <span>Roky skúseností</span>
           </div>
           <div class="stat-card">
-            <strong>5</strong>
+            <strong>2</strong>
             <span>Ľudí v tíme</span>
           </div>
           <div class="stat-card">
-            <strong>50+</strong>
+            <strong>30+</strong>
             <span>Dokončených projektov</span>
           </div>
         </div>
@@ -230,29 +851,30 @@
         <div class="process-cta">
           <a href="#rezervacia" class="btn btn-primary">Začať spoluprácu</a>
         </div>
-        <div class="steps steps-5">
+        <div class="process-track">
+          <div class="process-line"></div>
           <div class="step">
-            <div class="step-num">01</div>
+            <div class="step-circle">01</div>
             <h3>Úvodný meeting</h3>
             <p>V rámci 45-minútového AI workshopu preskúmame vaše ciele, prioritizujeme procesy vhodné na automatizáciu a navrhneme use-case s rýchlou návratnosťou.</p>
           </div>
           <div class="step">
-            <div class="step-num">02</div>
+            <div class="step-circle">02</div>
             <h3>Projekt a zmluva</h3>
             <p>Upresníme rozsah, výstupy, KPI aj harmonogram a všetko ukotvíme do prehľadnej zmluvy v súlade s vašimi obchodnými cieľmi.</p>
           </div>
           <div class="step">
-            <div class="step-num">03</div>
+            <div class="step-circle">03</div>
             <h3>Predanie prístupov</h3>
             <p>Bezpečne napojíme vaše aplikácie, CRM a dátové zdroje šifrovanými prístupmi v súlade s GDPR.</p>
           </div>
           <div class="step">
-            <div class="step-num">04</div>
+            <div class="step-circle">04</div>
             <h3>Implementácia riešenia</h3>
             <p>Prototypujeme, testujeme a nasadzujeme AI agentov priamo do workflow s API integráciami pre okamžitý prínos.</p>
           </div>
           <div class="step">
-            <div class="step-num">05</div>
+            <div class="step-circle">05</div>
             <h3>Optimalizácia</h3>
             <p>Sledujeme výkon v dashboardoch, ladíme modely a rozširujeme scenáre, aby riešenie škálovalo s rastom firmy.</p>
           </div>
@@ -392,13 +1014,13 @@
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Cenník</span>
-          <h2>Transparentné balíky</h2>
-          <p>Všetky ceny sú bez DPH. Individuálne riešenia po úvodnej konzultácii.</p>
+          <h2>Cenové ponuky na mieru</h2>
+          <p>Každý projekt je iný. Cenu určíme individuálne podľa rozsahu, integrácií a vašich cieľov — vždy po bezplatnej konzultácii.</p>
         </div>
         <div class="pricing-grid">
           <div class="pricing-card">
             <h3>Starter</h3>
-            <div class="price">od <strong>990 €</strong><span>/mesiac</span></div>
+            <div class="price"><strong>Na mieru</strong></div>
             <p>Pre malé firmy a startupy</p>
             <ul>
               <li>1 AI agent</li>
@@ -411,7 +1033,7 @@
           <div class="pricing-card pricing-featured">
             <div class="card-badge">Odporúčame</div>
             <h3>Business</h3>
-            <div class="price">od <strong>2 490 €</strong><span>/mesiac</span></div>
+            <div class="price"><strong>Na mieru</strong></div>
             <p>Pre rastúce firmy</p>
             <ul>
               <li>Až 3 AI agenti</li>
@@ -448,7 +1070,7 @@
         <div class="faq-list">
           <details class="faq-item">
             <summary>Koľko stoja vaše služby?</summary>
-            <p>Balíky začínajú od 990 € mesačne (Starter). Business od 2 490 € a Enterprise riešime individuálne. Presnú cenu určíme po 45-minútovom úvodnom workshope podľa rozsahu.</p>
+            <p>Každý balík oceňujeme individuálne podľa rozsahu a požiadaviek. Po bezplatnom 45-minútovom workshope vám pripravíme cenovú ponuku na mieru — bez záväzkov.</p>
           </details>
           <details class="faq-item">
             <summary>Ako prebieha spolupráca?</summary>
@@ -525,8 +1147,19 @@
           </article>
         </div>
         <p class="booking-note">
-          Po rezervácii dostanete potvrdenie e-mailom. Pre vlastný Calendly odkaz upravte premenné v súbore <code>script.js</code>.
+          Po rezervácii dostanete potvrdenie e-mailom. Pre vlastný Calendly odkaz upravte premenné v konfigurácii stránky.
         </p>
+      </div>
+    </section>
+
+    <section class="cta-banner fade-in">
+      <div class="container">
+        <h2>Pripravení na inteligentnejší biznis?</h2>
+        <p>Napíšte nám alebo si rovno rezervujte termín. Odpovedáme do 24 hodín.</p>
+        <div class="cta-banner-actions">
+          <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
+          <button type="button" class="btn btn-ghost" data-open-booking="zoom">Bezplatný Zoom call</button>
+        </div>
       </div>
     </section>
 
@@ -579,31 +1212,15 @@
   </main>
 
   <footer class="footer">
-    <div class="container footer-grid">
-      <div class="footer-brand">
-        <a href="#" class="logo logo-footer">
-          <img src="logo.png" alt="Veltro — AI Solutions" class="logo-img">
-        </a>
-        <p>AI Solutions — agenti, weby a implementácia AI pre moderné slovenské firmy.</p>
-        <a href="mailto:hello@veltro.sk" class="footer-email">hello@veltro.sk</a>
-      </div>
-      <div class="footer-links">
-        <h4>Navigácia</h4>
+    <div class="container footer-bar">
+      <a href="#" class="logo-text">VELTRO</a>
+      <p class="footer-copy">&copy; 2026 Veltro s.r.o. Všetky práva vyhradené.</p>
+      <div class="footer-links-inline">
         <a href="#sluzby">Služby</a>
-        <a href="#proces">Proces</a>
-        <a href="#referencie">Referencie</a>
-        <a href="#rezervacia">Rezervácia</a>
         <a href="#kontakt">Kontakt</a>
-      </div>
-      <div class="footer-links">
-        <h4>Právne</h4>
         <a href="#">Ochrana údajov</a>
-        <a href="#">Obchodné podmienky</a>
-        <a href="#" id="cookieSettings">Nastavenia cookies</a>
+        <a href="#" id="cookieSettings">Cookies</a>
       </div>
-    </div>
-    <div class="container footer-bottom">
-      <p>&copy; 2026 Veltro s.r.o. Všetky práva vyhradené.</p>
     </div>
   </footer>
 
@@ -704,6 +1321,383 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+/* ========== KONFIGURÁCIA — upravte podľa seba ========== */
+const CONFIG = {
+  calendly: {
+    zoom: 'https://calendly.com/vas-ucet/ai-workshop-zoom',
+    phone: 'https://calendly.com/vas-ucet/telefonicky-hovor',
+    discovery: 'https://calendly.com/vas-ucet/discovery-call',
+  },
+  email: 'hello@veltro.sk',
+};
+
+/* ========== Header & menu ========== */
+const header = document.getElementById('header');
+const menuToggle = document.getElementById('menuToggle');
+const navLinks = document.getElementById('navLinks');
+
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+menuToggle.addEventListener('click', () => {
+  menuToggle.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuToggle.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+
+/* ========== Scroll animations ========== */
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  },
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+
+document.querySelectorAll(
+  '.card, .step, .use-case, .pricing-card, .section-header, .stat-card, .team-card, .reference-card, .booking-card, .faq-item, .cta-banner, .about-grid, .agent-card'
+).forEach(el => {
+  el.classList.add('fade-in');
+  observer.observe(el);
+});
+
+/* ========== Kontaktný formulár ========== */
+const contactForm = document.getElementById('contactForm');
+
+contactForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = contactForm.querySelector('button[type="submit"]');
+  const originalText = btn.textContent;
+  btn.textContent = 'Odosielam...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.textContent = '✓ Správa odoslaná!';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    contactForm.reset();
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3000);
+  }, 1200);
+});
+
+/* ========== Hero demo rotácia ========== */
+const messages = [
+  'Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.',
+  'Vaša faktúra č. 2024-089 bola schválená. Posielam ju na e-mail do 5 minút.',
+  'Našiel som 3 produkty, ktoré by vás mohli zaujímať. Chcete, aby som vám poslal porovnanie?',
+];
+
+let msgIndex = 0;
+const agentResponse = document.getElementById('agentResponse');
+
+if (agentResponse) {
+  agentResponse.style.transition = 'opacity 0.4s ease';
+  setInterval(() => {
+    msgIndex = (msgIndex + 1) % messages.length;
+    agentResponse.style.opacity = '0';
+    setTimeout(() => {
+      agentResponse.textContent = messages[msgIndex];
+      agentResponse.style.opacity = '1';
+    }, 400);
+  }, 5000);
+}
+
+/* ========== Rezervačný modal ========== */
+const bookingModal = document.getElementById('bookingModal');
+const modalClose = document.getElementById('modalClose');
+const bookingForm = document.getElementById('bookingForm');
+const bookingType = document.getElementById('bookingType');
+const modalTitle = document.getElementById('modalTitle');
+const modalSubtitle = document.getElementById('modalSubtitle');
+const calendlyLink = document.getElementById('calendlyLink');
+
+const bookingLabels = {
+  zoom: {
+    title: 'Rezervovať Zoom videohovor',
+    subtitle: '45-minútový bezplatný AI workshop online.',
+    calendly: CONFIG.calendly.zoom,
+  },
+  phone: {
+    title: 'Rezervovať telefonický hovor',
+    subtitle: '20-minútový bezplatný hovor s naším konzultantom.',
+    calendly: CONFIG.calendly.phone,
+  },
+  discovery: {
+    title: 'Rezervovať Discovery call',
+    subtitle: '60-minútový hĺbkový call pre komplexnejšie projekty.',
+    calendly: CONFIG.calendly.discovery,
+  },
+};
+
+function openBooking(type = 'zoom') {
+  const config = bookingLabels[type] || bookingLabels.zoom;
+  bookingType.value = type;
+  modalTitle.textContent = config.title;
+  modalSubtitle.textContent = config.subtitle;
+  calendlyLink.href = config.calendly;
+  bookingModal.classList.add('open');
+  bookingModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('bookDate').min = tomorrow.toISOString().split('T')[0];
+}
+
+function closeBooking() {
+  bookingModal.classList.remove('open');
+  bookingModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('[data-open-booking]').forEach(btn => {
+  btn.addEventListener('click', () => openBooking(btn.dataset.openBooking));
+});
+
+modalClose.addEventListener('click', closeBooking);
+bookingModal.addEventListener('click', e => {
+  if (e.target === bookingModal) closeBooking();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeBooking();
+    closeChat();
+  }
+});
+
+bookingForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = bookingForm.querySelector('button[type="submit"]');
+  const type = bookingType.value;
+  const name = document.getElementById('bookName').value;
+  const email = document.getElementById('bookEmail').value;
+  const date = document.getElementById('bookDate').value;
+  const time = document.getElementById('bookTime').value;
+
+  btn.textContent = 'Rezervujem...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.textContent = '✓ Rezervácia odoslaná!';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+    const typeName = type === 'zoom' ? 'Zoom' : type === 'phone' ? 'Telefón' : 'Discovery';
+    console.log('Rezervácia:', { type: typeName, name, email, date, time });
+
+    setTimeout(() => {
+      closeBooking();
+      bookingForm.reset();
+      btn.textContent = 'Potvrdiť rezerváciu';
+      btn.style.background = '';
+      btn.disabled = false;
+      alert(
+        `Ďakujeme, ${name}! Vaša rezervácia (${typeName}) na ${date} o ${time} bola zaznamenaná. Potvrdenie pošleme na ${email}.\n\nTip: Pre automatické plánovanie pripojte Calendly odkaz v konfigurácii stránky.`
+      );
+    }, 1500);
+  }, 1000);
+});
+
+/* ========== AI Chatbot (Veltro AI) ========== */
+const chatToggle = document.getElementById('chatToggle');
+const chatPanel = document.getElementById('chatPanel');
+const chatClose = document.getElementById('chatClose');
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatQuick = document.getElementById('chatQuick');
+
+const chatKnowledge = [
+  {
+    keys: ['cenník', 'cena', 'ceny', 'koľko', 'stojí', 'stoji', 'cennik', 'balík', 'balik', 'starter', 'business', 'enterprise', 'ponuka'],
+    answer:
+      'Všetky cenové ponuky riešime **na mieru** — podľa rozsahu projektu, počtu agentov a integrácií. Po bezplatnom 45-minútovom workshope vám pripravíme individuálnu ponuku bez záväzkov. Chcete si rezervovať konzultáciu?',
+  },
+  {
+    keys: ['služb', 'sluzb', 'ponúk', 'ponuk', 'čo robíte', 'co robite', 'agent', 'web', 'e-shop', 'eshop', 'implement'],
+    answer:
+      'Ponúkame tri hlavné služby:\n\n1. **AI agenti** — zákaznícka podpora, predaj, interné procesy\n2. **Webstránky a e-shopy** — moderný dizajn, SEO, rýchlosť\n3. **Implementácia AI do businessu** — audit, automatizácia, školenia\n\nVšetko prispôsobíme vašej firme.',
+  },
+  {
+    keys: ['proces', 'spoluprác', 'spoluprac', 'ako prebieha', 'kroky', 'postup', 'workflow'],
+    answer:
+      'Spolupráca má 5 krokov:\n\n01 Úvodný meeting (45 min AI workshop)\n02 Projekt a zmluva (KPI, harmonogram)\n03 Predanie prístupov (GDPR, šifrovanie)\n04 Implementácia riešenia\n05 Optimalizácia a škálovanie\n\nPrvý prototyp zvyčajne do 2 týždňov.',
+  },
+  {
+    keys: ['rezerv', 'call', 'meeting', 'zoom', 'telefón', 'telefon', 'hovor', 'konzult', 'termín', 'termin', 'book', 'stretnut'],
+    answer:
+      'Bezplatnú konzultáciu si môžete rezervovať tromi spôsobmi:\n\n📹 **Zoom videohovor** (45 min)\n📞 **Telefonický hovor** (20 min)\n🤝 **Discovery call** (60 min)\n\nPrejdite do sekcie Rezervácia alebo kliknite na tlačidlo „Rezervovať call“ v menu. Môžem vám otvoriť rezervačný formulár — napíšte „rezervovať zoom“.',
+    action: 'booking',
+  },
+  {
+    keys: ['výsledk', 'vysledk', 'kedy', 'ako dlho', 'čas', 'cas', 'týžd', 'tyzd', 'nasaden'],
+    answer:
+      'Prvý prototyp AI agenta zvyčajne do **2 týždňov**. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do **4–6 týždňov** po nasadení. Záleží od zložitosti integrácií.',
+  },
+  {
+    keys: ['bezpeč', 'bezpec', 'gdpr', 'nda', 'dáta', 'data', 'ochrana', 'súkrom', 'sukrom'],
+    answer:
+      'Bezpečnosť berieme vážne: šifrované prístupy, GDPR compliance, minimálne spracovanie dát a NDA na požiadanie. Vaše dáta nikdy nepredávame tretím stranám.',
+  },
+  {
+    keys: ['zahranič', 'zahranic', 'česko', 'cesko', 'anglick', 'cudz'],
+    answer:
+      'Áno, pracujeme aj so zahraničnými klientmi. Primárne obsluhujeme **slovenský a český trh**, komunikujeme v slovenčine, češtine a angličtine.',
+  },
+  {
+    keys: ['kontakt', 'email', 'mail', 'telefón', 'telefon', 'zavola', 'napísa', 'napisa', 'adresa'],
+    answer: `Kontaktujte nás:\n\n📧 ${CONFIG.email}\n📞 +421 900 123 456\n📍 Bratislava · Košice · Remote\n\nOdpovedáme do 24 hodín.`,
+  },
+  {
+    keys: ['ahoj', 'hello', 'hi', 'dobrý', 'dobry', 'čau', 'cau', 'nazdar', 'začni', 'zacni'],
+    answer:
+      'Ahoj! Som **Veltro AI**, asistent spoločnosti Veltro. Pomôžem vám s informáciami o službách, cenách, procese alebo rezervácii callu. Čo vás zaujíma?',
+  },
+  {
+    keys: ['ďakuj', 'dakuj', 'vďaka', 'vdaka', 'super', 'paráda', 'parada', 'ok', 'okej'],
+    answer: 'Rád som pomohol! Ak budete potrebovať čokoľvek ďalšie, som tu. Prajem úspešný deň! 🚀',
+  },
+];
+
+function findChatAnswer(text) {
+  const lower = text.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+
+  if (lower.includes('rezervovat zoom') || lower.includes('rezervuj zoom')) {
+    return { answer: 'Otváram rezervačný formulár pre Zoom...', action: 'zoom' };
+  }
+  if (lower.includes('rezervovat') || lower.includes('rezervuj')) {
+    return { answer: 'Otváram rezervačný formulár...', action: 'booking' };
+  }
+
+  let best = null;
+  let bestScore = 0;
+
+  for (const item of chatKnowledge) {
+    let score = 0;
+    for (const key of item.keys) {
+      const k = key.normalize('NFD').replace(/\p{M}/gu, '');
+      if (lower.includes(k)) score += k.length;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = item;
+    }
+  }
+
+  if (best && bestScore > 0) return best;
+
+  return {
+    answer:
+      'Na túto otázku zatiaľ nemám presnú odpoveď. Odporúčam:\n\n• Rezervovať si **bezplatný call** (sekcia Rezervácia)\n• Napísať na **hello@veltro.sk**\n• Alebo sa opýtať na cenník, služby či proces spolupráce.',
+  };
+}
+
+function formatChatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function addChatMessage(text, isUser = false) {
+  const div = document.createElement('div');
+  div.className = `chat-msg ${isUser ? 'user' : 'bot'}`;
+  if (isUser) {
+    div.textContent = text;
+  } else {
+    div.innerHTML = formatChatText(text);
+  }
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function botReply(userText) {
+  addChatMessage(userText, true);
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg bot typing';
+  typing.textContent = 'Veltro AI píše...';
+  chatMessages.appendChild(typing);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    const result = findChatAnswer(userText);
+    addChatMessage(result.answer);
+
+    if (result.action === 'booking' || result.action === 'zoom') {
+      setTimeout(() => {
+        closeChat();
+        openBooking(result.action === 'zoom' ? 'zoom' : 'zoom');
+      }, 800);
+    }
+  }, 600 + Math.random() * 400);
+}
+
+function openChat() {
+  chatPanel.classList.add('open');
+  chatPanel.setAttribute('aria-hidden', 'false');
+  chatToggle.style.display = 'none';
+  chatInput.focus();
+}
+
+function closeChat() {
+  chatPanel.classList.remove('open');
+  chatPanel.setAttribute('aria-hidden', 'true');
+  chatToggle.style.display = 'flex';
+}
+
+chatToggle.addEventListener('click', openChat);
+chatClose.addEventListener('click', closeChat);
+
+chatForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if (!text) return;
+  chatInput.value = '';
+  botReply(text);
+});
+
+chatQuick.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => botReply(btn.dataset.question));
+});
+
+/* ========== Cookies ========== */
+const cookieBanner = document.getElementById('cookieBanner');
+const cookieAccept = document.getElementById('cookieAccept');
+const cookieReject = document.getElementById('cookieReject');
+const cookieSettings = document.getElementById('cookieSettings');
+
+if (!localStorage.getItem('cookiesChoice')) {
+  setTimeout(() => cookieBanner.classList.add('show'), 1500);
+}
+
+cookieAccept.addEventListener('click', () => {
+  localStorage.setItem('cookiesChoice', 'accepted');
+  cookieBanner.classList.remove('show');
+});
+
+cookieReject.addEventListener('click', () => {
+  localStorage.setItem('cookiesChoice', 'rejected');
+  cookieBanner.classList.remove('show');
+});
+
+cookieSettings.addEventListener('click', e => {
+  e.preventDefault();
+  cookieBanner.classList.add('show');
+});
+
+</script>
 </body>
 </html>
