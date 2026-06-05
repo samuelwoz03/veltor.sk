@@ -1699,5 +1699,32 @@ cookieSettings.addEventListener('click', e => {
 });
 
 </script>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+<script type="module">
+  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+  createChat({
+    webhookUrl: 'https://n8n.samcon8n.live/webhook/veltro-chatbot-webhook-001/chat',
+    target: '#n8n-chat',
+    mode: 'window',
+    chatInputKey: 'chatInput',
+    chatSessionKey: 'sessionId',
+    metadata: {},
+    showWelcomeScreen: false,
+    defaultLanguage: 'en',
+    initialMessages: [
+      'Ahoj! Som Veltro AI asistent. Ako vám môžem pomôcť?'
+    ],
+    i18n: {
+      en: {
+        title: 'Veltro AI',
+        subtitle: 'Online · Odpoviem do pár sekúnd',
+        footer: '',
+        getStarted: 'Začať konverzáciu',
+        inputPlaceholder: 'Napíšte správu...',
+      },
+    },
+  });
+</script>
+<div id="n8n-chat"></div>
 </body>
 </html>
