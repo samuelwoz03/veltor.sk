@@ -1,1292 +1,1264 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Veltro — AI Solutions. Tvoríme inteligentných AI agentov, weby a implementáciu AI pre slovenské firmy.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Veltro — AI Solutions | AI agenti pre firmy</title>
-  <link rel="icon" href="logo.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #040b14;
-  --bg-card: rgba(255, 255, 255, 0.03);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #f0f4f8;
-  --muted: rgba(255, 255, 255, 0.55);
-  --cyan: #00f5ff;
-  --blue: #4d9fff;
-  --purple: #a855f7;
-  --green: #22c55e;
-  --gradient: linear-gradient(135deg, var(--cyan), var(--blue));
-  --gradient-text: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
-  --font: 'Space Grotesk', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-  --radius: 14px;
-  --glow-cyan: 0 0 40px rgba(0, 245, 255, 0.15);
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-.container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-
-.mono { font-family: var(--mono); }
-
-/* Background */
-.bg-grid {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-.orb {
-  position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0;
-}
-.orb-blue { width: 500px; height: 500px; background: rgba(77, 159, 255, 0.12); top: -120px; right: -80px; }
-.orb-purple { width: 450px; height: 450px; background: rgba(168, 85, 247, 0.1); bottom: 10%; left: -100px; }
-.orb-cyan { width: 400px; height: 400px; background: rgba(0, 245, 255, 0.07); top: 45%; left: 50%; transform: translateX(-50%); }
-
-.skip-link {
-  position: absolute; top: -100px; left: 16px; padding: 10px 18px;
-  background: var(--cyan); color: var(--bg); border-radius: 8px; z-index: 300;
-  text-decoration: none; font-weight: 600;
-}
-.skip-link:focus { top: 16px; }
-
-/* Nav */
-.header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(4, 11, 20, 0.75);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-
-.nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
-
-.logo-text {
-  font-family: var(--font);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-decoration: none;
-  background: linear-gradient(135deg, var(--cyan), var(--blue));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
-.nav-links a {
-  color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: #fff; }
-
-.nav-cta {
-  padding: 9px 18px !important;
-  border: 1px solid var(--cyan) !important;
-  color: var(--cyan) !important;
-  border-radius: 8px;
-  transition: background 0.2s, box-shadow 0.2s !important;
-}
-.nav-cta:hover {
-  background: rgba(0, 245, 255, 0.08) !important;
-  box-shadow: var(--glow-cyan);
-  color: var(--cyan) !important;
-}
-
-.menu-toggle {
-  display: none; flex-direction: column; gap: 5px;
-  background: none; border: none; cursor: pointer; padding: 4px;
-}
-.menu-toggle span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
-.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.menu-toggle.active span:nth-child(2) { opacity: 0; }
-.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 13px 26px; border-radius: 10px; font-weight: 600; font-size: 0.92rem;
-  text-decoration: none; border: none; cursor: pointer; font-family: var(--font);
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-}
-.btn:hover { transform: translateY(-2px); }
-.btn-primary {
-  background: var(--gradient); color: #040b14;
-  box-shadow: 0 8px 32px rgba(0, 245, 255, 0.25);
-}
-.btn-primary:hover { box-shadow: 0 12px 40px rgba(0, 245, 255, 0.35); }
-.btn-secondary, .btn-ghost {
-  background: transparent; color: var(--text);
-  border: 1px solid var(--border);
-}
-.btn-secondary:hover, .btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
-.btn-outline {
-  background: transparent; color: var(--text); border: 1px solid var(--border);
-}
-.btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
-.btn-full { width: 100%; }
-.btn-sm { padding: 8px 16px; font-size: 0.82rem; }
-
-/* Hero */
-.hero {
-  position: relative; z-index: 1;
-  padding: 140px 0 90px; min-height: 100vh;
-  display: flex; align-items: center;
-}
-
-.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-
-.badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 14px; border: 1px solid var(--cyan); border-radius: 100px;
-  font-family: var(--mono); font-size: 0.75rem; color: var(--cyan);
-  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 22px;
-}
-.badge-dot {
-  width: 7px; height: 7px; background: var(--cyan); border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
-
-.hero h1 {
-  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-  font-weight: 700; letter-spacing: -2px; line-height: 1.08; margin-bottom: 20px;
-}
-.gradient-text {
-  display: block;
-  background: var(--gradient-text);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-.hero-desc { color: var(--muted); font-size: 1.05rem; max-width: 480px; margin-bottom: 32px; }
-.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
-
-.hero-stats {
-  display: flex; gap: 36px; padding-top: 28px;
-  border-top: 1px solid var(--border);
-}
-.stat strong {
-  display: block; font-size: 1.65rem; font-weight: 700; color: #fff; letter-spacing: -1px;
-}
-.stat span { font-size: 0.82rem; color: var(--muted); }
-
-/* Chat mockup */
-.hero-visual { position: relative; }
-.agent-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px;
-  backdrop-filter: blur(16px);
-}
-
-.agent-header {
-  display: flex; align-items: center; gap: 12px;
-  padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
-}
-.agent-avatar {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: var(--gradient); display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 0.75rem; font-weight: 600; color: var(--bg);
-}
-.agent-header strong { display: block; font-size: 0.92rem; }
-.status { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-.status.online::before {
-  content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-.chat-messages { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-.msg {
-  padding: 11px 14px; border-radius: 12px; font-size: 0.88rem; line-height: 1.5; max-width: 92%;
-}
-.msg.user {
-  align-self: flex-end; background: rgba(255,255,255,0.06);
-  border-bottom-right-radius: 4px;
-}
-.msg.agent {
-  align-self: flex-start;
-  background: rgba(0, 245, 255, 0.06);
-  border: 1px solid rgba(0, 245, 255, 0.12);
-  border-bottom-left-radius: 4px;
-}
-
-.chat-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag {
-  font-family: var(--mono); font-size: 0.68rem; padding: 5px 10px;
-  border-radius: 100px; text-transform: uppercase; letter-spacing: 0.04em;
-}
-.tag-cyan { color: var(--cyan); border: 1px solid rgba(0,245,255,0.3); background: rgba(0,245,255,0.06); }
-.tag-blue { color: var(--blue); border: 1px solid rgba(77,159,255,0.3); background: rgba(77,159,255,0.06); }
-.tag-purple { color: var(--purple); border: 1px solid rgba(168,85,247,0.3); background: rgba(168,85,247,0.06); }
-
-/* Sections */
-.section { position: relative; z-index: 1; padding: 90px 0; }
-.section-alt { background: rgba(255,255,255,0.015); }
-
-.section-header { text-align: center; max-width: 620px; margin: 0 auto 50px; }
-.section-tag {
-  display: block; font-family: var(--mono); font-size: 0.72rem;
-  text-transform: uppercase; letter-spacing: 0.14em; color: var(--cyan); margin-bottom: 12px;
-}
-.section-tag::before { content: '// '; }
-.section-header h2 {
-  font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 700;
-  letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px;
-}
-.section-header p { color: var(--muted); font-size: 1rem; }
-.section-header a { color: var(--cyan); }
-
-/* Glass cards */
-.glass {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  backdrop-filter: blur(12px);
-  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-  position: relative; overflow: hidden;
-}
-.glass::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: 0; transition: opacity 0.3s;
-}
-.glass:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
-.glass:hover::before { opacity: 1; }
-
-/* About */
-.about { position: relative; z-index: 1; padding: 80px 0; }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-.about-text h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 18px; }
-.outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.35); }
-.about-text p { color: var(--muted); }
-
-.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-.stat-card {
-  padding: 24px; text-align: center;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-}
-.stat-card strong { display: block; font-size: 2rem; font-weight: 700; letter-spacing: -1px; }
-.stat-card span { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
-
-/* Partners */
-.partners { position: relative; z-index: 1; padding: 28px 0; border-block: 1px solid var(--border); overflow: hidden; }
-.partners-label { text-align: center; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 18px; }
-.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.marquee-track { display: flex; gap: 40px; width: max-content; animation: marquee 28s linear infinite; }
-.marquee-track span { font-family: var(--mono); font-size: 0.9rem; color: rgba(255,255,255,0.25); white-space: nowrap; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-
-.logos { position: relative; z-index: 1; padding: 36px 0; }
-.logos p { text-align: center; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; }
-.logo-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; }
-.logo-row span { font-weight: 600; color: rgba(255,255,255,0.2); }
-
-/* Services */
-.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.card {
-  padding: 28px;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-  position: relative; overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: 0; transition: opacity 0.3s;
-}
-.card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
-.card:hover::before { opacity: 1; }
-.card-featured { background: rgba(0,245,255,0.04); border-color: rgba(0,245,255,0.2); }
-
-.card-badge {
-  position: absolute; top: 14px; right: 14px;
-  font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
-  letter-spacing: 0.06em; padding: 4px 9px;
-  background: rgba(0,245,255,0.12); color: var(--cyan); border: 1px solid rgba(0,245,255,0.25);
-  border-radius: 100px;
-}
-
-.service-num { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
-.card-icon {
-  width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem; margin-bottom: 14px;
-}
-.card:nth-child(1) .card-icon { background: rgba(0,245,255,0.1); }
-.card:nth-child(2) .card-icon { background: rgba(77,159,255,0.12); }
-.card:nth-child(3) .card-icon { background: rgba(168,85,247,0.1); }
-
-.card h3 { font-size: 1.15rem; margin-bottom: 10px; letter-spacing: -0.5px; }
-.card > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
-.card ul { list-style: none; }
-.card ul li {
-  font-size: 0.86rem; color: var(--muted); padding: 5px 0 5px 16px; position: relative;
-}
-.card ul li::before { content: ''; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); }
-
-/* Process */
-.process-cta { text-align: center; margin-bottom: 36px; }
-.process-track {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
-  position: relative; padding-top: 20px;
-}
-.process-line {
-  position: absolute; top: 36px; left: 10%; right: 10%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
-  z-index: 0;
-}
-.step { text-align: center; position: relative; z-index: 1; }
-.step-circle {
-  width: 48px; height: 48px; margin: 0 auto 16px;
-  border-radius: 50%; border: 1px solid var(--cyan);
-  background: var(--bg); font-family: var(--mono); font-size: 0.85rem;
-  color: var(--cyan); display: flex; align-items: center; justify-content: center;
-}
-.step h3 { font-size: 0.95rem; margin-bottom: 8px; }
-.step p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
-
-/* References */
-.reference-card {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
-  padding: 32px; margin-bottom: 20px;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-}
-.reference-card-alt { border-color: rgba(0,245,255,0.15); }
-.reference-tag { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); text-transform: uppercase; }
-.reference-content h3 { font-size: 1.2rem; margin: 10px 0; letter-spacing: -0.5px; }
-.reference-content > p { color: var(--muted); font-size: 0.9rem; }
-.reference-links { display: flex; gap: 14px; margin-top: 12px; }
-.reference-links span { font-size: 0.85rem; color: var(--blue); }
-.reference-metrics h4 { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-.metric-row {
-  display: flex; justify-content: space-between; padding: 10px 14px; margin-bottom: 8px;
-  background: rgba(0,0,0,0.25); border-radius: 8px; font-size: 0.88rem;
-}
-.metric-row span { color: var(--muted); }
-.metric-row strong { color: var(--cyan); font-family: var(--mono); }
-
-/* Use cases */
-.use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.use-case {
-  padding: 20px; background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 10px; transition: border-color 0.2s;
-}
-.use-case:hover { border-color: rgba(0,245,255,0.2); }
-.use-case h4 { font-size: 0.95rem; color: var(--cyan); margin-bottom: 4px; }
-.use-case p { font-size: 0.82rem; color: var(--muted); }
-
-/* Team */
-.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.team-card {
-  padding: 28px; text-align: center;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.team-card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
-.team-card-featured { border-color: rgba(0,245,255,0.2); background: rgba(0,245,255,0.03); }
-.team-avatar {
-  width: 68px; height: 68px; margin: 0 auto 14px; border-radius: 50%;
-  background: var(--gradient); display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-weight: 600; font-size: 0.9rem; color: var(--bg);
-}
-.team-avatar-ai { background: rgba(0,245,255,0.1); padding: 6px; overflow: hidden; }
-.team-logo-img { width: 100%; height: 100%; object-fit: contain; }
-.team-card h3 { font-size: 1.05rem; margin-bottom: 4px; }
-.team-role { font-family: var(--mono); font-size: 0.72rem; color: var(--cyan); display: block; margin-bottom: 10px; }
-.team-card > p { font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; }
-.team-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.team-tags li {
-  font-family: var(--mono); font-size: 0.65rem; padding: 4px 9px;
-  border: 1px solid var(--border); border-radius: 100px; color: var(--muted);
-}
-
-/* Pricing */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
-.pricing-card {
-  padding: 32px; text-align: center; position: relative;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.pricing-card:hover { transform: translateY(-4px); box-shadow: var(--glow-cyan); }
-.pricing-featured {
-  border-color: rgba(0,245,255,0.35);
-  box-shadow: 0 0 50px rgba(0,245,255,0.1);
-}
-.pricing-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
-.price { color: var(--muted); margin-bottom: 6px; }
-.price strong { font-size: 2.2rem; color: #fff; font-weight: 700; letter-spacing: -1px; }
-.pricing-card > p { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; }
-.pricing-card ul { list-style: none; text-align: left; margin-bottom: 24px; }
-.pricing-card ul li {
-  font-size: 0.88rem; color: var(--muted); padding: 7px 0 7px 22px; position: relative;
-}
-.pricing-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); font-weight: 700; }
-
-/* FAQ */
-.faq-list { max-width: 720px; margin: 0 auto; }
-.faq-item {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 10px; margin-bottom: 10px; overflow: hidden;
-}
-.faq-item summary {
-  padding: 18px 22px; font-weight: 600; cursor: pointer; list-style: none;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::after { content: '+'; font-family: var(--mono); color: var(--cyan); }
-.faq-item[open] summary::after { content: '−'; }
-.faq-item p { padding: 0 22px 18px; color: var(--muted); font-size: 0.92rem; }
-.faq-cta { text-align: center; margin-top: 36px; }
-
-/* Booking */
-.booking-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.booking-card {
-  padding: 28px; text-align: center; position: relative;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-}
-.booking-featured { border-color: rgba(0,245,255,0.25); }
-.booking-icon { font-size: 2rem; margin-bottom: 12px; }
-.booking-card h3 { margin-bottom: 10px; }
-.booking-card > p { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
-.booking-card ul { list-style: none; text-align: left; margin-bottom: 20px; }
-.booking-card ul li { font-size: 0.86rem; color: var(--muted); padding: 5px 0 5px 18px; position: relative; }
-.booking-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); }
-.booking-note { text-align: center; margin-top: 28px; font-size: 0.82rem; color: var(--muted); }
-.booking-note code { font-family: var(--mono); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
-
-/* CTA banner */
-.cta-banner {
-  position: relative; z-index: 1; margin: 0 24px 40px;
-  padding: 56px 40px; text-align: center;
-  background: var(--bg-card); border: 1px solid rgba(0,245,255,0.25);
-  border-radius: var(--radius); overflow: hidden;
-  max-width: 1132px; margin-inline: auto;
-}
-.cta-banner::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
-}
-.cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -1px; margin-bottom: 12px; }
-.cta-banner p { color: var(--muted); margin-bottom: 24px; }
-.cta-banner-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-
-/* Contact */
-.cta-section { padding-bottom: 100px; }
-.cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-.cta-content h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -1px; margin-bottom: 12px; }
-.cta-content > p { color: var(--muted); margin-bottom: 24px; }
-.contact-info { display: flex; flex-direction: column; gap: 10px; }
-.contact-info a { color: var(--cyan); text-decoration: none; }
-.contact-quick { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-
-.contact-form {
-  padding: 28px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-}
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.form-group input, .form-group textarea, .form-group select {
-  width: 100%; padding: 11px 14px; background: rgba(0,0,0,0.35);
-  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-  font-family: var(--font); font-size: 0.92rem;
-}
-.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-  outline: none; border-color: var(--cyan);
-}
-.form-note { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 14px; }
-
-/* Footer */
-.footer {
-  position: relative; z-index: 1;
-  border-top: 1px solid var(--border); padding: 24px 0;
-}
-.footer-bar {
-  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-}
-.footer-copy { font-size: 0.82rem; color: var(--muted); }
-.footer-links-inline { display: flex; gap: 20px; flex-wrap: wrap; }
-.footer-links-inline a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
-.footer-links-inline a:hover { color: #fff; }
-
-/* Modal */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
-  z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px;
-  opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
-}
-.modal-overlay.open { opacity: 1; visibility: visible; }
-.modal {
-  background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 32px; max-width: 460px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;
-}
-.modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
-.modal h3 { font-size: 1.2rem; margin-bottom: 6px; }
-.modal-subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 20px; }
-.modal-calendly { text-align: center; margin-top: 14px; font-size: 0.82rem; color: var(--muted); }
-.modal-calendly a { color: var(--cyan); }
-
-/* Chat widget */
-.chat-widget { position: fixed; bottom: 24px; right: 24px; z-index: 250; }
-.chat-toggle {
-  display: flex; align-items: center; gap: 10px; padding: 12px 18px;
-  background: var(--gradient); color: var(--bg); border: none; border-radius: 100px;
-  cursor: pointer; font-family: var(--font); font-weight: 600; font-size: 0.88rem;
-  box-shadow: 0 8px 32px rgba(0,245,255,0.3);
-}
-.chat-toggle-logo { height: 26px; width: auto; }
-.chat-panel {
-  position: absolute; bottom: 64px; right: 0; width: 360px; max-width: calc(100vw - 48px);
-  height: 500px; max-height: calc(100vh - 120px);
-  background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
-  display: flex; flex-direction: column;
-  opacity: 0; visibility: hidden; transform: translateY(12px);
-  transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
-}
-.chat-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
-.chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); }
-.chat-header-info { display: flex; align-items: center; gap: 10px; }
-.chat-avatar-img { height: 32px; width: auto; }
-.chat-header strong { font-size: 0.9rem; }
-.chat-header span { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
-.chat-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
-.chat-messages-panel { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.chat-msg { max-width: 88%; padding: 10px 14px; border-radius: 10px; font-size: 0.86rem; line-height: 1.5; }
-.chat-msg.bot { background: rgba(0,245,255,0.06); border: 1px solid rgba(0,245,255,0.1); align-self: flex-start; }
-.chat-msg.user { background: rgba(255,255,255,0.06); align-self: flex-end; }
-.chat-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
-.chat-quick button {
-  font-family: var(--mono); font-size: 0.68rem; padding: 5px 10px;
-  background: transparent; border: 1px solid var(--border); border-radius: 100px;
-  color: var(--muted); cursor: pointer;
-}
-.chat-quick button:hover { border-color: var(--cyan); color: var(--cyan); }
-.chat-input-form { display: flex; gap: 8px; padding: 14px; border-top: 1px solid var(--border); }
-.chat-input-form input {
-  flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.35);
-  border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font);
-}
-.chat-input-form button {
-  width: 40px; height: 40px; background: var(--gradient); border: none;
-  border-radius: 8px; color: var(--bg); cursor: pointer; font-size: 1rem;
-}
-
-/* Cookies */
-.cookie-banner {
-  position: fixed; bottom: 20px; left: 20px; right: 20px; max-width: 500px; margin: 0 auto;
-  padding: 18px 20px; background: #071018; border: 1px solid var(--border); border-radius: var(--radius);
-  z-index: 200; display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
-  transform: translateY(120%); transition: transform 0.4s;
-}
-.cookie-banner.show { transform: translateY(0); }
-.cookie-banner p { font-size: 0.86rem; color: var(--muted); flex: 1; }
-.cookie-banner a { color: var(--cyan); }
-.cookie-actions { display: flex; gap: 8px; }
-
-/* Animations */
-.fade-in {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.fade-in.visible { opacity: 1; transform: translateY(0); }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .nav-links {
-    position: fixed; top: 0; right: -100%; width: 260px; height: 100vh;
-    background: rgba(4,11,20,0.98); backdrop-filter: blur(20px);
-    flex-direction: column; align-items: flex-start; padding: 80px 28px 28px;
-    gap: 20px; border-left: 1px solid var(--border); transition: right 0.3s;
+  <meta name="description" content="Veltro navrhuje a nasadzuje AI agentov, moderné weby a implementáciu AI do firemných procesov. AI agenti pre slovenský trh — prvé nasadenie do 2 týždňov." />
+  <meta property="og:title" content="Veltro — AI Solutions | AI agenti pre firmy" />
+  <meta property="og:description" content="Navrhujeme a nasadzujeme AI agentov, moderné weby a implementáciu AI do vašich procesov — aby ste sa mohli sústrediť na biznis." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="sk_SK" />
+  <meta property="og:image" content="https://veltro.sk/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Veltro",
+    "description": "AI agenti, webstránky a implementácia umelej inteligencie do firemných procesov.",
+    "email": "info@veltro.sk",
+    "telephone": "+421903120356",
+    "url": "https://veltro.sk",
+    "areaServed": "SK",
+    "address": { "@type": "PostalAddress", "addressLocality": "Bratislava", "addressCountry": "SK" }
   }
-  .nav-links.open { right: 0; }
-  .menu-toggle { display: flex; z-index: 101; }
+  </script>
+  <link rel="icon" href="logo.png" type="image/png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            ink: '#040b14',
+            deep: '#071120',
+            card: '#0a1626',
+            neon: { 300: '#7dfbff', 400: '#33f7ff', 500: '#00f5ff' },
+            azure: { 400: '#4d9fff', 500: '#2e8bff' },
+            viol: { 400: '#c084fc', 500: '#a855f7' },
+            frost: '#f0f4f8',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+    body { background: #040b14; }
+    ::selection { background: rgba(0,245,255,.28); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #040b14; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(#00f5ff55, #a855f755); border-radius: 8px; }
 
-  .hero-grid, .cta-grid, .about-grid, .reference-card { grid-template-columns: 1fr; }
-  .hero { padding-top: 110px; min-height: auto; }
-  .cards-grid, .pricing-grid, .booking-grid, .team-grid { grid-template-columns: 1fr; max-width: 440px; margin-inline: auto; }
-  .process-track { grid-template-columns: 1fr; }
-  .process-line { display: none; }
-  .use-cases { grid-template-columns: 1fr 1fr; }
-  .form-row { grid-template-columns: 1fr; }
-  .footer-bar { flex-direction: column; text-align: center; }
-  .chat-toggle-label { display: none; }
-}
+    /* ============ 3D SCROLL-SCRUB REVEAL ============
+       JS píše --srp (0→1) podľa pozície vo viewporte.
+       Element sa otáča z hĺbky do roviny — obojsmerne, plynulo so scrollom. */
+    .sr {
+      --srp: 1;
+      opacity: calc(0.02 + var(--srp) * 0.98);
+      transform: perspective(1100px)
+                 rotateX(calc((1 - var(--srp)) * 16deg))
+                 translateY(calc((1 - var(--srp)) * 64px))
+                 scale(calc(0.955 + var(--srp) * 0.045));
+      transform-origin: 50% 100%;
+      will-change: transform, opacity;
+    }
+    .sr-left {
+      transform: perspective(1100px)
+                 rotateY(calc((1 - var(--srp)) * 18deg))
+                 translateX(calc((1 - var(--srp)) * -70px))
+                 scale(calc(0.955 + var(--srp) * 0.045));
+      transform-origin: 0% 50%;
+    }
+    .sr-right {
+      transform: perspective(1100px)
+                 rotateY(calc((1 - var(--srp)) * -18deg))
+                 translateX(calc((1 - var(--srp)) * 70px))
+                 scale(calc(0.955 + var(--srp) * 0.045));
+      transform-origin: 100% 50%;
+    }
 
-@media (max-width: 600px) {
-  .use-cases { grid-template-columns: 1fr; }
-  .hero-stats { flex-direction: column; gap: 16px; }
-}
+    /* ============ 3D tilt + spotlight (kombinovateľné so .sr cez CSS premenné) ============ */
+    .tilt {
+      transform: perspective(950px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+      transition: transform .18s ease-out, border-color .35s, box-shadow .35s;
+      will-change: transform;
+    }
+    .tilt.sr {
+      transform: perspective(1000px)
+                 rotateX(calc((1 - var(--srp)) * 16deg + var(--rx, 0deg)))
+                 rotateY(var(--ry, 0deg))
+                 translateY(calc((1 - var(--srp)) * 64px))
+                 scale(calc(0.955 + var(--srp) * 0.045));
+      transition: border-color .35s, box-shadow .35s;
+    }
+    .spotlight { position: relative; overflow: hidden; }
+    .spotlight::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s;
+      background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,.13), transparent 65%);
+    }
+    .spotlight:hover::after { opacity: 1; }
 
-</style>
+    /* ============ text gradient ============ */
+    .text-gradient {
+      background: linear-gradient(100deg, #00f5ff 0%, #4d9fff 35%, #a855f7 60%, #4d9fff 80%, #00f5ff 100%);
+      background-size: 220% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 8s linear infinite;
+    }
+    @keyframes shimmer { to { background-position: -220% 0; } }
+
+    /* ============ ambient ============ */
+    .hero-glow {
+      background:
+        radial-gradient(620px 380px at 15% 10%, rgba(0,245,255,.13), transparent 60%),
+        radial-gradient(680px 420px at 88% 28%, rgba(168,85,247,.14), transparent 60%),
+        radial-gradient(540px 340px at 50% 108%, rgba(77,159,255,.12), transparent 60%);
+    }
+    .noise::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .45; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* perspektívna 3D podlaha v hero */
+    .gridfloor {
+      position: absolute; left: -30%; right: -30%; bottom: -6%; height: 58%;
+      transform: perspective(850px) rotateX(63deg); transform-origin: 50% 100%;
+      background-image:
+        linear-gradient(rgba(0,245,255,.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,.16) 1px, transparent 1px);
+      background-size: 46px 46px;
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.9) 12%, transparent 82%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,.9) 12%, transparent 82%);
+      animation: gridmove 2.4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes gridmove { to { background-position: 0 46px, 0 0; } }
+
+    .float-chip { animation: floaty var(--dur, 6s) ease-in-out var(--del, 0s) infinite alternate; }
+    @keyframes floaty { from { transform: translateY(-8px); } to { transform: translateY(10px); } }
+
+    /* ============ chat mockup — 3D karta riadená scrollom + myšou ============ */
+    .chat3d {
+      transform: perspective(1500px) rotateY(var(--cy, -12deg)) rotateX(var(--cx, 6deg)) translateZ(0);
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .msg { opacity: 0; transform: translateY(16px) scale(.96); animation: msgin .65s cubic-bezier(.22,1,.36,1) forwards; }
+    @keyframes msgin { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* ============ button shine ============ */
+    .btn-shine { position: relative; overflow: hidden; }
+    .btn-shine::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.5), transparent);
+      transform: skewX(-20deg); transition: left .65s ease;
+    }
+    .btn-shine:hover::after { left: 130%; }
+
+    /* ============ rotujúci border beam ============ */
+    @property --a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+    .beam { position: relative; }
+    .beam::before {
+      content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1.2px; pointer-events: none;
+      background: conic-gradient(from var(--a), transparent 0deg 290deg, rgba(0,245,255,.95) 320deg, rgba(168,85,247,.95) 345deg, transparent 360deg);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation: beamspin 6.5s linear infinite;
+    }
+    @keyframes beamspin { to { --a: 360deg; } }
+
+    /* ============ marquee ============ */
+    .marquee {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+    .marquee-track { display: flex; gap: 1rem; width: max-content; animation: scrollx 30s linear infinite; }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    @keyframes scrollx { to { transform: translateX(-50%); } }
+
+    /* ============ PROCES — sticky 3D prelet kamerou ============ */
+    #procesTrack { height: 520vh; }
+    #procesStage {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      perspective: 1250px; perspective-origin: 50% 46%;
+    }
+    .pstep {
+      position: absolute; left: 50%; top: 50%;
+      width: min(600px, 90vw);
+      transform: translate(-50%, -50%) translateZ(var(--z, -2000px)) rotateX(var(--prx, 0deg));
+      opacity: var(--o, 0);
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+    .pstep.focus { pointer-events: auto; }
+    /* karty preletu musia byť nepriehľadné — inak cez ne presvitá ďalší krok */
+    .pstep .glass {
+      background: linear-gradient(180deg, rgba(15,29,52,.985), rgba(8,18,33,1));
+      backdrop-filter: none;
+    }
+    .pdot {
+      position: absolute; border-radius: 9999px; pointer-events: none;
+      transform: translate3d(0,0,var(--z, -1500px));
+      opacity: var(--o, 0);
+      will-change: transform, opacity;
+    }
+    /* ============ FAQ accordion ============ */
+    .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.22,1,.36,1); }
+    .faq-item.open .faq-body { grid-template-rows: 1fr; }
+    .faq-item .faq-icon { transition: transform .4s cubic-bezier(.22,1,.36,1); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    .num-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: .45rem 1.05rem; border-radius: 9999px;
+      border: 1px solid rgba(0,245,255,.22);
+      background: rgba(0,245,255,.05); backdrop-filter: blur(6px);
+      color: #7dfbff; letter-spacing: .18em;
+    }
+    .num-badge::before {
+      content: ''; width: .5rem; height: .5rem; border-radius: 9999px; flex: none;
+      background: linear-gradient(135deg, #00f5ff, #a855f7);
+      box-shadow: 0 0 10px rgba(0,245,255,.8);
+    }
+
+    .glass { border: 1px solid rgba(240,244,248,.09); background: rgba(10,22,38,.62); backdrop-filter: blur(14px); }
+    .ring-glow { box-shadow: 0 0 0 1px rgba(0,245,255,.06), 0 30px 70px -25px rgba(0,0,0,.7); }
+
+    #toTop.show-btn { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    /* ============ AI chat widget (prenesené zo starého webu) ============ */
+    .chat-widget { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 80; }
+    .chat-toggle {
+      display: flex; align-items: center; gap: .6rem; cursor: pointer; border: none;
+      padding: .85rem 1.3rem; border-radius: 9999px;
+      background: linear-gradient(135deg, #00f5ff, #4d9fff, #a855f7);
+      color: #040b14; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .875rem;
+      box-shadow: 0 14px 34px -10px rgba(0,245,255,.55);
+      transition: transform .25s, filter .25s;
+    }
+    .chat-toggle:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .chat-toggle-logo { width: 1.5rem; height: 1.5rem; border-radius: 9999px; object-fit: contain; }
+    .chat-panel {
+      position: absolute; right: 0; bottom: 0;
+      width: min(374px, calc(100vw - 2rem)); height: min(548px, calc(100vh - 5rem));
+      display: flex; flex-direction: column; overflow: hidden; border-radius: 1.5rem;
+      border: 1px solid rgba(240,244,248,.1); background: rgba(8,18,33,.98);
+      box-shadow: 0 34px 76px -22px rgba(0,0,0,.85);
+      opacity: 0; visibility: hidden; transform: translateY(18px) scale(.96); transform-origin: 100% 100%;
+      transition: opacity .3s, transform .3s, visibility .3s;
+    }
+    .chat-panel.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 1rem 1.15rem; border-bottom: 1px solid rgba(240,244,248,.08);
+      background: linear-gradient(135deg, rgba(0,245,255,.1), rgba(168,85,247,.1));
+    }
+    .chat-header-info { display: flex; align-items: center; gap: .7rem; }
+    .chat-avatar-img { width: 2.25rem; height: 2.25rem; border-radius: 9999px; object-fit: contain; background: rgba(255,255,255,.06); }
+    .chat-header-info strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: .9rem; color: #fff; }
+    .chat-header-info span { display: block; font-size: .7rem; color: #34d399; }
+    .chat-close { background: none; border: none; color: rgba(240,244,248,.5); font-size: 1.6rem; line-height: 1; cursor: pointer; transition: color .2s; }
+    .chat-close:hover { color: #fff; }
+    .chat-messages-panel { flex: 1; overflow-y: auto; padding: 1.15rem; display: flex; flex-direction: column; gap: .7rem; }
+    .chat-msg { max-width: 86%; padding: .7rem 1rem; border-radius: 1rem; font-size: .85rem; line-height: 1.55; }
+    .chat-msg.bot { align-self: flex-start; border-bottom-left-radius: .35rem; background: rgba(255,255,255,.06); border: 1px solid rgba(240,244,248,.08); color: rgba(240,244,248,.82); }
+    .chat-msg.user { align-self: flex-end; border-bottom-right-radius: .35rem; background: linear-gradient(135deg, rgba(46,139,255,.3), rgba(168,85,247,.3)); border: 1px solid rgba(240,244,248,.1); color: rgba(240,244,248,.95); }
+    .chat-msg.typing { color: rgba(240,244,248,.4); font-style: italic; }
+    .chat-quick { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0 1.15rem .8rem; }
+    .chat-quick button {
+      cursor: pointer; padding: .4rem .8rem; border-radius: 9999px; font-size: .72rem; font-weight: 600;
+      border: 1px solid rgba(0,245,255,.25); background: rgba(0,245,255,.06); color: #7dfbff; transition: background .2s, color .2s;
+    }
+    .chat-quick button:hover { background: #00f5ff; color: #040b14; }
+    .chat-input-form { display: flex; gap: .5rem; padding: .85rem 1.15rem 1.15rem; border-top: 1px solid rgba(240,244,248,.08); }
+    .chat-input-form input {
+      flex: 1; min-width: 0; padding: .7rem .95rem; border-radius: .85rem; font-size: .85rem; color: #fff; outline: none;
+      border: 1px solid rgba(240,244,248,.1); background: rgba(255,255,255,.05); transition: border-color .2s;
+    }
+    .chat-input-form input::placeholder { color: rgba(240,244,248,.3); }
+    .chat-input-form input:focus { border-color: rgba(0,245,255,.5); }
+    .chat-input-form button {
+      flex: none; width: 2.6rem; border: none; border-radius: .85rem; cursor: pointer; font-size: 1.05rem;
+      background: linear-gradient(135deg, #00f5ff, #4d9fff); color: #040b14; transition: filter .2s;
+    }
+    .chat-input-form button:hover { filter: brightness(1.1); }
+
+    /* ============ cookie lišta (prenesená zo starého webu) ============ */
+    .cookie-banner {
+      position: fixed; left: 1.5rem; bottom: 1.5rem; z-index: 90; max-width: 26rem;
+      display: flex; flex-wrap: wrap; align-items: center; gap: .9rem;
+      padding: 1.1rem 1.25rem; border-radius: 1.25rem;
+      border: 1px solid rgba(240,244,248,.1); background: rgba(8,18,33,.97);
+      box-shadow: 0 26px 60px -20px rgba(0,0,0,.8);
+      opacity: 0; visibility: hidden; transform: translateY(16px);
+      transition: opacity .4s, transform .4s, visibility .4s;
+    }
+    .cookie-banner.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    .cookie-banner p { flex: 1 1 12rem; font-size: .8rem; line-height: 1.55; color: rgba(240,244,248,.6); }
+    .cookie-banner a { color: #7dfbff; text-decoration: underline; }
+    .cookie-actions { display: flex; gap: .5rem; }
+    .cookie-actions button { cursor: pointer; padding: .5rem .9rem; border-radius: .75rem; font-size: .75rem; font-weight: 700; transition: filter .2s, background .2s; }
+    .cookie-reject { border: 1px solid rgba(240,244,248,.15); background: rgba(255,255,255,.05); color: #fff; }
+    .cookie-reject:hover { background: rgba(255,255,255,.1); }
+    .cookie-accept { border: none; background: linear-gradient(135deg, #00f5ff, #4d9fff); color: #040b14; }
+    .cookie-accept:hover { filter: brightness(1.1); }
+    @media (max-width: 640px) {
+      .cookie-banner { left: 1rem; right: 1rem; max-width: none; }
+      body.cookie-open .chat-widget { bottom: 11rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .text-gradient, .float-chip, .beam::before, .btn-shine::after, .gridfloor, .marquee-track, .msg { animation: none !important; opacity: 1 !important; transform: none !important; }
+      .sr, .sr-left, .sr-right, .tilt, .chat3d { transform: none !important; opacity: 1 !important; transition: none !important; }
+      #procesTrack { height: auto !important; }
+      #procesStage { position: static; height: auto; overflow: visible; }
+      .pstep { position: static; width: auto; transform: none; opacity: 1; pointer-events: auto; margin: 1rem 0; }
+      .pdot { display: none; }
+      .chat-panel, .cookie-banner, .chat-toggle { transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
 </head>
-<body>
-  <a href="#main" class="skip-link">Preskočiť na hlavný obsah</a>
+<body class="noise font-sans text-frost/60 antialiased relative">
 
-  <div class="bg-grid"></div>
-  <div class="orb orb-blue"></div>
-  <div class="orb orb-purple"></div>
-  <div class="orb orb-cyan"></div>
+  <!-- scroll progress -->
+  <div id="progress" class="fixed left-0 top-0 z-[70] h-[3px] w-0 bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 shadow-[0_0_12px_rgba(0,245,255,.6)]"></div>
 
-  <header class="header" id="header">
-    <nav class="nav container">
-      <a href="#" class="logo-text">VELTRO</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#o-nas">O nás</a></li>
-        <li><a href="#sluzby">Služby</a></li>
-        <li><a href="#proces">Proces</a></li>
-        <li><a href="#referencie">Referencie</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#rezervacia" class="nav-cta">Rezervovať call</a></li>
-      </ul>
-      <button class="menu-toggle" id="menuToggle" aria-label="Otvoriť menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </nav>
+  <!-- ===== HEADER ===== -->
+  <header id="top" class="fixed top-0 inset-x-0 z-50">
+    <div class="mx-auto max-w-7xl px-4 pt-4">
+      <div class="flex h-16 items-center justify-between rounded-2xl border border-white/10 bg-ink/70 px-5 shadow-lg shadow-black/40 backdrop-blur-xl">
+        <a href="#top" class="group flex items-center gap-3">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-neon-500 via-azure-400 to-viol-500 font-display text-lg font-bold text-ink shadow-md shadow-neon-500/30 transition-transform group-hover:scale-105">V</span>
+          <span class="flex flex-col leading-none">
+            <span class="font-display text-lg font-bold tracking-tight text-white">Veltro</span>
+            <span class="text-[10px] font-medium tracking-[0.22em] uppercase text-neon-300/80">AI Solutions</span>
+          </span>
+        </a>
+
+        <nav class="hidden items-center gap-1 lg:flex">
+          <a href="#sluzby" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">Služby</a>
+          <a href="#proces" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">Proces</a>
+          <a href="#referencie" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">Referencie</a>
+          <a href="#tim" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">Tím</a>
+          <a href="#cennik" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">Cenník</a>
+          <a href="#faq" class="rounded-lg px-3.5 py-2 text-sm font-medium text-frost/70 transition hover:bg-white/10 hover:text-white">FAQ</a>
+          <a href="#kontakt" class="btn-shine ml-2 rounded-xl bg-gradient-to-r from-neon-500 to-azure-400 px-4 py-2 text-sm font-semibold text-ink transition hover:brightness-110">Kontakt</a>
+        </nav>
+
+        <button id="menuBtn" aria-label="Menu" class="grid h-10 w-10 place-items-center rounded-xl text-white hover:bg-white/10 lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+
+      <div id="mobileNav" class="mt-2 hidden overflow-hidden rounded-2xl border border-white/10 bg-ink/95 shadow-xl backdrop-blur-xl lg:hidden">
+        <nav class="flex flex-col p-2">
+          <a href="#sluzby" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">Služby</a>
+          <a href="#proces" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">Proces spolupráce</a>
+          <a href="#referencie" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">Referencie</a>
+          <a href="#tim" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">Tím</a>
+          <a href="#cennik" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">Cenník</a>
+          <a href="#faq" class="rounded-xl px-4 py-3 text-sm font-medium text-frost/80 hover:bg-white/10">FAQ</a>
+          <a href="#kontakt" class="rounded-xl px-4 py-3 text-sm font-semibold text-neon-300 hover:bg-white/10">Kontakt</a>
+        </nav>
+      </div>
+    </div>
   </header>
 
-  <main id="main">
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-content">
-          <div class="badge">
-            <span class="badge-dot"></span>
-            AI agenti pre slovenský trh
-          </div>
-          <h1>
-            Je čas efektívne využiť<br>
-            <span class="gradient-text">umelú inteligenciu</span><br>
+  <!-- ===== HERO ===== -->
+  <section id="hero" class="relative overflow-hidden">
+    <div class="hero-glow absolute inset-0"></div>
+    <div class="gridfloor"></div>
+    <div class="parallax absolute -left-28 top-14 h-96 w-96 rounded-full bg-neon-500/10 blur-3xl" data-depth="20"></div>
+    <div class="parallax absolute -right-20 top-1/3 h-[28rem] w-[28rem] rounded-full bg-viol-500/12 blur-3xl" data-depth="30"></div>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink to-transparent z-[2]"></div>
+
+    <div id="heroInner" class="relative z-[3] mx-auto max-w-7xl px-5 pb-28 pt-36 sm:pt-44 will-change-transform">
+      <div class="grid items-center gap-14 lg:grid-cols-2">
+        <!-- ľavá strana -->
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full border border-neon-500/25 bg-neon-500/[.06] px-4 py-1.5 text-xs font-semibold tracking-[0.18em] text-neon-300 backdrop-blur">
+            <span class="relative flex h-2 w-2">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon-400 opacity-60"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-neon-400"></span>
+            </span>
+            AI AGENTI PRE SLOVENSKÝ TRH
+          </span>
+
+          <h1 class="font-display mt-7 text-[2.5rem] font-bold leading-[1.08] tracking-tight text-white sm:text-5xl xl:text-6xl">
+            Je čas efektívne využiť<br />
+            <span class="text-gradient">umelú inteligenciu</span><br />
             pre rast vášho podnikania.
           </h1>
-          <p class="hero-desc">
+
+          <p class="mt-6 max-w-xl text-base leading-relaxed text-frost/55 sm:text-lg">
             Navrhujeme a nasadzujeme AI agentov, moderné weby a implementáciu AI do vašich
             procesov — aby ste sa mohli sústrediť na biznis, zatiaľ čo technológie pracujú za vás.
           </p>
-          <div class="hero-actions">
-            <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
-            <button type="button" class="btn btn-secondary" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Bezplatný Zoom call</button>
+
+          <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a href="#kontakt" class="btn-shine group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 px-7 py-4 text-sm font-bold text-ink shadow-xl shadow-neon-500/20 transition hover:shadow-neon-500/35 hover:brightness-110">
+              Chcem začať rásť
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[.05] px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:border-neon-500/40 hover:bg-white/10">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 7h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>
+              Bezplatný Zoom call
+            </button>
           </div>
-          <div class="hero-stats">
-            <div class="stat">
-              <strong>20+</strong>
-              <span>spokojných klientov</span>
+
+          <!-- štatistiky -->
+          <div class="mt-12 grid max-w-lg grid-cols-3 gap-3">
+            <div class="rounded-2xl border border-white/10 bg-white/[.04] p-4 text-center backdrop-blur">
+              <div class="font-display text-2xl font-bold text-white sm:text-3xl"><span data-count="20">0</span>+</div>
+              <div class="mt-1 text-[11px] leading-tight text-frost/45 sm:text-xs">spokojných klientov</div>
             </div>
-            <div class="stat">
-              <strong>30+</strong>
-              <span>dokončených projektov</span>
+            <div class="rounded-2xl border border-white/10 bg-white/[.04] p-4 text-center backdrop-blur">
+              <div class="font-display text-2xl font-bold text-white sm:text-3xl"><span data-count="30">0</span>+</div>
+              <div class="mt-1 text-[11px] leading-tight text-frost/45 sm:text-xs">dokončených projektov</div>
             </div>
-            <div class="stat">
-              <strong>2 týždne</strong>
-              <span>do prvého nasadenia</span>
+            <div class="rounded-2xl border border-white/10 bg-white/[.04] p-4 text-center backdrop-blur">
+              <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">2 týž.</div>
+              <div class="mt-1 text-[11px] leading-tight text-frost/45 sm:text-xs">do prvého nasadenia</div>
             </div>
           </div>
         </div>
-        <div class="hero-visual">
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar">AI</div>
-              <div>
-                <strong>Agent podpory</strong>
-                <span class="status online">Online</span>
+
+        <!-- pravá strana: 3D chat mockup -->
+        <div class="relative hidden lg:block" style="perspective: 1500px;">
+          <div class="parallax float-chip absolute -left-8 -top-8 z-10" data-depth="42" style="--dur:5.5s">
+            <span class="glass flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold text-frost/80 shadow-xl shadow-black/40">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8m-8 4h5m-9 7V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8z"/></svg>
+              CRM INTEGRÁCIA
+            </span>
+          </div>
+          <div class="parallax float-chip absolute -right-6 top-16 z-10" data-depth="34" style="--dur:6.5s; --del:.5s">
+            <span class="glass flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold text-frost/80 shadow-xl shadow-black/40">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-azure-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M3.5 12h17M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
+              SLOVENSKÝ JAZYK
+            </span>
+          </div>
+          <div class="parallax float-chip absolute -bottom-7 right-10 z-10" data-depth="48" style="--dur:7s; --del:.9s">
+            <span class="glass flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold text-frost/80 shadow-xl shadow-black/40">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-viol-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.4-3 8.5-7 10-4-1.5-7-5.6-7-10V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12l1.8 1.8 3.4-3.6"/></svg>
+              GDPR READY
+            </span>
+          </div>
+
+          <div id="chatCard" class="chat3d glass ring-glow relative mx-auto max-w-md rounded-[1.75rem] p-5 shadow-2xl">
+            <!-- hlavička chatu -->
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-neon-500 to-viol-500 text-ink shadow-lg shadow-neon-500/30">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="5" y="7" width="14" height="11" rx="3"/><path stroke-linecap="round" d="M12 7V4m-6.5 9h.01M12 4h.01M9 12.5h.01M15 12.5h.01M9.5 15.5c.7.6 1.6 1 2.5 1s1.8-.4 2.5-1"/></svg>
+                </span>
+                <div class="leading-tight">
+                  <div class="font-display text-sm font-bold text-white">AI Agent podpory</div>
+                  <div class="flex items-center gap-1.5 text-[11px] text-emerald-400"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>Online</div>
+                </div>
+              </div>
+              <span class="rounded-full border border-neon-500/25 bg-neon-500/10 px-2.5 py-1 text-[10px] font-bold tracking-wider text-neon-300">24/7</span>
+            </div>
+
+            <!-- správy -->
+            <div class="mt-4 flex flex-col gap-3 text-sm">
+              <div class="msg self-end max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-r from-azure-500/25 to-viol-500/25 border border-white/10 px-4 py-2.5 text-frost/90" style="animation-delay:.6s">
+                Dobrý deň, kedy mi príde objednávka č. 4821?
+              </div>
+              <div class="msg self-start max-w-[88%] rounded-2xl rounded-bl-md bg-white/[.06] border border-white/10 px-4 py-2.5 text-frost/80" style="animation-delay:1.5s">
+                Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie. 📦
+              </div>
+              <div class="msg self-end max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-r from-azure-500/25 to-viol-500/25 border border-white/10 px-4 py-2.5 text-frost/90" style="animation-delay:2.6s">
+                Môžete mi poslať faktúru k tej objednávke?
+              </div>
+              <div class="msg self-start max-w-[88%] rounded-2xl rounded-bl-md bg-white/[.06] border border-white/10 px-4 py-2.5 text-frost/80" style="animation-delay:3.7s">
+                Vaša faktúra č. 2024-089 bola schválená. Posielam ju na e-mail do 5 minút. ✅
               </div>
             </div>
-            <div class="chat-messages">
-              <div class="msg user">Dobrý deň, kedy mi príde objednávka č. 4821?</div>
-              <div class="msg agent">Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.</div>
-              <div class="msg user">Môžete mi poslať faktúru k tej objednávke?</div>
-              <div class="msg agent"><span id="agentResponse">Vaša faktúra č. 2024-089 bola schválená. Posielam ju na e-mail do 5 minút.</span></div>
-            </div>
-            <div class="chat-tags">
-              <span class="tag tag-cyan">CRM integrácia</span>
-              <span class="tag tag-blue">Slovenský jazyk</span>
-              <span class="tag tag-purple">GDPR ready</span>
+
+            <div class="mt-5 flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.04] px-4 py-3">
+              <span class="text-xs text-frost/35">Napíšte správu…</span>
+              <span class="ml-auto grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-r from-neon-500 to-azure-400 text-ink">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about" id="o-nas">
-      <div class="container about-grid">
-        <div class="about-text">
-          <span class="section-tag">O nás</span>
-          <h2>
-            <span class="outline-text">Presnosť</span> a<br>
-            <span class="gradient-text">transparentnosť</span>
+  <!-- ===== O NÁS ===== -->
+  <section id="onas" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div class="sr">
+          <span class="num-badge text-xs font-bold">O NÁS</span>
+          <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Presnosť a<br /><span class="text-gradient">transparentnosť</span>
           </h2>
-          <p>
+          <p class="mt-6 max-w-lg text-lg leading-relaxed text-frost/55">
             Robíme len to, v čom sme najlepší — AI agenti, weby a implementácia AI do businessu.
             Nesnažíme sa byť agentúrou na všetko. Stavíme na jasnom pláne, silných nápadoch
             a exekúcii, ktorá prináša výsledky.
           </p>
         </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <strong>20+</strong>
-            <span>Spokojných klientov</span>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="sr tilt spotlight glass rounded-3xl p-7 text-center" data-d="0">
+            <div class="font-display text-4xl font-bold text-white"><span data-count="20">0</span>+</div>
+            <div class="mt-2 text-xs font-semibold tracking-[0.14em] text-frost/45">SPOKOJNÝCH KLIENTOV</div>
           </div>
-          <div class="stat-card">
-            <strong>3+</strong>
-            <span>Roky skúseností</span>
+          <div class="sr tilt spotlight glass rounded-3xl p-7 text-center" data-d=".08">
+            <div class="font-display text-4xl font-bold text-white"><span data-count="3">0</span>+</div>
+            <div class="mt-2 text-xs font-semibold tracking-[0.14em] text-frost/45">ROKY SKÚSENOSTÍ</div>
           </div>
-          <div class="stat-card">
-            <strong>2</strong>
-            <span>Ľudí v tíme</span>
+          <div class="sr tilt spotlight glass rounded-3xl p-7 text-center" data-d=".16">
+            <div class="font-display text-4xl font-bold text-white"><span data-count="2">0</span></div>
+            <div class="mt-2 text-xs font-semibold tracking-[0.14em] text-frost/45">ĽUDIA V TÍME</div>
           </div>
-          <div class="stat-card">
-            <strong>30+</strong>
-            <span>Dokončených projektov</span>
+          <div class="sr tilt spotlight glass rounded-3xl p-7 text-center" data-d=".24">
+            <div class="font-display text-4xl font-bold text-white"><span data-count="30">0</span>+</div>
+            <div class="mt-2 text-xs font-semibold tracking-[0.14em] text-frost/45">DOKONČENÝCH PROJEKTOV</div>
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="partners">
-      <p class="partners-label">Technológie, s ktorými pracujeme</p>
-      <div class="marquee">
-        <div class="marquee-track">
-          <span>OpenAI</span>
-          <span>Claude</span>
-          <span>Google Gemini</span>
-          <span>n8n</span>
-          <span>Cursor</span>
-          <span>GitHub Copilot</span>
-          <span>Anthropic</span>
-          <span>Ollama</span>
-          <span>OpenAI</span>
-          <span>Claude</span>
-          <span>Google Gemini</span>
-          <span>n8n</span>
-          <span>Cursor</span>
-          <span>GitHub Copilot</span>
-          <span>Anthropic</span>
-          <span>Ollama</span>
+      <!-- technológie marquee -->
+      <div class="sr mt-20">
+        <p class="text-center text-xs font-bold tracking-[0.28em] text-frost/35">TECHNOLÓGIE, S KTORÝMI PRACUJEME</p>
+        <div class="marquee mt-7">
+          <div class="marquee-track">
+            <!-- 2× ten istý obsah pre nekonečnú slučku -->
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">OpenAI</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Claude</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Google Gemini</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">n8n</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Cursor</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">GitHub Copilot</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Anthropic</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Ollama</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">OpenAI</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Claude</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Google Gemini</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">n8n</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Cursor</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">GitHub Copilot</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Anthropic</span>
+            <span class="glass rounded-2xl px-6 py-3 font-display text-sm font-semibold text-frost/70">Ollama</span>
+          </div>
+        </div>
+
+        <p class="mt-14 text-center text-xs font-bold tracking-[0.28em] text-frost/35">DÔVERUJÚ NÁM FIRMY Z CELÉHO SLOVENSKA</p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 font-display text-base font-semibold text-frost/30">
+          <span>TechStart SK</span><span>LogiPro</span><span>MediCare+</span><span>RetailHub</span><span>FinServ</span>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="logos">
-      <div class="container">
-        <p>Dôverujú nám firmy z celého Slovenska</p>
-        <div class="logo-row">
-          <span>TechStart SK</span>
-          <span>LogiPro</span>
-          <span>MediCare+</span>
-          <span>RetailHub</span>
-          <span>FinServ</span>
+  <!-- ===== SLUŽBY ===== -->
+  <section id="sluzby" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">SLUŽBY</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Naše služby</h2>
+        <p class="mt-5 text-lg leading-relaxed text-frost/55">Tri piliere, na ktorých stojí váš digitálny rast s umelou inteligenciou.</p>
+      </div>
+
+      <div class="mt-14 grid gap-5 lg:grid-cols-3">
+        <!-- 001 AI agenti -->
+        <div class="sr tilt spotlight beam glass relative rounded-3xl p-8" data-d="0">
+          <span class="absolute right-6 top-6 rounded-full bg-gradient-to-r from-neon-500 to-azure-400 px-3 py-1 text-[10px] font-bold tracking-wider text-ink">NAJŽIADANEJŠIE</span>
+          <div class="font-display text-xs font-bold tracking-[0.3em] text-neon-300/60">001</div>
+          <div class="mt-5 grid h-13 w-13 h-[3.25rem] w-[3.25rem] place-items-center rounded-2xl bg-gradient-to-br from-neon-500 to-azure-400 text-ink shadow-lg shadow-neon-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="5" y="7" width="14" height="11" rx="3"/><path stroke-linecap="round" d="M12 7V4m0 0h.01M9 12.5h.01M15 12.5h.01M9.5 15.5c.7.6 1.6 1 2.5 1s1.8-.4 2.5-1M2.5 12v3M21.5 12v3"/></svg>
+          </div>
+          <h3 class="font-display mt-5 text-xl font-bold text-white">AI agenti</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">
+            Navrhujeme autonómnych AI agentov, ktorí prirodzene komunikujú, riešia úlohy
+            a presne sa napájajú na vaše systémy.
+          </p>
+          <ul class="mt-5 space-y-2.5 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Zákaznícka podpora 24/7</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Predaj a kvalifikácia leadov</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Interné workflow a reporty</li>
+          </ul>
+        </div>
+
+        <!-- 002 Weby -->
+        <div class="sr tilt spotlight glass rounded-3xl border border-white/10 p-8" data-d=".1">
+          <div class="font-display text-xs font-bold tracking-[0.3em] text-azure-400/60">002</div>
+          <div class="mt-5 grid h-[3.25rem] w-[3.25rem] place-items-center rounded-2xl bg-gradient-to-br from-azure-400 to-viol-500 text-ink shadow-lg shadow-azure-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M3.5 12h17M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
+          </div>
+          <h3 class="font-display mt-5 text-xl font-bold text-white">Webstránky a e-shopy</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">
+            Vytvárame moderné, rýchle a funkčné weby a e-shopy s dôrazom na UX/UI dizajn
+            a SEO optimalizáciu.
+          </p>
+          <ul class="mt-5 space-y-2.5 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-azure-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Responzívny dizajn</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-azure-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Rýchlosť a Lighthouse skóre</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-azure-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Prepojenie s AI agentmi</li>
+          </ul>
+        </div>
+
+        <!-- 003 Implementácia -->
+        <div class="sr tilt spotlight glass rounded-3xl border border-white/10 p-8" data-d=".2">
+          <div class="font-display text-xs font-bold tracking-[0.3em] text-viol-400/60">003</div>
+          <div class="mt-5 grid h-[3.25rem] w-[3.25rem] place-items-center rounded-2xl bg-gradient-to-br from-viol-500 to-neon-500 text-ink shadow-lg shadow-viol-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>
+          </div>
+          <h3 class="font-display mt-5 text-xl font-bold text-white">Implementácia AI do businessu</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">
+            Pomáhame firmám implementovať umelú inteligenciu do obchodných procesov
+            pre vyššiu efektivitu a konkurencieschopnosť.
+          </p>
+          <ul class="mt-5 space-y-2.5 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-viol-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Audit a stratégia</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-viol-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Automatizácia procesov</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-viol-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Školenie tímu</li>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="sluzby">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Služby</span>
-          <h2>Naše služby</h2>
-          <p>Tri pilieré, na ktorých stojí váš digitálny rast s umelou inteligenciou.</p>
+  <!-- ===== PROCES: sticky 3D prelet ===== -->
+  <section id="proces" class="relative">
+    <div id="procesTrack">
+      <div id="procesStage">
+        <div class="hero-glow absolute inset-0 opacity-60"></div>
+
+        <!-- hlavička sekcie (statická v sticky scéne) -->
+        <div class="pointer-events-none absolute inset-x-0 top-0 z-20 pt-24 text-center sm:pt-28">
+          <span class="num-badge text-xs font-bold">PROCES</span>
+          <h2 class="font-display mt-3 text-2xl font-bold tracking-tight text-white sm:text-4xl">Proces spolupráce</h2>
+          <p class="mx-auto mt-2 max-w-md px-4 text-sm text-frost/45">Scrollujte — každý krok vás prenesie hlbšie do spolupráce.</p>
         </div>
-        <div class="cards-grid services-grid">
-          <article class="card">
-            <span class="service-num">001</span>
-            <div class="card-icon">🤖</div>
-            <h3>AI agenti</h3>
-            <p>Navrhujeme autonómnych AI agentov, ktorí prirodzene komunikujú, riešia úlohy a presne sa napájajú na vaše systémy.</p>
-            <ul>
-              <li>Zákaznícka podpora 24/7</li>
-              <li>Predaj a kvalifikácia leadov</li>
-              <li>Interné workflow a reporty</li>
-            </ul>
-          </article>
-          <article class="card card-featured">
-            <div class="card-badge">Najžiadanejšie</div>
-            <span class="service-num">002</span>
-            <div class="card-icon">🌐</div>
-            <h3>Webstránky a e-shopy</h3>
-            <p>Vytvárame moderné, rýchle a funkčné weby a e-shopy s dôrazom na UX/UI dizajn a SEO optimalizáciu.</p>
-            <ul>
-              <li>Responzívny dizajn</li>
-              <li>Rýchlosť a Lighthouse skóre</li>
-              <li>Prepojenie s AI agentmi</li>
-            </ul>
-          </article>
-          <article class="card">
-            <span class="service-num">003</span>
-            <div class="card-icon">⚡</div>
-            <h3>Implementácia AI do businessu</h3>
-            <p>Pomáhame firmám implementovať umelú inteligenciu do obchodných procesov pre vyššiu efektivitu a konkurencieschopnosť.</p>
-            <ul>
-              <li>Audit a stratégia</li>
-              <li>Automatizácia procesov</li>
-              <li>Školenie tímu</li>
-            </ul>
-          </article>
+
+        <!-- hĺbkové častice -->
+        <div class="pdot h-3 w-3 bg-neon-500/60 blur-[1px]" style="left:16%; top:30%"  data-z="-450"></div>
+        <div class="pdot h-2 w-2 bg-viol-500/70"            style="left:82%; top:26%"  data-z="-900"></div>
+        <div class="pdot h-4 w-4 bg-azure-400/40 blur-[2px]" style="left:12%; top:70%"  data-z="-1400"></div>
+        <div class="pdot h-2 w-2 bg-neon-500/70"            style="left:86%; top:64%"  data-z="-1900"></div>
+        <div class="pdot h-3 w-3 bg-viol-500/50 blur-[1px]" style="left:22%; top:22%"  data-z="-2400"></div>
+        <div class="pdot h-2 w-2 bg-azure-400/60"           style="left:78%; top:76%"  data-z="-2900"></div>
+
+        <!-- kroky -->
+        <div class="pstep" data-i="0">
+          <div class="glass ring-glow relative rounded-[1.75rem] p-8 sm:p-10">
+            <div class="flex items-center gap-4">
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-gradient-to-br from-neon-500 to-azure-400 text-ink shadow-lg shadow-neon-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 7h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>
+              </span>
+              <h3 class="font-display text-xl font-bold text-white sm:text-2xl">Úvodný meeting</h3>
+              <span class="ml-auto font-display text-3xl font-bold text-gradient sm:text-4xl">01</span>
+            </div>
+            <p class="mt-5 leading-relaxed text-frost/60">
+              V rámci 45-minútového AI workshopu preskúmame vaše ciele, prioritizujeme procesy
+              vhodné na automatizáciu a navrhneme use-case s rýchlou návratnosťou.
+            </p>
+          </div>
+        </div>
+
+        <div class="pstep" data-i="1">
+          <div class="glass ring-glow relative rounded-[1.75rem] p-8 sm:p-10">
+            <div class="flex items-center gap-4">
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-gradient-to-br from-azure-400 to-viol-500 text-ink shadow-lg shadow-azure-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h4m5-13v4a1 1 0 0 0 1 1h4M8 3h8l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+              </span>
+              <h3 class="font-display text-xl font-bold text-white sm:text-2xl">Projekt a zmluva</h3>
+              <span class="ml-auto font-display text-3xl font-bold text-gradient sm:text-4xl">02</span>
+            </div>
+            <p class="mt-5 leading-relaxed text-frost/60">
+              Upresníme rozsah, výstupy, KPI aj harmonogram a všetko ukotvíme do prehľadnej
+              zmluvy v súlade s vašimi obchodnými cieľmi.
+            </p>
+          </div>
+        </div>
+
+        <div class="pstep" data-i="2">
+          <div class="glass ring-glow relative rounded-[1.75rem] p-8 sm:p-10">
+            <div class="flex items-center gap-4">
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-gradient-to-br from-viol-500 to-neon-500 text-ink shadow-lg shadow-viol-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path stroke-linecap="round" d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg>
+              </span>
+              <h3 class="font-display text-xl font-bold text-white sm:text-2xl">Predanie prístupov</h3>
+              <span class="ml-auto font-display text-3xl font-bold text-gradient sm:text-4xl">03</span>
+            </div>
+            <p class="mt-5 leading-relaxed text-frost/60">
+              Bezpečne napojíme vaše aplikácie, CRM a dátové zdroje šifrovanými prístupmi
+              v súlade s GDPR.
+            </p>
+          </div>
+        </div>
+
+        <div class="pstep" data-i="3">
+          <div class="glass ring-glow relative rounded-[1.75rem] p-8 sm:p-10">
+            <div class="flex items-center gap-4">
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-gradient-to-br from-neon-500 to-viol-500 text-ink shadow-lg shadow-neon-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>
+              </span>
+              <h3 class="font-display text-xl font-bold text-white sm:text-2xl">Implementácia riešenia</h3>
+              <span class="ml-auto font-display text-3xl font-bold text-gradient sm:text-4xl">04</span>
+            </div>
+            <p class="mt-5 leading-relaxed text-frost/60">
+              Prototypujeme, testujeme a nasadzujeme AI agentov priamo do workflow
+              s API integráciami pre okamžitý prínos.
+            </p>
+          </div>
+        </div>
+
+        <div class="pstep" data-i="4">
+          <div class="glass ring-glow relative rounded-[1.75rem] p-8 sm:p-10">
+            <div class="flex items-center gap-4">
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-gradient-to-br from-azure-400 to-neon-500 text-ink shadow-lg shadow-azure-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19h16M6 16l4-6 4 3 4-8"/></svg>
+              </span>
+              <h3 class="font-display text-xl font-bold text-white sm:text-2xl">Optimalizácia</h3>
+              <span class="ml-auto font-display text-3xl font-bold text-gradient sm:text-4xl">05</span>
+            </div>
+            <p class="mt-5 leading-relaxed text-frost/60">
+              Sledujeme výkon v dashboardoch, ladíme modely a rozširujeme scenáre,
+              aby riešenie škálovalo s rastom firmy.
+            </p>
+            <a href="#kontakt" class="btn-shine mt-7 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 px-6 py-3.5 text-sm font-bold text-ink shadow-xl shadow-neon-500/25 transition hover:brightness-110">
+              Začať spoluprácu
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- progres kroky dole -->
+        <div id="pRail" class="absolute inset-x-0 bottom-8 z-20 flex items-center justify-center gap-3">
+          <span class="prail-dot h-2 w-8 rounded-full bg-white/15 transition-all duration-300" data-i="0"></span>
+          <span class="prail-dot h-2 w-8 rounded-full bg-white/15 transition-all duration-300" data-i="1"></span>
+          <span class="prail-dot h-2 w-8 rounded-full bg-white/15 transition-all duration-300" data-i="2"></span>
+          <span class="prail-dot h-2 w-8 rounded-full bg-white/15 transition-all duration-300" data-i="3"></span>
+          <span class="prail-dot h-2 w-8 rounded-full bg-white/15 transition-all duration-300" data-i="4"></span>
+          <span id="pCount" class="ml-3 font-display text-xs font-bold tracking-widest text-frost/40">01 / 05</span>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section section-alt" id="proces">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Proces</span>
-          <h2>Proces spolupráce</h2>
-          <p>Celý proces je hladký a bezproblémový — vy sa sústredíte na podnikanie, my sa postaráme o AI.</p>
-        </div>
-        <div class="process-cta">
-          <a href="#rezervacia" class="btn btn-primary">Začať spoluprácu</a>
-        </div>
-        <div class="process-track">
-          <div class="process-line"></div>
-          <div class="step">
-            <div class="step-circle">01</div>
-            <h3>Úvodný meeting</h3>
-            <p>V rámci 45-minútového AI workshopu preskúmame vaše ciele, prioritizujeme procesy vhodné na automatizáciu a navrhneme use-case s rýchlou návratnosťou.</p>
-          </div>
-          <div class="step">
-            <div class="step-circle">02</div>
-            <h3>Projekt a zmluva</h3>
-            <p>Upresníme rozsah, výstupy, KPI aj harmonogram a všetko ukotvíme do prehľadnej zmluvy v súlade s vašimi obchodnými cieľmi.</p>
-          </div>
-          <div class="step">
-            <div class="step-circle">03</div>
-            <h3>Predanie prístupov</h3>
-            <p>Bezpečne napojíme vaše aplikácie, CRM a dátové zdroje šifrovanými prístupmi v súlade s GDPR.</p>
-          </div>
-          <div class="step">
-            <div class="step-circle">04</div>
-            <h3>Implementácia riešenia</h3>
-            <p>Prototypujeme, testujeme a nasadzujeme AI agentov priamo do workflow s API integráciami pre okamžitý prínos.</p>
-          </div>
-          <div class="step">
-            <div class="step-circle">05</div>
-            <h3>Optimalizácia</h3>
-            <p>Sledujeme výkon v dashboardoch, ladíme modely a rozširujeme scenáre, aby riešenie škálovalo s rastom firmy.</p>
-          </div>
-        </div>
+  <!-- ===== REFERENCIE ===== -->
+  <section id="referencie" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">REFERENCIE</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Reálne výsledky pre našich klientov</h2>
       </div>
-    </section>
 
-    <section class="section" id="referencie">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Referencie</span>
-          <h2>Reálne výsledky pre našich klientov</h2>
-        </div>
-        <div class="reference-card">
-          <div class="reference-content">
-            <span class="reference-tag">Logistika · Bratislava</span>
-            <h3>Profesionálna logistická firma</h3>
-            <p>AI agent pre zákaznícku podporu a sledovanie zásielok. Integrácia s interným CRM a automatické odpovede v slovenčine.</p>
-            <div class="reference-links">
-              <span>Web</span>
-              <span>Instagram</span>
+      <div class="mt-14 grid gap-6 lg:grid-cols-2">
+        <!-- Logistika -->
+        <div class="sr-left sr tilt spotlight glass rounded-[1.75rem] p-8 sm:p-10">
+          <span class="text-xs font-bold tracking-[0.22em] text-neon-300/70">LOGISTIKA · BRATISLAVA</span>
+          <h3 class="font-display mt-3 text-2xl font-bold text-white">Profesionálna logistická firma</h3>
+          <p class="mt-4 leading-relaxed text-frost/55">
+            AI agent pre zákaznícku podporu a sledovanie zásielok. Integrácia s interným CRM
+            a automatické odpovede v slovenčine.
+          </p>
+          <div class="mt-4 flex gap-4 text-sm font-semibold text-azure-400">
+            <span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M3.5 12h17M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>Web</span>
+            <span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path stroke-linecap="round" d="M17.5 6.5h.01"/></svg>Instagram</span>
+          </div>
+
+          <div class="mt-7 border-t border-white/10 pt-6">
+            <p class="text-[11px] font-bold tracking-[0.22em] text-frost/35">PREHĽAD DOPADU AI</p>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">−<span data-count="60">0</span> %</div>
+                <div class="mt-1 text-xs text-frost/45">zníženie zaťaženia call centra</div>
+              </div>
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">1,2 s</div>
+                <div class="mt-1 text-xs text-frost/45">priemerná doba odpovede</div>
+              </div>
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">+<span data-count="34">0</span> %</div>
+                <div class="mt-1 text-xs text-frost/45">spokojnosť zákazníkov</div>
+              </div>
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl"><span data-count="4200">0</span> €</div>
+                <div class="mt-1 text-xs text-frost/45">úspora mesačných nákladov</div>
+              </div>
             </div>
           </div>
-          <div class="reference-metrics">
-            <h4>Prehľad dopadu AI</h4>
-            <div class="metrics-table">
-              <div class="metric-row">
-                <span>Zníženie zaťaženia call centra</span>
-                <strong>−60 %</strong>
-              </div>
-              <div class="metric-row">
-                <span>Priemerná doba odpovede</span>
-                <strong>1,2 s</strong>
-              </div>
-              <div class="metric-row">
-                <span>Spokojnosť zákazníkov</span>
-                <strong>+34 %</strong>
-              </div>
-              <div class="metric-row">
-                <span>Úspora mesačných nákladov</span>
-                <strong>4 200 €</strong>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class="reference-card reference-card-alt">
-          <div class="reference-content">
-            <span class="reference-tag">E-commerce · Košice</span>
-            <h3>Online obchod s módou</h3>
-            <p>Nový web, SEO optimalizácia a predajný AI agent s personalizovanými odporúčaniami produktov.</p>
-          </div>
-          <div class="reference-metrics">
-            <h4>Prehľad dopadu</h4>
-            <div class="metrics-table">
-              <div class="metric-row">
-                <span>Organická návštevnosť za 1. mesiac</span>
-                <strong>+320</strong>
+
+        <!-- E-commerce -->
+        <div class="sr-right sr tilt spotlight glass rounded-[1.75rem] p-8 sm:p-10">
+          <span class="text-xs font-bold tracking-[0.22em] text-viol-400/80">E-COMMERCE · KOŠICE</span>
+          <h3 class="font-display mt-3 text-2xl font-bold text-white">Online obchod s módou</h3>
+          <p class="mt-4 leading-relaxed text-frost/55">
+            Nový web, SEO optimalizácia a predajný AI agent s personalizovanými
+            odporúčaniami produktov.
+          </p>
+
+          <div class="mt-7 border-t border-white/10 pt-6">
+            <p class="text-[11px] font-bold tracking-[0.22em] text-frost/35">PREHĽAD DOPADU</p>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">+<span data-count="320">0</span></div>
+                <div class="mt-1 text-xs text-frost/45">organická návštevnosť za 1. mesiac</div>
               </div>
-              <div class="metric-row">
-                <span>Online konverzie</span>
-                <strong>+27 %</strong>
+              <div>
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl">+<span data-count="27">0</span> %</div>
+                <div class="mt-1 text-xs text-frost/45">online konverzie</div>
               </div>
-              <div class="metric-row">
-                <span>Skóre Google Lighthouse</span>
-                <strong>96 / 100</strong>
+              <div class="col-span-2">
+                <div class="font-display text-2xl font-bold text-gradient sm:text-3xl"><span data-count="96">0</span> / 100</div>
+                <div class="mt-1 text-xs text-frost/45">skóre Google Lighthouse</div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div id="lhBar" class="h-full w-0 rounded-full bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 transition-[width] duration-[1600ms] ease-out"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section section-alt" id="pripady">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Odvetvia</span>
-          <h2>Kde AI agenti excelujú</h2>
+  <!-- ===== ODVETVIA ===== -->
+  <section id="odvetvia" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">ODVETVIA</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Kde AI agenti excelujú</h2>
+      </div>
+
+      <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d="0">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-neon-500/25 bg-neon-500/10 text-neon-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 12.2A2 2 0 0 0 9.36 18h8.28a2 2 0 0 0 1.96-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="17" cy="21" r="1"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">E-commerce</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Sledovanie objednávok, vrátenia, odporúčania produktov</p>
         </div>
-        <div class="use-cases">
-          <div class="use-case"><h4>E-commerce</h4><p>Sledovanie objednávok, vrátenia, odporúčania produktov</p></div>
-          <div class="use-case"><h4>Zdravotníctvo</h4><p>Objednávanie termínov, pripomienky, FAQ pre pacientov</p></div>
-          <div class="use-case"><h4>B2B služby</h4><p>Kvalifikácia leadov, cenové ponuky, follow-up</p></div>
-          <div class="use-case"><h4>Logistika</h4><p>Status zásielok, koordinácia, incident management</p></div>
-          <div class="use-case"><h4>Financie</h4><p>Onboarding klientov, KYC asistencia, reporty</p></div>
-          <div class="use-case"><h4>HR a nábor</h4><p>Screening CV, plánovanie pohovorov, onboarding</p></div>
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d=".06">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-azure-400/25 bg-azure-400/10 text-azure-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21C7 17 3.5 13.2 3.5 9.3 3.5 6.4 5.7 4.5 8 4.5c1.6 0 3.1.8 4 2.2.9-1.4 2.4-2.2 4-2.2 2.3 0 4.5 1.9 4.5 4.8 0 3.9-3.5 7.7-8.5 11.7z"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 11h3l1.5-3 2 5L15 11h2"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Zdravotníctvo</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Objednávanie termínov, pripomienky, FAQ pre pacientov</p>
+        </div>
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d=".12">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-viol-500/25 bg-viol-500/10 text-viol-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path stroke-linecap="round" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">B2B služby</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Kvalifikácia leadov, cenové ponuky, follow-up</p>
+        </div>
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d="0">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-neon-500/25 bg-neon-500/10 text-neon-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16V6a1 1 0 0 1 1-1h9v11M13 8h4l3 4v4h-2.5M13 16h2"/><circle cx="7" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Logistika</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Status zásielok, koordinácia, incident management</p>
+        </div>
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d=".06">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-azure-400/25 bg-azure-400/10 text-azure-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M4 10L12 4l8 6M6 10v8m4-8v8m4-8v8m4-8v8M3 20h18"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Financie</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Onboarding klientov, KYC asistencia, reporty</p>
+        </div>
+        <div class="sr tilt spotlight glass rounded-3xl p-7" data-d=".12">
+          <div class="mb-4 grid h-11 w-11 place-items-center rounded-2xl border border-viol-500/25 bg-viol-500/10 text-viol-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 19a4 4 0 0 0-8 0M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM20 19c0-2-1.2-3.6-3-4.4M4 19c0-2 1.2-3.6 3-4.4M17.5 10.5a3 3 0 0 0-1.6-5.7M6.5 10.5a3 3 0 0 1 1.6-5.7"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">HR a nábor</h3>
+          <p class="mt-2 text-sm leading-relaxed text-frost/55">Screening CV, plánovanie pohovorov, onboarding</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="tim">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Tím</span>
-          <h2>Kto stojí za Veltro</h2>
-        </div>
-        <div class="team-grid">
-          <article class="team-card">
-            <div class="team-avatar">TH</div>
-            <h3>Tomaš Haban</h3>
-            <span class="team-role">Konateľ a AI architekt</span>
-            <p>Špecializujem sa na návrh a implementáciu AI systémov, automatizácií a inteligentných agentov.</p>
-            <ul class="team-tags">
-              <li>AI agenti</li>
-              <li>Automatizácia</li>
-              <li>Architektúra systémov</li>
-            </ul>
-          </article>
-          <article class="team-card team-card-featured">
-            <div class="team-avatar team-avatar-ai">
-              <img src="logo.png" alt="Veltro AI" class="team-logo-img">
-            </div>
-            <h3>Veltro AI</h3>
-            <span class="team-role">AI jadrový architekt</span>
-            <p>Nikdy nespí. Spracováva dáta, navrhuje workflow a robí rozhodnutia rýchlejšie než mrknutie oka.</p>
-            <ul class="team-tags">
-              <li>Spracovanie dát</li>
-              <li>Prediktívna inteligencia</li>
-              <li>Nekonečný rast</li>
-            </ul>
-          </article>
-          <article class="team-card">
-            <div class="team-avatar">SW</div>
-            <h3>Samuel Woznica</h3>
-            <span class="team-role">Systémový inžinier</span>
-            <p>Zodpovedám za technickú implementáciu, integrácie a optimalizáciu kódu našich AI produktov.</p>
-            <ul class="team-tags">
-              <li>Integrácie</li>
-              <li>Vývoj na mieru</li>
-              <li>Optimalizácia</li>
-            </ul>
-          </article>
-        </div>
+  <!-- ===== TÍM ===== -->
+  <section id="tim" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">TÍM</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Kto stojí za Veltro</h2>
       </div>
-    </section>
 
-    <section class="section section-alt" id="cennik">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Cenník</span>
-          <h2>Cenové ponuky na mieru</h2>
-          <p>Každý projekt je iný. Cenu určíme individuálne podľa rozsahu, integrácií a vašich cieľov — vždy po bezplatnej konzultácii.</p>
+      <div class="mt-14 grid gap-5 lg:grid-cols-3">
+        <div class="sr tilt spotlight glass rounded-3xl p-8 text-center" data-d="0">
+          <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-neon-500 to-azure-400 font-display text-2xl font-bold text-ink shadow-xl shadow-neon-500/25">TH</div>
+          <h3 class="font-display mt-5 text-xl font-bold text-white">Tomaš Haban</h3>
+          <p class="mt-1 text-sm font-semibold text-neon-300/80">Konateľ a AI architekt</p>
+          <p class="mt-4 text-sm leading-relaxed text-frost/55">
+            Špecializujem sa na návrh a implementáciu AI systémov, automatizácií a inteligentných agentov.
+          </p>
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">AI agenti</span>
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">Automatizácia</span>
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">Architektúra systémov</span>
+          </div>
         </div>
-        <div class="pricing-grid">
-          <div class="pricing-card">
-            <h3>Starter</h3>
-            <div class="price"><strong>Na mieru</strong></div>
-            <p>Pre malé firmy a startupy</p>
-            <ul>
-              <li>1 AI agent</li>
-              <li>Do 1 000 konverzácií/mes.</li>
-              <li>E-mail a chat podpora</li>
-              <li>Základné integrácie</li>
-            </ul>
-            <button type="button" class="btn btn-outline btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Rezervovať konzultáciu</button>
+
+        <div class="sr tilt spotlight beam glass rounded-3xl p-8 text-center" data-d=".1">
+          <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-neon-500 via-azure-400 to-viol-500 text-ink shadow-xl shadow-viol-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="5" y="7" width="14" height="11" rx="3"/><path stroke-linecap="round" d="M12 7V4m0 0h.01M9 12.5h.01M15 12.5h.01M9.5 15.5c.7.6 1.6 1 2.5 1s1.8-.4 2.5-1M2.5 12v3M21.5 12v3"/></svg>
           </div>
-          <div class="pricing-card pricing-featured">
-            <div class="card-badge">Odporúčame</div>
-            <h3>Business</h3>
-            <div class="price"><strong>Na mieru</strong></div>
-            <p>Pre rastúce firmy</p>
-            <ul>
-              <li>Až 3 AI agenti</li>
-              <li>Neobmedzené konverzácie</li>
-              <li>CRM a ERP integrácie</li>
-              <li>Prioritná podpora</li>
-              <li>Mesačné reporty</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Rezervovať konzultáciu</button>
+          <h3 class="font-display mt-5 text-xl font-bold text-gradient">Veltro AI</h3>
+          <p class="mt-1 text-sm font-semibold text-viol-400/90">AI jadrový architekt</p>
+          <p class="mt-4 text-sm leading-relaxed text-frost/55">
+            Nikdy nespí. Spracováva dáta, navrhuje workflow a robí rozhodnutia rýchlejšie než mrknutie oka.
+          </p>
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            <span class="rounded-full border border-neon-500/25 bg-neon-500/[.07] px-3 py-1 text-xs text-neon-300/80">Spracovanie dát</span>
+            <span class="rounded-full border border-neon-500/25 bg-neon-500/[.07] px-3 py-1 text-xs text-neon-300/80">Prediktívna inteligencia</span>
+            <span class="rounded-full border border-neon-500/25 bg-neon-500/[.07] px-3 py-1 text-xs text-neon-300/80">Nekonečný rast</span>
           </div>
-          <div class="pricing-card">
-            <h3>Enterprise</h3>
-            <div class="price"><strong>Na mieru</strong></div>
-            <p>Pre korporácie</p>
-            <ul>
-              <li>Neobmedzený počet agentov</li>
-              <li>On-premise možnosť</li>
-              <li>SLA dostupnosť</li>
-              <li>Dedikovaný account manager</li>
-            </ul>
-            <button type="button" class="btn btn-outline btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Zavolať nám</button>
+        </div>
+
+        <div class="sr tilt spotlight glass rounded-3xl p-8 text-center" data-d=".2">
+          <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-viol-500 to-azure-400 font-display text-2xl font-bold text-ink shadow-xl shadow-viol-500/25">SW</div>
+          <h3 class="font-display mt-5 text-xl font-bold text-white">Samuel Woznica</h3>
+          <p class="mt-1 text-sm font-semibold text-azure-400/90">Systémový inžinier</p>
+          <p class="mt-4 text-sm leading-relaxed text-frost/55">
+            Zodpovedám za technickú implementáciu, integrácie a optimalizáciu kódu našich AI produktov.
+          </p>
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">Integrácie</span>
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">Vývoj na mieru</span>
+            <span class="rounded-full border border-white/10 bg-white/[.05] px-3 py-1 text-xs text-frost/60">Optimalizácia</span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="faq">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">FAQ</span>
-          <h2>Časté otázky</h2>
-          <p>Stále máte otázky? <a href="#rezervacia">Rezervujte si meeting zadarmo</a></p>
-        </div>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary>Koľko stoja vaše služby?</summary>
-            <p>Každý balík oceňujeme individuálne podľa rozsahu a požiadaviek. Po bezplatnom 45-minútovom workshope vám pripravíme cenovú ponuku na mieru — bez záväzkov.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Ako prebieha spolupráca?</summary>
-            <p>Začíname úvodným meetingom, potom projekt a zmluva, bezpečné predanie prístupov, implementácia a priebežná optimalizácia. Celý proces má 5 jasných krokov.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Kedy uvidím prvé výsledky?</summary>
-            <p>Prvý prototyp AI agenta zvyčajne do 2 týždňov. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do 4–6 týždňov po nasadení.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Pracujete s klientmi zo zahraničia?</summary>
-            <p>Áno. Primárne obsluhujeme slovenský a český trh, no vieme komunikovať v angličtine a realizovať projekty aj pre zahraničné firmy.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Čo všetko ponúka vaša agentúra?</summary>
-            <p>AI agentov, webstránky a e-shopy a komplexnú implementáciu AI do business procesov — vrátane auditov, integrácií a školení.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Ako s vami môžem začať spolupracovať?</summary>
-            <p>Rezervujte si bezplatný Zoom call, telefonický hovor alebo vyplňte kontaktný formulár. Do 24 hodín sa vám ozveme s návrhom ďalších krokov.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Ako riešite bezpečnosť pri spolupráci?</summary>
-            <p>Používame šifrované prístupy, dodržiavame GDPR, dáta spracúvame minimálne potrebné množstvo a na požiadanie podpisujeme NDA.</p>
-          </details>
-        </div>
-        <div class="faq-cta">
-          <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-alt booking-section" id="rezervacia">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Rezervácia</span>
-          <h2>Rezervujte si bezplatnú konzultáciu</h2>
-          <p>Vyberte spôsob, ako sa s nami spojíte. Úvodný AI workshop je vždy zadarmo a bez záväzkov.</p>
-        </div>
-        <div class="booking-grid">
-          <article class="booking-card">
-            <div class="booking-icon">📹</div>
-            <h3>Zoom videohovor</h3>
-            <p>45-minútový AI workshop online. Ideálne pre prvý kontakt a predstavenie use-case.</p>
-            <ul>
-              <li>Bezplatne</li>
-              <li>Flexibilné termíny</li>
-              <li>Zdieľaná obrazovka</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Rezervovať Zoom</button>
-          </article>
-          <article class="booking-card booking-featured">
-            <div class="card-badge">Najrýchlejšie</div>
-            <div class="booking-icon">📞</div>
-            <h3>Telefonický hovor</h3>
-            <p>20-minútový hovor s naším konzultantom. Rýchle zodpovedanie vašich otázok.</p>
-            <ul>
-              <li>Bezplatne</li>
-              <li>Do 24 hodín</li>
-              <li>+421 SK linka</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Rezervovať hovor</button>
-          </article>
-          <article class="booking-card">
-            <div class="booking-icon">🤝</div>
-            <h3>Discovery call</h3>
-            <p>Hlbší 60-minútový call pre firmy s komplexnejšími požiadavkami a viacerými procesmi.</p>
-            <ul>
-              <li>Bezplatne</li>
-              <li>Audit procesov</li>
-              <li>Návrh ROI</li>
-            </ul>
-            <button type="button" class="btn btn-outline btn-full" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Rezervovať discovery</button>
-          </article>
-        </div>
-        <p class="booking-note">
-          Po rezervácii dostanete e-mailom potvrdenie spolu s pozvánkou do kalendára.
+  <!-- ===== CENNÍK ===== -->
+  <section id="cennik" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">CENNÍK</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Cenové ponuky na mieru</h2>
+        <p class="mt-5 text-lg leading-relaxed text-frost/55">
+          Každý projekt je iný. Cenu určíme individuálne podľa rozsahu, integrácií
+          a vašich cieľov — vždy po bezplatnej konzultácii.
         </p>
       </div>
-    </section>
 
-    <section class="cta-banner fade-in">
-      <div class="container">
-        <h2>Pripravení na inteligentnejší biznis?</h2>
-        <p>Napíšte nám alebo si rovno rezervujte termín. Odpovedáme do 24 hodín.</p>
-        <div class="cta-banner-actions">
-          <a href="#rezervacia" class="btn btn-primary">Chcem začať rásť</a>
-          <button type="button" class="btn btn-ghost" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Bezplatný Zoom call</button>
+      <div class="mt-14 grid gap-5 lg:grid-cols-3">
+        <!-- Starter -->
+        <div class="sr tilt spotlight glass rounded-3xl p-8" data-d="0">
+          <h3 class="font-display text-lg font-bold text-white">Starter</h3>
+          <div class="font-display mt-3 text-3xl font-bold text-white">Na mieru</div>
+          <p class="mt-1 text-sm text-frost/45">Pre malé firmy a startupy</p>
+          <ul class="mt-6 space-y-3 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>1 AI agent</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Do 1 000 konverzácií/mes.</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>E-mail a chat podpora</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Základné integrácie</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="mt-8 inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">Rezervovať konzultáciu</button>
+        </div>
+
+        <!-- Business -->
+        <div class="sr relative" data-d=".1">
+          <span class="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-gradient-to-r from-neon-500 to-viol-500 px-4 py-1.5 text-[10px] font-bold tracking-widest text-ink shadow-lg shadow-neon-500/30">ODPORÚČAME</span>
+          <div class="tilt spotlight beam glass rounded-3xl p-8 shadow-2xl shadow-neon-500/10">
+          <h3 class="font-display text-lg font-bold text-gradient">Business</h3>
+          <div class="font-display mt-3 text-3xl font-bold text-white">Na mieru</div>
+          <p class="mt-1 text-sm text-frost/45">Pre rastúce firmy</p>
+          <ul class="mt-6 space-y-3 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Až 3 AI agenti</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Neobmedzené konverzácie</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>CRM a ERP integrácie</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Prioritná podpora</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Mesačné reporty</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="btn-shine mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 px-5 py-3.5 text-sm font-bold text-ink shadow-xl shadow-neon-500/25 transition hover:brightness-110">Rezervovať konzultáciu</button>
+          </div>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="sr tilt spotlight glass rounded-3xl p-8" data-d=".2">
+          <h3 class="font-display text-lg font-bold text-white">Enterprise</h3>
+          <div class="font-display mt-3 text-3xl font-bold text-white">Na mieru</div>
+          <p class="mt-1 text-sm text-frost/45">Pre korporácie</p>
+          <ul class="mt-6 space-y-3 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Neobmedzený počet agentov</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>On-premise možnosť</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>SLA dostupnosť</li>
+            <li class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Dedikovaný account manager</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="mt-8 inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">Zavolať nám</button>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section cta-section" id="kontakt">
-      <div class="container">
-        <div class="cta-grid">
-          <div class="cta-content">
-            <span class="section-tag">Kontakt</span>
-            <h2>Pripravení na inteligentnejší biznis?</h2>
-            <p>Napíšte nám alebo si rovno rezervujte termín. Odpovedáme do 24 hodín.</p>
-            <div class="contact-info">
-              <a href="mailto:hello@veltro.sk">info@veltro.sk</a>
-              <a href="tel:+421900123456">+421 903 120 356</a>
-              <span>Bratislava · Košice · Remote</span>
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="relative py-24">
+    <div class="mx-auto max-w-4xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">FAQ</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Časté otázky</h2>
+        <p class="mt-5 text-lg text-frost/55">Stále máte otázky? <a href="#rezervacia" class="font-semibold text-neon-300 underline decoration-neon-500/40 underline-offset-4 transition hover:text-white">Rezervujte si meeting zadarmo</a></p>
+      </div>
+
+      <div class="mt-12 space-y-3">
+        <div class="faq-item sr glass rounded-2xl" data-d="0">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Koľko stoja vaše služby?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Každý balík oceňujeme individuálne podľa rozsahu a požiadaviek. Po bezplatnom 45-minútovom workshope vám pripravíme cenovú ponuku na mieru — bez záväzkov.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".04">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Ako prebieha spolupráca?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Začíname úvodným meetingom, potom projekt a zmluva, bezpečné predanie prístupov, implementácia a priebežná optimalizácia. Celý proces má 5 jasných krokov.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".08">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Kedy uvidím prvé výsledky?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Prvý prototyp AI agenta zvyčajne do 2 týždňov. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do 4–6 týždňov po nasadení.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".12">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Pracujete s klientmi zo zahraničia?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Áno. Primárne obsluhujeme slovenský a český trh, no vieme komunikovať v angličtine a realizovať projekty aj pre zahraničné firmy.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".16">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Čo všetko ponúka vaša agentúra?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">AI agentov, webstránky a e-shopy a komplexnú implementáciu AI do business procesov — vrátane auditov, integrácií a školení.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".2">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Ako s vami môžem začať spolupracovať?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Rezervujte si bezplatný Zoom call, telefonický hovor alebo vyplňte kontaktný formulár. Do 24 hodín sa vám ozveme s návrhom ďalších krokov.</p></div></div>
+        </div>
+        <div class="faq-item sr glass rounded-2xl" data-d=".24">
+          <button class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+            <span class="font-display font-semibold text-white">Ako riešite bezpečnosť pri spolupráci?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="faq-icon h-5 w-5 flex-none text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-body"><div class="overflow-hidden"><p class="px-6 pb-5 text-sm leading-relaxed text-frost/55">Používame šifrované prístupy, dodržiavame GDPR, dáta spracúvame minimálne potrebné množstvo a na požiadanie podpisujeme NDA.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REZERVÁCIA ===== -->
+  <section id="rezervacia" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr mx-auto max-w-2xl text-center">
+        <span class="num-badge text-xs font-bold">REZERVÁCIA</span>
+        <h2 class="font-display mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">Rezervujte si bezplatnú konzultáciu</h2>
+        <p class="mt-5 text-lg leading-relaxed text-frost/55">Vyberte spôsob, ako sa s nami spojíte. Úvodný AI workshop je vždy zadarmo a bez záväzkov.</p>
+      </div>
+
+      <div class="mt-14 grid gap-5 lg:grid-cols-3">
+        <div class="sr tilt spotlight glass rounded-3xl p-8" data-d="0">
+          <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-neon-500 to-azure-400 text-ink shadow-lg shadow-neon-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 7h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Zoom videohovor</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">45-minútový AI workshop online. Ideálne pre prvý kontakt a predstavenie use-case.</p>
+          <ul class="mt-5 space-y-2 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-neon-400"></span>Bezplatne</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-neon-400"></span>Flexibilné termíny</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-neon-400"></span>Zdieľaná obrazovka</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="mt-7 inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">Rezervovať Zoom</button>
+        </div>
+
+        <div class="sr relative" data-d=".1">
+          <span class="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-gradient-to-r from-neon-500 to-viol-500 px-4 py-1.5 text-[10px] font-bold tracking-widest text-ink shadow-lg shadow-neon-500/30">NAJRÝCHLEJŠIE</span>
+          <div class="tilt spotlight beam glass rounded-3xl p-8">
+          <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-azure-400 to-viol-500 text-ink shadow-lg shadow-azure-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h2.3a1 1 0 0 1 1 .76l1 4a1 1 0 0 1-.29.95L7.6 10.6a13 13 0 0 0 5.8 5.8l1.9-1.4a1 1 0 0 1 .95-.29l4 1a1 1 0 0 1 .76 1V19a2 2 0 0 1-2 2A16 16 0 0 1 3 5z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Telefonický hovor</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">20-minútový hovor s naším konzultantom. Rýchle zodpovedanie vašich otázok.</p>
+          <ul class="mt-5 space-y-2 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-azure-400"></span>Bezplatne</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-azure-400"></span>Do 24 hodín</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-azure-400"></span>+421 SK linka</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="btn-shine mt-7 inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 px-5 py-3.5 text-sm font-bold text-ink shadow-xl shadow-neon-500/25 transition hover:brightness-110">Rezervovať hovor</button>
+          </div>
+        </div>
+
+        <div class="sr tilt spotlight glass rounded-3xl p-8" data-d=".2">
+          <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-viol-500 to-neon-500 text-ink shadow-lg shadow-viol-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8m-8 0a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a4 4 0 0 1-4 4m-8 0v5a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3v-5"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Discovery call</h3>
+          <p class="mt-3 text-sm leading-relaxed text-frost/55">Hlbší 60-minútový call pre firmy s komplexnejšími požiadavkami a viacerými procesmi.</p>
+          <ul class="mt-5 space-y-2 text-sm text-frost/70">
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-viol-400"></span>Bezplatne</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-viol-400"></span>Audit procesov</li>
+            <li class="flex items-center gap-2.5"><span class="h-1.5 w-1.5 rounded-full bg-viol-400"></span>Návrh ROI</li>
+          </ul>
+          <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="mt-7 inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">Rezervovať discovery</button>
+        </div>
+      </div>
+
+      <p class="sr mt-8 text-center text-sm text-frost/40">Po rezervácii dostanete e-mailom potvrdenie spolu s pozvánkou do kalendára.</p>
+    </div>
+  </section>
+
+  <!-- ===== KONTAKT ===== -->
+  <section id="kontakt" class="relative py-24">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="sr glass ring-glow overflow-hidden rounded-[2rem]">
+        <div class="hero-glow absolute inset-0 opacity-50"></div>
+        <div class="relative grid lg:grid-cols-2">
+          <!-- ľavá časť -->
+          <div class="p-9 sm:p-12">
+            <span class="num-badge text-xs font-bold">KONTAKT</span>
+            <h2 class="font-display mt-4 text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">
+              Pripravení na <span class="text-gradient">inteligentnejší</span> biznis?
+            </h2>
+            <p class="mt-4 max-w-md leading-relaxed text-frost/55">
+              Napíšte nám alebo si rovno rezervujte termín. Odpovedáme do 24 hodín.
+            </p>
+
+            <div class="mt-8 space-y-4">
+              <a href="mailto:info@veltro.sk" class="group flex items-center gap-4">
+                <span class="grid h-11 w-11 place-items-center rounded-2xl border border-neon-500/25 bg-neon-500/10 text-neon-400 transition group-hover:bg-neon-500 group-hover:text-ink">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>
+                </span>
+                <span class="text-sm font-medium text-frost/80 transition group-hover:text-white">info@veltro.sk</span>
+              </a>
+              <a href="tel:+421903120356" class="group flex items-center gap-4">
+                <span class="grid h-11 w-11 place-items-center rounded-2xl border border-azure-400/25 bg-azure-400/10 text-azure-400 transition group-hover:bg-azure-400 group-hover:text-ink">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h2.3a1 1 0 0 1 1 .76l1 4a1 1 0 0 1-.29.95L7.6 10.6a13 13 0 0 0 5.8 5.8l1.9-1.4a1 1 0 0 1 .95-.29l4 1a1 1 0 0 1 .76 1V19a2 2 0 0 1-2 2A16 16 0 0 1 3 5z"/></svg>
+                </span>
+                <span class="text-sm font-medium text-frost/80 transition group-hover:text-white">+421 903 120 356</span>
+              </a>
+              <div class="flex items-center gap-4">
+                <span class="grid h-11 w-11 place-items-center rounded-2xl border border-viol-500/25 bg-viol-500/10 text-viol-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                </span>
+                <span class="text-sm font-medium text-frost/80">Bratislava · Košice · Remote</span>
+              </div>
             </div>
-            <div class="contact-quick">
-              <button type="button" class="btn btn-secondary" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Zoom call</button>
-              <button type="button" class="btn btn-secondary" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Telefón</button>
+
+            <div class="mt-9 flex flex-wrap gap-3">
+              <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neon-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 7h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/></svg>
+                Zoom call
+              </button>
+              <button type="button" data-cal-link="veltro/bezplatny-ai-workshop" data-cal-namespace="bezplatny-ai-workshop" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}' class="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[.05] px-5 py-3 text-sm font-semibold text-white transition hover:border-neon-500/40 hover:bg-white/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-azure-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h2.3a1 1 0 0 1 1 .76l1 4a1 1 0 0 1-.29.95L7.6 10.6a13 13 0 0 0 5.8 5.8l1.9-1.4a1 1 0 0 1 .95-.29l4 1a1 1 0 0 1 .76 1V19a2 2 0 0 1-2 2A16 16 0 0 1 3 5z"/></svg>
+                Telefón
+              </button>
             </div>
           </div>
-          <form class="contact-form" id="contactForm">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="name">Meno a priezvisko</label>
-                <input type="text" id="name" name="name" required placeholder="Ján Novák">
+
+          <!-- formulár -->
+          <div class="border-t border-white/10 p-9 sm:p-12 lg:border-l lg:border-t-0">
+            <form id="contactForm" class="space-y-4">
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="f-name" class="text-[11px] font-bold tracking-[0.16em] text-frost/45">MENO A PRIEZVISKO</label>
+                  <input id="f-name" name="name" type="text" required class="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm text-white placeholder-frost/30 outline-none transition focus:border-neon-500/50 focus:bg-white/[.08]" placeholder="Ján Novák" />
+                </div>
+                <div>
+                  <label for="f-firm" class="text-[11px] font-bold tracking-[0.16em] text-frost/45">FIRMA</label>
+                  <input id="f-firm" name="firm" type="text" class="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm text-white placeholder-frost/30 outline-none transition focus:border-neon-500/50 focus:bg-white/[.08]" placeholder="Vaša s.r.o." />
+                </div>
               </div>
-              <div class="form-group">
-                <label for="company">Firma</label>
-                <input type="text" id="company" name="company" required placeholder="Vaša firma s.r.o.">
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="f-email" class="text-[11px] font-bold tracking-[0.16em] text-frost/45">E-MAIL</label>
+                  <input id="f-email" name="email" type="email" required class="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm text-white placeholder-frost/30 outline-none transition focus:border-neon-500/50 focus:bg-white/[.08]" placeholder="jan@firma.sk" />
+                </div>
+                <div>
+                  <label for="f-tel" class="text-[11px] font-bold tracking-[0.16em] text-frost/45">TELEFÓN (VOLITEĽNÉ)</label>
+                  <input id="f-tel" name="tel" type="tel" class="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm text-white placeholder-frost/30 outline-none transition focus:border-neon-500/50 focus:bg-white/[.08]" placeholder="+421 900 000 000" />
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label for="email">E-mail</label>
-              <input type="email" id="email" name="email" required placeholder="jan@firma.sk">
-            </div>
-            <div class="form-group">
-              <label for="phone">Telefón (voliteľné)</label>
-              <input type="tel" id="phone" name="phone" placeholder="+421 900 000 000">
-            </div>
-            <div class="form-group">
-              <label for="message">Čo vás zaujíma?</label>
-              <textarea id="message" name="message" rows="4" placeholder="Popíšte váš use case alebo otázku..."></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">Odoslať správu</button>
-            <p class="form-note">Odpovedáme do 24 hodín. Vaše údaje sú v bezpečí (GDPR).</p>
-          </form>
+              <div>
+                <label for="f-msg" class="text-[11px] font-bold tracking-[0.16em] text-frost/45">ČO VÁS ZAUJÍMA?</label>
+                <textarea id="f-msg" name="msg" rows="4" required class="mt-1.5 w-full resize-none rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm text-white placeholder-frost/30 outline-none transition focus:border-neon-500/50 focus:bg-white/[.08]" placeholder="Popíšte nám váš projekt alebo proces, ktorý chcete automatizovať…"></textarea>
+              </div>
+              <button type="submit" class="btn-shine group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-neon-500 via-azure-400 to-viol-500 px-6 py-4 text-sm font-bold text-ink shadow-xl shadow-neon-500/25 transition hover:brightness-110">
+                Odoslať správu
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+              <p class="text-center text-xs text-frost/35">Odpovedáme do 24 hodín. Vaše údaje sú v bezpečí (GDPR).</p>
+            </form>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="footer">
-    <div class="container footer-bar">
-      <a href="#" class="logo-text">VELTRO</a>
-      <p class="footer-copy">&copy; 2026 Veltro s.r.o. Všetky práva vyhradené.</p>
-      <div class="footer-links-inline">
-        <a href="#sluzby">Služby</a>
-        <a href="#kontakt">Kontakt</a>
-        <a href="#">Ochrana údajov</a>
-        <a href="#" id="cookieSettings">Cookies</a>
+  <!-- ===== FOOTER ===== -->
+  <footer class="relative border-t border-white/[.07] py-14">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+        <div class="flex items-center gap-3">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-neon-500 via-azure-400 to-viol-500 font-display text-lg font-bold text-ink shadow-md shadow-neon-500/30">V</span>
+          <div class="leading-tight">
+            <div class="font-display font-bold text-white">Veltro</div>
+            <div class="text-[11px] tracking-[0.2em] text-neon-300/70">AI SOLUTIONS</div>
+          </div>
+        </div>
+        <nav class="flex flex-wrap gap-x-7 gap-y-2 text-sm text-frost/50">
+          <a href="#sluzby" class="transition hover:text-white">Služby</a>
+          <a href="#proces" class="transition hover:text-white">Proces</a>
+          <a href="#referencie" class="transition hover:text-white">Referencie</a>
+          <a href="#cennik" class="transition hover:text-white">Cenník</a>
+          <a href="#kontakt" class="transition hover:text-white">Kontakt</a>
+        </nav>
+      </div>
+      <div class="mt-10 border-t border-white/[.07] pt-7 text-sm text-frost/35">
+        <p>info@veltro.sk · +421 903 120 356 · Bratislava · Košice · Remote</p>
+        <p class="mt-2">&copy; <span id="year"></span> Veltro — AI Solutions. Všetky práva vyhradené.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Rezervačný modal -->
-  <div class="modal-overlay" id="bookingModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="modalTitle">
-      <button class="modal-close" id="modalClose" aria-label="Zavrieť">&times;</button>
-      <h3 id="modalTitle">Rezervovať termín</h3>
-      <p class="modal-subtitle" id="modalSubtitle">Vyplňte formulár a my vám pošleme potvrdenie.</p>
-      <form id="bookingForm">
-        <input type="hidden" id="bookingType" name="type" value="zoom">
-        <div class="form-group">
-          <label for="bookName">Meno a priezvisko</label>
-          <input type="text" id="bookName" required placeholder="Ján Novák">
-        </div>
-        <div class="form-group">
-          <label for="bookEmail">E-mail</label>
-          <input type="email" id="bookEmail" required placeholder="jan@firma.sk">
-        </div>
-        <div class="form-group">
-          <label for="bookPhone">Telefón</label>
-          <input type="tel" id="bookPhone" placeholder="+421 900 000 000">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="bookDate">Preferovaný dátum</label>
-            <input type="date" id="bookDate" required>
-          </div>
-          <div class="form-group">
-            <label for="bookTime">Preferovaný čas</label>
-            <select id="bookTime" required>
-              <option value="">Vyberte čas</option>
-              <option value="09:00">09:00</option>
-              <option value="10:00">10:00</option>
-              <option value="11:00">11:00</option>
-              <option value="13:00">13:00</option>
-              <option value="14:00">14:00</option>
-              <option value="15:00">15:00</option>
-              <option value="16:00">16:00</option>
-              <option value="17:00">17:00</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="bookNote">Poznámka (voliteľné)</label>
-          <textarea id="bookNote" rows="3" placeholder="Stručne popíšte, čo vás zaujíma..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary btn-full">Potvrdiť rezerváciu</button>
-      </form>
-      <p class="modal-calendly">
-        Alebo použite priamy odkaz:
-        <a href="#" id="calendlyLink" target="_blank" rel="noopener">Otvoriť v Calendly</a>
-      </p>
-    </div>
-  </div>
+  <!-- back to top -->
+  <button id="toTop" aria-label="Späť hore" class="pointer-events-none fixed bottom-6 left-6 z-50 grid h-12 w-12 translate-y-3 place-items-center rounded-2xl bg-gradient-to-br from-neon-500 to-viol-500 text-ink opacity-0 shadow-xl shadow-neon-500/25 transition-all duration-300 hover:brightness-110">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6"/></svg>
+  </button>
 
-  <!-- AI Chatbot -->
+  <!-- ===== AI CHATBOT (prenesený zo starého webu) ===== -->
   <div class="chat-widget" id="chatWidget">
-    <button class="chat-toggle" id="chatToggle" aria-label="Otvoriť AI asistenta">
-      <img src="logo.png" alt="" class="chat-toggle-logo">
-      <span class="chat-toggle-label">AI asistent</span>
+    <button class="chat-toggle" id="chatToggle" aria-label="Otvoriť AI asistenta" aria-expanded="false">
+      <img src="logo.png" alt="" class="chat-toggle-logo" />
+      <span>AI asistent</span>
     </button>
     <div class="chat-panel" id="chatPanel" aria-hidden="true">
       <div class="chat-header">
         <div class="chat-header-info">
-          <img src="logo.png" alt="" class="chat-avatar-img">
+          <img src="logo.png" alt="" class="chat-avatar-img" />
           <div>
             <strong>Veltro AI</strong>
             <span>AI asistent · Online</span>
@@ -1306,410 +1278,366 @@ body {
         <button type="button" data-question="Chcem rezervovať call">Rezervácia</button>
       </div>
       <form class="chat-input-form" id="chatForm">
-        <input type="text" id="chatInput" placeholder="Napíšte správu..." autocomplete="off">
-        <button type="submit" aria-label="Odoslať">→</button>
+        <input type="text" id="chatInput" placeholder="Napíšte správu…" autocomplete="off" aria-label="Správa pre AI asistenta" />
+        <button type="submit" aria-label="Odoslať">&rarr;</button>
       </form>
     </div>
   </div>
 
-  <!-- Cookies -->
+  <!-- ===== COOKIE LIŠTA (prenesená zo starého webu) ===== -->
   <div class="cookie-banner" id="cookieBanner">
-    <p>Používame cookies na zlepšenie vášho zážitku. <a href="#">Viac informácií</a></p>
+    <p>Používame cookies na zlepšenie vášho zážitku.</p>
     <div class="cookie-actions">
-      <button type="button" class="btn btn-secondary btn-sm" id="cookieReject">Odmietnuť</button>
-      <button type="button" class="btn btn-primary btn-sm" id="cookieAccept">Súhlasím</button>
+      <button type="button" class="cookie-reject" id="cookieReject">Odmietnuť</button>
+      <button type="button" class="cookie-accept" id="cookieAccept">Súhlasím</button>
     </div>
   </div>
 
   <script>
-/* ========== KONFIGURÁCIA — upravte podľa seba ========== */
-const CONFIG = {
-  calendly: {
-    zoom: 'https://calendly.com/vas-ucet/ai-workshop-zoom',
-    phone: 'https://calendly.com/vas-ucet/telefonicky-hovor',
-    discovery: 'https://calendly.com/vas-ucet/discovery-call',
-  },
-  email: 'hello@veltro.sk',
-};
+    // ---------- základ ----------
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = matchMedia('(pointer: fine)').matches;
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-/* ========== Header & menu ========== */
-const header = document.getElementById('header');
-const menuToggle = document.getElementById('menuToggle');
-const navLinks = document.getElementById('navLinks');
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    menuBtn.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.add('hidden')));
 
-window.addEventListener('scroll', () => {
-  header.classList.toggle('scrolled', window.scrollY > 40);
-});
-
-menuToggle.addEventListener('click', () => {
-  menuToggle.classList.toggle('active');
-  navLinks.classList.toggle('open');
-});
-
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    menuToggle.classList.remove('active');
-    navLinks.classList.remove('open');
-  });
-});
-
-/* ========== Scroll animations ========== */
-const observer = new IntersectionObserver(
-  entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
+    // ---------- FAQ ----------
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-toggle').addEventListener('click', () => {
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
     });
-  },
-  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-);
 
-document.querySelectorAll(
-  '.card, .step, .use-case, .pricing-card, .section-header, .stat-card, .team-card, .reference-card, .booking-card, .faq-item, .cta-banner, .about-grid, .agent-card'
-).forEach(el => {
-  el.classList.add('fade-in');
-  observer.observe(el);
-});
+    // ---------- formulár → mailto ----------
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const body = [
+        'Meno: ' + f.name.value,
+        'Firma: ' + (f.firm.value || '—'),
+        'E-mail: ' + f.email.value,
+        'Telefón: ' + (f.tel.value || '—'),
+        '',
+        f.msg.value,
+      ].join('\n');
+      location.href = 'mailto:info@veltro.sk?subject=' + encodeURIComponent('Dopyt z webu — ' + f.name.value) + '&body=' + encodeURIComponent(body);
+    });
 
-/* ========== Kontaktný formulár ========== */
-const contactForm = document.getElementById('contactForm');
+    // ---------- count-up čísla ----------
+    const fmt = new Intl.NumberFormat('sk-SK');
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        cio.unobserve(en.target);
+        const el = en.target, target = +el.dataset.count;
+        if (reduced) { el.textContent = fmt.format(target); return; }
+        const t0 = performance.now(), dur = 1500;
+        const tick = (t) => {
+          const p = Math.min((t - t0) / dur, 1);
+          el.textContent = fmt.format(Math.round(target * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
 
-contactForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const btn = contactForm.querySelector('button[type="submit"]');
-  const originalText = btn.textContent;
-  btn.textContent = 'Odosielam...';
-  btn.disabled = true;
+    // Lighthouse bar
+    const lhBar = document.getElementById('lhBar');
+    const lio = new IntersectionObserver((en) => {
+      if (!en[0].isIntersecting) return;
+      lio.disconnect();
+      requestAnimationFrame(() => { lhBar.style.width = '96%'; });
+    }, { threshold: 0.5 });
+    lio.observe(lhBar);
 
-  setTimeout(() => {
-    btn.textContent = '✓ Správa odoslaná!';
-    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-    contactForm.reset();
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '';
-      btn.disabled = false;
-    }, 3000);
-  }, 1200);
-});
+    // ---------- hlavná scroll slučka: progress, hero, 3D scrub, proces ----------
+    const bar = document.getElementById('progress');
+    const toTop = document.getElementById('toTop');
+    const heroInner = document.getElementById('heroInner');
+    const chatCard = document.getElementById('chatCard');
+    const srEls = [...document.querySelectorAll('.sr')];
+    const track = document.getElementById('procesTrack');
+    const steps = [...document.querySelectorAll('.pstep')];
+    const pdots = [...document.querySelectorAll('.pdot')];
+    const railDots = [...document.querySelectorAll('.prail-dot')];
+    const pCount = document.getElementById('pCount');
+    const STEP_GAP = 680;
+    const N = steps.length;
+    // bližší krok sa musí kresliť nad vzdialenejším (poradie kreslenia ≠ 3D hĺbka)
+    steps.forEach((st, i) => { st.style.zIndex = String(N - i); });
+    const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
 
-/* ========== Hero demo rotácia ========== */
-const messages = [
-  'Objednávka č. 4821 je na ceste — doručenie zajtra do 14:00. Poslal som vám SMS s odkazom na sledovanie.',
-  'Vaša faktúra č. 2024-089 bola schválená. Posielam ju na e-mail do 5 minút.',
-  'Našiel som 3 produkty, ktoré by vás mohli zaujímať. Chcete, aby som vám poslal porovnanie?',
-];
+    // stav myši pre chat kartu
+    let mouseCY = 0, mouseCX = 0;
 
-let msgIndex = 0;
-const agentResponse = document.getElementById('agentResponse');
+    let raf = null;
+    function frame() {
+      raf = null;
+      const vh = innerHeight;
+      const max = document.documentElement.scrollHeight - vh;
+      bar.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
+      toTop.classList.toggle('show-btn', scrollY > 700);
+      if (reduced) return;
 
-if (agentResponse) {
-  agentResponse.style.transition = 'opacity 0.4s ease';
-  setInterval(() => {
-    msgIndex = (msgIndex + 1) % messages.length;
-    agentResponse.style.opacity = '0';
-    setTimeout(() => {
-      agentResponse.textContent = messages[msgIndex];
-      agentResponse.style.opacity = '1';
-    }, 400);
-  }, 5000);
-}
+      // hero sa kinematicky vzďaľuje
+      const hp = clamp01(scrollY / vh);
+      heroInner.style.transform = `perspective(1200px) translateY(${(hp * 90).toFixed(1)}px) rotateX(${(hp * 5).toFixed(2)}deg) scale(${(1 - hp * 0.07).toFixed(3)})`;
+      heroInner.style.opacity = (1 - hp * 0.55).toFixed(3);
 
-/* ========== Rezervačný modal ========== */
-const bookingModal = document.getElementById('bookingModal');
-const modalClose = document.getElementById('modalClose');
-const bookingForm = document.getElementById('bookingForm');
-const bookingType = document.getElementById('bookingType');
-const modalTitle = document.getElementById('modalTitle');
-const modalSubtitle = document.getElementById('modalSubtitle');
-const calendlyLink = document.getElementById('calendlyLink');
+      // chat karta: scroll + myš
+      if (chatCard) {
+        chatCard.style.setProperty('--cy', (-12 + hp * 20 + mouseCY).toFixed(2) + 'deg');
+        chatCard.style.setProperty('--cx', (6 - hp * 8 + mouseCX).toFixed(2) + 'deg');
+      }
 
-const bookingLabels = {
-  zoom: {
-    title: 'Rezervovať Zoom videohovor',
-    subtitle: '45-minútový bezplatný AI workshop online.',
-    calendly: CONFIG.calendly.zoom,
-  },
-  phone: {
-    title: 'Rezervovať telefonický hovor',
-    subtitle: '20-minútový bezplatný hovor s naším konzultantom.',
-    calendly: CONFIG.calendly.phone,
-  },
-  discovery: {
-    title: 'Rezervovať Discovery call',
-    subtitle: '60-minútový hĺbkový call pre komplexnejšie projekty.',
-    calendly: CONFIG.calendly.discovery,
-  },
-};
+      // 3D scrub reveal — obojsmerný, viazaný na scroll
+      for (const el of srEls) {
+        const r = el.getBoundingClientRect();
+        if (r.top > vh + 120 || r.bottom < -120) { el.style.setProperty('--srp', r.top > 0 ? 0 : 1); continue; }
+        const d = parseFloat(el.dataset.d || 0);
+        const raw = (vh - r.top) / (vh * 0.52);
+        el.style.setProperty('--srp', clamp01(raw - d).toFixed(3));
+      }
 
-function openBooking(type = 'zoom') {
-  const config = bookingLabels[type] || bookingLabels.zoom;
-  bookingType.value = type;
-  modalTitle.textContent = config.title;
-  modalSubtitle.textContent = config.subtitle;
-  calendlyLink.href = config.calendly;
-  bookingModal.classList.add('open');
-  bookingModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  document.getElementById('bookDate').min = tomorrow.toISOString().split('T')[0];
-}
-
-function closeBooking() {
-  bookingModal.classList.remove('open');
-  bookingModal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
-}
-
-document.querySelectorAll('[data-open-booking]').forEach(btn => {
-  btn.addEventListener('click', () => openBooking(btn.dataset.openBooking));
-});
-
-modalClose.addEventListener('click', closeBooking);
-bookingModal.addEventListener('click', e => {
-  if (e.target === bookingModal) closeBooking();
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeBooking();
-    closeChat();
-  }
-});
-
-bookingForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const btn = bookingForm.querySelector('button[type="submit"]');
-  const type = bookingType.value;
-  const name = document.getElementById('bookName').value;
-  const email = document.getElementById('bookEmail').value;
-  const date = document.getElementById('bookDate').value;
-  const time = document.getElementById('bookTime').value;
-
-  btn.textContent = 'Rezervujem...';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    btn.textContent = '✓ Rezervácia odoslaná!';
-    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-
-    const typeName = type === 'zoom' ? 'Zoom' : type === 'phone' ? 'Telefón' : 'Discovery';
-    console.log('Rezervácia:', { type: typeName, name, email, date, time });
-
-    setTimeout(() => {
-      closeBooking();
-      bookingForm.reset();
-      btn.textContent = 'Potvrdiť rezerváciu';
-      btn.style.background = '';
-      btn.disabled = false;
-      alert(
-        `Ďakujeme, ${name}! Vaša rezervácia (${typeName}) na ${date} o ${time} bola zaznamenaná. Potvrdenie pošleme na ${email}.\n\nTip: Pre automatické plánovanie pripojte Calendly odkaz v konfigurácii stránky.`
-      );
-    }, 1500);
-  }, 1000);
-});
-
-/* ========== AI Chatbot (Veltro AI) ========== */
-const chatToggle = document.getElementById('chatToggle');
-const chatPanel = document.getElementById('chatPanel');
-const chatClose = document.getElementById('chatClose');
-const chatMessages = document.getElementById('chatMessages');
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
-const chatQuick = document.getElementById('chatQuick');
-
-const chatKnowledge = [
-  {
-    keys: ['cenník', 'cena', 'ceny', 'koľko', 'stojí', 'stoji', 'cennik', 'balík', 'balik', 'starter', 'business', 'enterprise', 'ponuka'],
-    answer:
-      'Všetky cenové ponuky riešime **na mieru** — podľa rozsahu projektu, počtu agentov a integrácií. Po bezplatnom 45-minútovom workshope vám pripravíme individuálnu ponuku bez záväzkov. Chcete si rezervovať konzultáciu?',
-  },
-  {
-    keys: ['služb', 'sluzb', 'ponúk', 'ponuk', 'čo robíte', 'co robite', 'agent', 'web', 'e-shop', 'eshop', 'implement'],
-    answer:
-      'Ponúkame tri hlavné služby:\n\n1. **AI agenti** — zákaznícka podpora, predaj, interné procesy\n2. **Webstránky a e-shopy** — moderný dizajn, SEO, rýchlosť\n3. **Implementácia AI do businessu** — audit, automatizácia, školenia\n\nVšetko prispôsobíme vašej firme.',
-  },
-  {
-    keys: ['proces', 'spoluprác', 'spoluprac', 'ako prebieha', 'kroky', 'postup', 'workflow'],
-    answer:
-      'Spolupráca má 5 krokov:\n\n01 Úvodný meeting (45 min AI workshop)\n02 Projekt a zmluva (KPI, harmonogram)\n03 Predanie prístupov (GDPR, šifrovanie)\n04 Implementácia riešenia\n05 Optimalizácia a škálovanie\n\nPrvý prototyp zvyčajne do 2 týždňov.',
-  },
-  {
-    keys: ['rezerv', 'call', 'meeting', 'zoom', 'telefón', 'telefon', 'hovor', 'konzult', 'termín', 'termin', 'book', 'stretnut'],
-    answer:
-      'Bezplatnú konzultáciu si môžete rezervovať tromi spôsobmi:\n\n📹 **Zoom videohovor** (45 min)\n📞 **Telefonický hovor** (20 min)\n🤝 **Discovery call** (60 min)\n\nPrejdite do sekcie Rezervácia alebo kliknite na tlačidlo „Rezervovať call“ v menu. Môžem vám otvoriť rezervačný formulár — napíšte „rezervovať zoom“.',
-    action: 'booking',
-  },
-  {
-    keys: ['výsledk', 'vysledk', 'kedy', 'ako dlho', 'čas', 'cas', 'týžd', 'tyzd', 'nasaden'],
-    answer:
-      'Prvý prototyp AI agenta zvyčajne do **2 týždňov**. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do **4–6 týždňov** po nasadení. Záleží od zložitosti integrácií.',
-  },
-  {
-    keys: ['bezpeč', 'bezpec', 'gdpr', 'nda', 'dáta', 'data', 'ochrana', 'súkrom', 'sukrom'],
-    answer:
-      'Bezpečnosť berieme vážne: šifrované prístupy, GDPR compliance, minimálne spracovanie dát a NDA na požiadanie. Vaše dáta nikdy nepredávame tretím stranám.',
-  },
-  {
-    keys: ['zahranič', 'zahranic', 'česko', 'cesko', 'anglick', 'cudz'],
-    answer:
-      'Áno, pracujeme aj so zahraničnými klientmi. Primárne obsluhujeme **slovenský a český trh**, komunikujeme v slovenčine, češtine a angličtine.',
-  },
-  {
-    keys: ['kontakt', 'email', 'mail', 'telefón', 'telefon', 'zavola', 'napísa', 'napisa', 'adresa'],
-    answer: `Kontaktujte nás:\n\n📧 ${CONFIG.email}\n📞 +421 900 123 456\n📍 Bratislava · Košice · Remote\n\nOdpovedáme do 24 hodín.`,
-  },
-  {
-    keys: ['ahoj', 'hello', 'hi', 'dobrý', 'dobry', 'čau', 'cau', 'nazdar', 'začni', 'zacni'],
-    answer:
-      'Ahoj! Som **Veltro AI**, asistent spoločnosti Veltro. Pomôžem vám s informáciami o službách, cenách, procese alebo rezervácii callu. Čo vás zaujíma?',
-  },
-  {
-    keys: ['ďakuj', 'dakuj', 'vďaka', 'vdaka', 'super', 'paráda', 'parada', 'ok', 'okej'],
-    answer: 'Rád som pomohol! Ak budete potrebovať čokoľvek ďalšie, som tu. Prajem úspešný deň! 🚀',
-  },
-];
-
-function findChatAnswer(text) {
-  const lower = text.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-
-  if (lower.includes('rezervovat zoom') || lower.includes('rezervuj zoom')) {
-    return { answer: 'Otváram rezervačný formulár pre Zoom...', action: 'zoom' };
-  }
-  if (lower.includes('rezervovat') || lower.includes('rezervuj')) {
-    return { answer: 'Otváram rezervačný formulár...', action: 'booking' };
-  }
-
-  let best = null;
-  let bestScore = 0;
-
-  for (const item of chatKnowledge) {
-    let score = 0;
-    for (const key of item.keys) {
-      const k = key.normalize('NFD').replace(/\p{M}/gu, '');
-      if (lower.includes(k)) score += k.length;
+      // PROCES: prelet kamerou
+      const tr = track.getBoundingClientRect();
+      const total = tr.height - vh;
+      const p = clamp01(-tr.top / total);
+      const camZ = p * STEP_GAP * (N - 1);
+      let focusIdx = Math.round(camZ / STEP_GAP);
+      steps.forEach((st, i) => {
+        const z = camZ - i * STEP_GAP;           // z>0 = už za kamerou
+        let o;
+        if (z > 0) o = 1 - clamp01(z / 340);      // prešiel kamerou → rýchly fade
+        else o = clamp01(1 - (-z) / (STEP_GAP * 1.45));
+        st.style.setProperty('--z', z.toFixed(1) + 'px');
+        st.style.setProperty('--prx', (clamp01(z / 340) * -14).toFixed(2) + 'deg');
+        st.style.setProperty('--o', o.toFixed(3));
+        st.classList.toggle('focus', i === focusIdx);
+      });
+      pdots.forEach(dt => {
+        const base = parseFloat(dt.dataset.z);
+        const z = camZ + base;
+        dt.style.setProperty('--z', z.toFixed(1) + 'px');
+        dt.style.setProperty('--o', (z > 60 ? 0 : clamp01(1 - Math.abs(z) / 1600) * 0.9).toFixed(3));
+      });
+      railDots.forEach((d, i) => {
+        d.style.background = i <= focusIdx && p > 0.001
+          ? 'linear-gradient(90deg,#00f5ff,#4d9fff)' : 'rgba(255,255,255,.15)';
+        d.style.boxShadow = i === focusIdx && p > 0.001 ? '0 0 12px rgba(0,245,255,.7)' : 'none';
+      });
+      pCount.textContent = String(focusIdx + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
     }
-    if (score > bestScore) {
-      bestScore = score;
-      best = item;
+    function onScroll() { if (!raf) raf = requestAnimationFrame(frame); }
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+    toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ---------- myš: tilt karty, spotlight, hero parallax ----------
+    if (finePointer && !reduced) {
+      document.querySelectorAll('.tilt').forEach(card => {
+        let traf = null;
+        card.addEventListener('pointermove', (e) => {
+          if (traf) return;
+          traf = requestAnimationFrame(() => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width;
+            const py = (e.clientY - r.top) / r.height;
+            card.style.setProperty('--rx', ((0.5 - py) * 6).toFixed(2) + 'deg');
+            card.style.setProperty('--ry', ((px - 0.5) * 8).toFixed(2) + 'deg');
+            card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+            card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+            traf = null;
+          });
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+        });
+      });
+
+      const hero = document.getElementById('hero');
+      const layers = hero.querySelectorAll('.parallax');
+      let hraf = null;
+      hero.addEventListener('pointermove', (e) => {
+        if (hraf) return;
+        hraf = requestAnimationFrame(() => {
+          const r = hero.getBoundingClientRect();
+          const nx = (e.clientX - r.left) / r.width - 0.5;
+          const ny = (e.clientY - r.top) / r.height - 0.5;
+          layers.forEach(l => {
+            const d = +l.dataset.depth || 20;
+            l.style.translate = `${(-nx * d).toFixed(1)}px ${(-ny * d).toFixed(1)}px`;
+          });
+          mouseCY = nx * 7; mouseCX = -ny * 5;
+          onScroll();
+          hraf = null;
+        });
+      });
+      hero.addEventListener('pointerleave', () => { mouseCY = 0; mouseCX = 0; onScroll(); });
     }
-  }
 
-  if (best && bestScore > 0) return best;
+    /* ================= AI CHATBOT — prenesený zo starého webu =================
+       Rule-based: hľadá kľúčové slová v otázke, žiadne API ani kľúče. */
+    const chatToggle = document.getElementById('chatToggle');
+    const chatPanel = document.getElementById('chatPanel');
+    const chatClose = document.getElementById('chatClose');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatQuick = document.getElementById('chatQuick');
 
-  return {
-    answer:
-      'Na túto otázku zatiaľ nemám presnú odpoveď. Odporúčam:\n\n• Rezervovať si **bezplatný call** (sekcia Rezervácia)\n• Napísať na **hello@veltro.sk**\n• Alebo sa opýtať na cenník, služby či proces spolupráce.',
-  };
-}
+    const chatKnowledge = [
+      {
+        keys: ['cenník', 'cena', 'ceny', 'koľko', 'stojí', 'stoji', 'cennik', 'balík', 'balik', 'starter', 'business', 'enterprise', 'ponuka'],
+        answer: 'Všetky cenové ponuky riešime **na mieru** — podľa rozsahu projektu, počtu agentov a integrácií. Po bezplatnom 45-minútovom workshope vám pripravíme individuálnu ponuku bez záväzkov. Chcete si rezervovať konzultáciu?',
+      },
+      {
+        keys: ['služb', 'sluzb', 'ponúk', 'ponuk', 'čo robíte', 'co robite', 'agent', 'web', 'e-shop', 'eshop', 'implement'],
+        answer: 'Ponúkame tri hlavné služby:\n\n1. **AI agenti** — zákaznícka podpora, predaj, interné procesy\n2. **Webstránky a e-shopy** — moderný dizajn, SEO, rýchlosť\n3. **Implementácia AI do businessu** — audit, automatizácia, školenia\n\nVšetko prispôsobíme vašej firme.',
+      },
+      {
+        keys: ['proces', 'spoluprác', 'spoluprac', 'ako prebieha', 'kroky', 'postup', 'workflow'],
+        answer: 'Spolupráca má 5 krokov:\n\n01 Úvodný meeting (45 min AI workshop)\n02 Projekt a zmluva (KPI, harmonogram)\n03 Predanie prístupov (GDPR, šifrovanie)\n04 Implementácia riešenia\n05 Optimalizácia a škálovanie\n\nPrvý prototyp zvyčajne do 2 týždňov.',
+      },
+      {
+        keys: ['rezerv', 'call', 'meeting', 'zoom', 'telefón', 'telefon', 'hovor', 'konzult', 'termín', 'termin', 'book', 'stretnut'],
+        answer: 'Bezplatnú konzultáciu si môžete rezervovať tromi spôsobmi:\n\n📹 **Zoom videohovor** (45 min)\n📞 **Telefonický hovor** (20 min)\n🤝 **Discovery call** (60 min)\n\nStačí kliknúť na ktorékoľvek tlačidlo „Rezervovať“ — otvorí sa vám kalendár s voľnými termínmi.',
+        action: 'booking',
+      },
+      {
+        keys: ['výsledk', 'vysledk', 'kedy', 'ako dlho', 'čas', 'cas', 'týžd', 'tyzd', 'nasaden'],
+        answer: 'Prvý prototyp AI agenta zvyčajne do **2 týždňov**. Merateľné výsledky (úspora času, rýchlejšie odpovede) väčšinou do **4–6 týždňov** po nasadení. Záleží od zložitosti integrácií.',
+      },
+      {
+        keys: ['bezpeč', 'bezpec', 'gdpr', 'nda', 'dáta', 'data', 'ochrana', 'súkrom', 'sukrom'],
+        answer: 'Bezpečnosť berieme vážne: šifrované prístupy, GDPR compliance, minimálne spracovanie dát a NDA na požiadanie. Vaše dáta nikdy nepredávame tretím stranám.',
+      },
+      {
+        keys: ['zahranič', 'zahranic', 'česko', 'cesko', 'anglick', 'cudz'],
+        answer: 'Áno, pracujeme aj so zahraničnými klientmi. Primárne obsluhujeme **slovenský a český trh**, komunikujeme v slovenčine, češtine a angličtine.',
+      },
+      {
+        keys: ['kontakt', 'email', 'mail', 'zavola', 'napísa', 'napisa', 'adresa'],
+        answer: 'Kontaktujte nás:\n\n📧 info@veltro.sk\n📞 +421 903 120 356\n📍 Bratislava · Košice · Remote\n\nOdpovedáme do 24 hodín.',
+      },
+      {
+        keys: ['ahoj', 'hello', 'hi', 'dobrý', 'dobry', 'čau', 'cau', 'nazdar', 'začni', 'zacni'],
+        answer: 'Ahoj! Som **Veltro AI**, asistent spoločnosti Veltro. Pomôžem vám s informáciami o službách, cenách, procese alebo rezervácii callu. Čo vás zaujíma?',
+      },
+      {
+        keys: ['ďakuj', 'dakuj', 'vďaka', 'vdaka', 'super', 'paráda', 'parada', 'ok', 'okej'],
+        answer: 'Rád som pomohol! Ak budete potrebovať čokoľvek ďalšie, som tu. Prajem úspešný deň! 🚀',
+      },
+    ];
 
-function formatChatText(text) {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-}
+    function findChatAnswer(text) {
+      const lower = text.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+      if (lower.includes('rezervovat') || lower.includes('rezervuj')) {
+        return { answer: 'Otváram sekciu s rezerváciou — vyberte si formu callu a kliknutím sa vám otvorí kalendár.', action: 'booking' };
+      }
+      let best = null, bestScore = 0;
+      for (const item of chatKnowledge) {
+        let score = 0;
+        for (const key of item.keys) {
+          const k = key.normalize('NFD').replace(/\p{M}/gu, '');
+          if (lower.includes(k)) score += k.length;
+        }
+        if (score > bestScore) { bestScore = score; best = item; }
+      }
+      if (best && bestScore > 0) return best;
+      return {
+        answer: 'Na túto otázku zatiaľ nemám presnú odpoveď. Odporúčam:\n\n• Rezervovať si **bezplatný call** (sekcia Rezervácia)\n• Napísať na **info@veltro.sk**\n• Alebo sa opýtať na cenník, služby či proces spolupráce.',
+      };
+    }
 
-function addChatMessage(text, isUser = false) {
-  const div = document.createElement('div');
-  div.className = `chat-msg ${isUser ? 'user' : 'bot'}`;
-  if (isUser) {
-    div.textContent = text;
-  } else {
-    div.innerHTML = formatChatText(text);
-  }
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+    const formatChatText = (text) => text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
 
-function botReply(userText) {
-  addChatMessage(userText, true);
+    function addChatMessage(text, isUser = false) {
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + (isUser ? 'user' : 'bot');
+      // správy používateľa nikdy cez innerHTML
+      if (isUser) div.textContent = text; else div.innerHTML = formatChatText(text);
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-  const typing = document.createElement('div');
-  typing.className = 'chat-msg bot typing';
-  typing.textContent = 'Veltro AI píše...';
-  chatMessages.appendChild(typing);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+    function botReply(userText) {
+      addChatMessage(userText, true);
+      const typing = document.createElement('div');
+      typing.className = 'chat-msg bot typing';
+      typing.textContent = 'Veltro AI píše…';
+      chatMessages.appendChild(typing);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
-  setTimeout(() => {
-    typing.remove();
-    const result = findChatAnswer(userText);
-    addChatMessage(result.answer);
-
-    if (result.action === 'booking' || result.action === 'zoom') {
       setTimeout(() => {
-        closeChat();
-        const sec = document.getElementById('rezervacia');
-        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-      }, 800);
+        typing.remove();
+        const result = findChatAnswer(userText);
+        addChatMessage(result.answer);
+        if (result.action === 'booking') {
+          setTimeout(() => {
+            closeChat();
+            document.getElementById('rezervacia')?.scrollIntoView({ behavior: 'smooth' });
+          }, 900);
+        }
+      }, 600 + Math.random() * 400);
     }
-  }, 600 + Math.random() * 400);
-}
 
-function openChat() {
-  chatPanel.classList.add('open');
-  chatPanel.setAttribute('aria-hidden', 'false');
-  chatToggle.style.display = 'none';
-  chatInput.focus();
-}
+    function openChat() {
+      chatPanel.classList.add('open');
+      chatPanel.setAttribute('aria-hidden', 'false');
+      chatToggle.setAttribute('aria-expanded', 'true');
+      chatToggle.style.display = 'none';
+      chatInput.focus();
+    }
+    function closeChat() {
+      chatPanel.classList.remove('open');
+      chatPanel.setAttribute('aria-hidden', 'true');
+      chatToggle.setAttribute('aria-expanded', 'false');
+      chatToggle.style.display = 'flex';
+    }
 
-function closeChat() {
-  chatPanel.classList.remove('open');
-  chatPanel.setAttribute('aria-hidden', 'true');
-  chatToggle.style.display = 'flex';
-}
+    chatToggle.addEventListener('click', openChat);
+    chatClose.addEventListener('click', closeChat);
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+      chatInput.value = '';
+      botReply(text);
+    });
+    chatQuick.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => botReply(btn.dataset.question)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeChat(); });
 
-chatToggle.addEventListener('click', openChat);
-chatClose.addEventListener('click', closeChat);
+    /* ================= COOKIES — prenesené zo starého webu ================= */
+    const cookieBanner = document.getElementById('cookieBanner');
+    if (!localStorage.getItem('cookiesChoice')) {
+      document.body.classList.add('cookie-open');
+      setTimeout(() => cookieBanner.classList.add('show'), 1500);
+    }
+    const closeCookies = (choice) => {
+      localStorage.setItem('cookiesChoice', choice);
+      cookieBanner.classList.remove('show');
+      document.body.classList.remove('cookie-open');
+    };
+    document.getElementById('cookieAccept').addEventListener('click', () => closeCookies('accepted'));
+    document.getElementById('cookieReject').addEventListener('click', () => closeCookies('rejected'));
+  </script>
 
-chatForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
-  chatInput.value = '';
-  botReply(text);
-});
-
-chatQuick.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => botReply(btn.dataset.question));
-});
-
-/* ========== Cookies ========== */
-const cookieBanner = document.getElementById('cookieBanner');
-const cookieAccept = document.getElementById('cookieAccept');
-const cookieReject = document.getElementById('cookieReject');
-const cookieSettings = document.getElementById('cookieSettings');
-
-if (!localStorage.getItem('cookiesChoice')) {
-  setTimeout(() => cookieBanner.classList.add('show'), 1500);
-}
-
-cookieAccept.addEventListener('click', () => {
-  localStorage.setItem('cookiesChoice', 'accepted');
-  cookieBanner.classList.remove('show');
-});
-
-cookieReject.addEventListener('click', () => {
-  localStorage.setItem('cookiesChoice', 'rejected');
-  cookieBanner.classList.remove('show');
-});
-
-cookieSettings.addEventListener('click', e => {
-  e.preventDefault();
-  cookieBanner.classList.add('show');
-});
-
-</script>
- 
-  <!-- Cal.eu element-click embed -->
-  <script type="text/javascript">
-    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.eu/embed/embed.js", "init");
-    Cal("init", "bezplatny-ai-workshop", {origin:"https://app.cal.eu"});
+  <!-- ===== Cal.eu embed — skutočný rezervačný systém, prenesený zo starého webu ===== -->
+  <script>
+    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.eu/embed/embed.js", "init");
+    Cal("init", "bezplatny-ai-workshop", { origin: "https://app.cal.eu" });
     Cal.config = Cal.config || {};
     Cal.config.forwardQueryParams = true;
-    Cal.ns["bezplatny-ai-workshop"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+    Cal.ns["bezplatny-ai-workshop"]("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
   </script>
-  <!-- /Cal.eu embed -->
-
 </body>
 </html>
