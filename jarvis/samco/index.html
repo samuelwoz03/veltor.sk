@@ -533,7 +533,7 @@
 
     <label for="setVoice">Hlas</label>
     <select class="field" id="setVoice"></select>
-    <p class="hint">Najprirodzenejší hlas zadarmo: na počítači otvor Jarvisa v Microsoft Edge a vyber Lukáš alebo Viktória (Natural). Na iPhone si stiahni vylepšený slovenský hlas: Nastavenia → Prístupnosť → Hovorený obsah → Hlasy → Slovenčina.</p>
+    <p class="hint">Lili je slovenský AI hlas, ktorý beží priamo v prehliadači, zadarmo. Pri prvom spustení sa stiahne raz, asi 60 MB, najlepšie cez Wi-Fi. Dovtedy hovorí hlas zariadenia.</p>
     <label class="check" id="serverVoiceRow" hidden><input id="setServerVoice" type="checkbox"> Prirodzený AI hlas zo servera</label>
 
     <label for="setRate">Rýchlosť reči</label>
@@ -762,8 +762,12 @@ const CONFIG = {
     sel.innerHTML = "";
     const auto = document.createElement("option");
     auto.value = "";
-    auto.textContent = "Automaticky (najprirodzenejší slovenský)";
+    auto.textContent = "Automaticky (Lili, kým sa nestiahne, hlas zariadenia)";
     sel.appendChild(auto);
+    const lili = document.createElement("option");
+    lili.value = "lili";
+    lili.textContent = "Lili, AI hlas v prehliadači (zadarmo)";
+    sel.appendChild(lili);
     voices.slice().sort((a, b) => voiceScore(b) - voiceScore(a) || a.name.localeCompare(b.name)).forEach((v) => {
       const o = document.createElement("option");
       o.value = v.voiceURI;
@@ -804,11 +808,97 @@ const CONFIG = {
   function speak(text, preAudio) {
     if (!settings.speak || !text) return Promise.resolve(true);
     if (useServerVoice()) return speakServer(text, preAudio);
+    if (useLili() && lili.ready) return speakLili(text);
+    if (useLili()) startLiliDownload();   // kým sa Lili sťahuje, hovorí hlas zariadenia
     return speakBrowser(text);
   }
 
+  /* ---------- Lili: slovenský AI hlas priamo v prehliadači, zadarmo ---------- */
+  const lili = { mod: null, ready: false, loading: false, broken: false, pct: 0 };
+  function useLili() {
+    return !lili.broken && (!settings.voice || settings.voice === "lili") &&
+      typeof WebAssembly === "object" && typeof BigInt64Array === "function" && "caches" in window && !!audioEl;
+  }
+  function showLiliProgress() {
+    if (lili.loading && appState === "idle" && !pendingSpeech) setState("idle", "Sťahujem hlas Lili " + lili.pct + " %");
+  }
+  async function startLiliDownload() {
+    if (lili.ready || lili.loading || !useLili()) return;
+    lili.loading = true;
+    try {
+      lili.mod = lili.mod || await import(new URL("../shared/lili.js", location.href).href);
+      await lili.mod.load((loaded, total) => {
+        const pct = total ? Math.min(99, Math.round(loaded / total * 100)) : 0;
+        if (pct !== lili.pct) { lili.pct = pct; showLiliProgress(); }
+      });
+      lili.ready = true;
+    } catch (e) {
+      lili.broken = true;
+    }
+    lili.loading = false;
+    if (appState === "idle" && els.state.textContent.indexOf("Lili") !== -1) setState("idle");
+  }
+  function speakLili(text) {
+    stopSpeaking();
+    const my = speechSeq;
+    const chunks = splitForSpeech(text);
+    setState("speaking");
+    return new Promise((resolve) => {
+      let finished = false;
+      const pulse = setInterval(() => { orb.pulse = Math.min(1, orb.pulse + 0.2 + Math.random() * 0.35); }, 140);
+      const finish = (value) => {
+        if (finished) return;
+        finished = true;
+        clearInterval(pulse);
+        audioEl.onended = audioEl.onerror = null;
+        if (audioDone === finish) audioDone = null;
+        resolve(value);
+      };
+      audioDone = () => finish(false);
+      const play = (url) => new Promise((res) => {
+        audioEl.onended = () => res("ended");
+        audioEl.onerror = () => res("error");
+        audioEl.src = url;
+        let p;
+        try { p = audioEl.play(); } catch (e) { p = Promise.reject(e); }
+        if (p && p.catch) p.catch(() => res("blocked"));
+      });
+      (async () => {
+        let next = lili.mod.synth(chunks[0]);
+        for (let i = 0; i < chunks.length; i++) {
+          let blob;
+          try { blob = await next; } catch (e) {
+            if (my !== speechSeq) return finish(false);
+            // Lili zlyhala: zvyšok prečíta hlas zariadenia a odteraz sa používa ten.
+            lili.broken = true;
+            const rest = chunks.slice(i).join(" ");
+            clearInterval(pulse);
+            finished = true;
+            if (audioDone) audioDone = null;
+            return resolve(speakBrowser(rest));
+          }
+          if (my !== speechSeq) return finish(false);
+          if (i + 1 < chunks.length) next = lili.mod.synth(chunks[i + 1]);
+          const url = URL.createObjectURL(blob);
+          const result = await play(url);
+          URL.revokeObjectURL(url);
+          if (my !== speechSeq) return finish(false);
+          if (result === "blocked") {
+            // Prehliadač zablokoval zvuk bez ťuknutia: zvyšok počká na ťuknutie na guľu.
+            pendingSpeech = chunks.slice(i).join(" ");
+            pendingAudio = null;
+            setState("idle", "Ťukni na guľu a prečítam ti odpoveď");
+            return finish(false);
+          }
+          if (result === "error") return finish(false);
+        }
+        finish(true);
+      })();
+    });
+  }
+
   /* ---------- prirodzený AI hlas zo servera (Azure alebo ElevenLabs cez n8n) ---------- */
-  const audioEl = CONFIG.serverVoice && typeof Audio === "function" ? new Audio() : null;
+  const audioEl = typeof Audio === "function" ? new Audio() : null;
   if (audioEl) audioEl.preload = "auto";
   const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
   let audioUnlocked = false;
@@ -816,7 +906,7 @@ const CONFIG = {
   let audioDone = null;            // ukončí práve hrajúci zvuk
   const audioCache = new Map();    // krátke vety (napríklad rozlúčka) sa generujú len raz
   function useServerVoice() {
-    return !!(audioEl && !isDemo() && settings.serverVoice && !serverVoiceOff);
+    return !!(CONFIG.serverVoice && audioEl && !isDemo() && settings.serverVoice && !serverVoiceOff);
   }
   function unlockAudio() {
     if (!audioEl || audioUnlocked) return;
@@ -1592,7 +1682,7 @@ const CONFIG = {
 
   /* ---------- boot ---------- */
   setState("boot");
-  setTimeout(() => { if (appState === "boot") setState("idle"); autoBrief(); }, reduceMotion ? 200 : 1400);
+  setTimeout(() => { if (appState === "boot") setState("idle"); startLiliDownload(); autoBrief(); }, reduceMotion ? 200 : 1400);
   renderHud();
   loadHud(true);
 })();
