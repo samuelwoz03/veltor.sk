@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#05080f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jarvis">
+<title>Jarvis</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305080f'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%233ee0ff' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%233ee0ff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05080f;
+    --panel: rgba(13, 21, 38, 0.78);
+    --panel-solid: #0b1222;
+    --field: #060b16;
+    --line: rgba(130, 170, 230, 0.16);
+    --text: #e7eefb;
+    --muted: #8a9bb8;
+    --up: #4ee08f;
+    --down: #ff7a7a;
+    --danger: #ff7a7a;
+    --accent: #3ee0ff;
+    --accent-rgb: 62, 224, 255;
+    --on-accent: #021118;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --hud: "Chakra Petch", "IBM Plex Sans", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background:
+      radial-gradient(900px 600px at 50% 30%, rgba(var(--accent-rgb), 0.09), transparent 62%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app {
+    height: 100vh;
+    height: 100dvh;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 12px);
+  }
+  .layout { flex: 1 1 auto; min-height: 0; display: flex; }
+  .center { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+  .side { display: none; }
+
+  .top {
+    height: 60px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .brand { display: flex; align-items: center; min-width: 0; }
+  .mark {
+    font-family: var(--hud);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.34em;
+    color: var(--accent);
+  }
+  .who {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-actions { display: flex; align-items: center; gap: 8px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 11px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .pill::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f2b84b;
+  }
+  .pill[data-state="ready"]::before, .pill[data-state="online"]::before { background: var(--up); }
+  .pill[data-state="error"]::before { background: var(--danger); }
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .icon-btn:hover { color: var(--text); border-color: rgba(var(--accent-rgb), 0.4); }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .icon-btn[aria-pressed="true"] { color: var(--danger); }
+
+  .stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0 8px;
+  }
+  .stage .pill { margin-bottom: 10px; }
+  .orb-wrap {
+    width: min(60vw, 34vh, 300px);
+    aspect-ratio: 1 / 1;
+    position: relative;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .orb-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .state {
+    margin-top: 12px;
+    font-family: var(--hud);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+  .state[data-state="listening"], .state[data-state="speaking"], .state[data-state="boot"] { color: var(--accent); }
+  .state[data-state="error"] { color: var(--danger); }
+  .live {
+    min-height: 24px;
+    max-width: 92%;
+    margin-top: 6px;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .log {
+    flex: 0 1 auto;
+    max-height: 40vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 2px 8px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 16px);
+    scrollbar-width: thin;
+  }
+  .msg {
+    max-width: 86%;
+    padding: 10px 13px;
+    border-radius: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .msg .meta {
+    display: block;
+    margin-bottom: 3px;
+    font-family: var(--hud);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .msg.jarvis { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); }
+  .msg.jarvis .meta { color: var(--accent); }
+  .msg.user {
+    align-self: flex-end;
+    background: rgba(var(--accent-rgb), 0.12);
+    border: 1px solid rgba(var(--accent-rgb), 0.28);
+  }
+  .msg.error { border-color: rgba(255, 122, 122, 0.45); }
+  .msg.error .meta { color: var(--danger); }
+
+  .chips {
+    flex: none;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 6px 0 10px;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+    mask-image: linear-gradient(to right, #000 88%, transparent);
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(13, 21, 38, 0.6);
+    color: var(--text);
+    font-size: 14px;
+    white-space: nowrap;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .chip:hover { border-color: rgba(var(--accent-rgb), 0.5); background: rgba(var(--accent-rgb), 0.08); }
+
+  .composer {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .composer input {
+    flex: 1;
+    min-width: 0;
+    height: 46px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+  }
+  .composer input::placeholder { color: var(--muted); }
+  .send {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .send:hover { color: var(--text); }
+  .send svg { width: 20px; height: 20px; }
+  .mic {
+    width: 50px;
+    height: 50px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--accent-rgb), 0.5);
+    background: rgba(var(--accent-rgb), 0.14);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s, box-shadow 0.2s, color 0.15s;
+  }
+  .mic svg { width: 22px; height: 22px; }
+  .mic.active {
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 0 0 6px rgba(var(--accent-rgb), 0.16), 0 0 28px rgba(var(--accent-rgb), 0.55);
+  }
+
+  /* ---------- HUD panels (desktop) ---------- */
+  .panel {
+    position: relative;
+    padding: 14px 16px 15px;
+    border: 1px solid rgba(var(--accent-rgb), 0.16);
+    background: rgba(9, 15, 29, 0.66);
+    border-radius: 4px;
+    animation: panelIn 0.6s ease both;
+  }
+  .panel::before, .panel::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: rgba(var(--accent-rgb), 0.75);
+    border-style: solid;
+    pointer-events: none;
+  }
+  .panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-family: var(--hud);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .panel-title small { font-family: var(--mono); font-size: 11px; letter-spacing: 0; color: var(--muted); text-transform: none; }
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+    border-top: 1px solid rgba(130, 170, 230, 0.07);
+    font-size: 14px;
+  }
+  .row:first-of-type { border-top: 0; }
+  .row-l { color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row-l .sub { color: var(--muted); font-size: 12px; margin-left: 6px; }
+  .row-r { font-family: var(--mono); font-size: 13px; color: var(--text); white-space: nowrap; text-align: right; }
+  .row-r .chg { display: inline-block; min-width: 58px; margin-left: 8px; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .time-col { font-family: var(--mono); font-size: 13px; color: var(--accent); white-space: nowrap; margin-right: 10px; }
+  .item { display: flex; align-items: baseline; padding: 5px 0; border-top: 1px solid rgba(130, 170, 230, 0.07); font-size: 14px; }
+  .item:first-of-type { border-top: 0; }
+  .item-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-text .sub { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+  .item-text .sub.late { color: var(--danger); }
+  .empty { color: var(--muted); font-size: 13px; padding: 4px 0; }
+  .warn { margin-top: 8px; font-size: 12px; color: #f2b84b; }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+  .stat-v { font-family: var(--mono); font-size: 20px; color: var(--text); line-height: 1.2; }
+  .stat-l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .clock-time { font-family: var(--mono); font-size: 44px; font-weight: 500; letter-spacing: 0.02em; color: var(--text); line-height: 1; }
+  .clock-time .sec { font-size: 20px; color: var(--muted); margin-left: 4px; }
+  .clock-date { margin-top: 8px; color: var(--muted); font-size: 14px; }
+  .clock-date::first-letter { text-transform: uppercase; }
+  .hud-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); padding: 2px 4px; }
+  .hud-foot button { border: 0; background: transparent; color: var(--muted); font-family: var(--mono); font-size: 11px; padding: 2px 0; }
+  .hud-foot button:hover { color: var(--accent); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .top .pill-top { display: none; }
+  .stats { margin-bottom: 8px; }
+
+  @media (min-width: 1100px) {
+    body {
+      background:
+        radial-gradient(1100px 760px at 50% 38%, rgba(var(--accent-rgb), 0.08), transparent 62%),
+        repeating-linear-gradient(0deg, rgba(var(--accent-rgb), 0.025) 0 1px, transparent 1px 48px),
+        repeating-linear-gradient(90deg, rgba(var(--accent-rgb), 0.025) 0 1px, transparent 1px 48px),
+        var(--bg);
+    }
+    .app { max-width: 1480px; padding: 0 28px 20px; }
+    .top { height: 72px; }
+    .layout { gap: 28px; }
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 320px;
+      flex: none;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 4px 2px 8px;
+      scrollbar-width: none;
+    }
+    .side::-webkit-scrollbar { display: none; }
+    .center { max-width: 760px; margin: 0 auto; }
+    .orb-wrap { width: min(36vh, 360px); }
+    .stage .pill { display: none; }
+    .top .pill-top { display: inline-flex; }
+    .chips { padding-right: 24px; }
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(2, 4, 10, 0.7);
+  }
+  .sheet {
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--panel-solid);
+    border: 1px solid var(--line);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 18px calc(env(safe-area-inset-bottom) + 18px);
+  }
+  @media (min-width: 640px) {
+    .modal { align-items: center; }
+    .sheet { border-radius: 20px; }
+  }
+  .sheet h2 {
+    margin: 0 0 4px;
+    font-family: var(--hud);
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+  }
+  .sheet label { display: block; margin: 14px 0 6px; font-size: 13px; color: var(--muted); }
+  .field {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--field);
+    font-size: 16px;
+  }
+  .field:focus { border-color: rgba(var(--accent-rgb), 0.6); outline: none; }
+  .key-row { display: flex; gap: 8px; }
+  .key-row .field { flex: 1; min-width: 0; }
+  .check { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 15px; color: var(--text); }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .hint { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .btn {
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .btn:hover { border-color: rgba(var(--accent-rgb), 0.45); }
+  .btn.primary { background: var(--accent); border-color: transparent; color: var(--on-accent); }
+  .btn.ghost-danger { color: var(--danger); margin-right: auto; }
+
+  @media (max-height: 640px) {
+    .log { max-height: 28vh; }
+    .stage .pill { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .panel { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">JARVIS</span>
+      <span class="who" id="who"></span>
+    </div>
+    <div class="top-actions">
+      <span class="pill pill-top" id="statusPillTop" data-state="demo">Demo režim</span>
+      <button class="icon-btn" id="muteBtn" type="button" aria-label="Vypnúť hlas" aria-pressed="false" title="Hlas zapnutý / vypnutý">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path id="waveIcon" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      </button>
+      <button class="icon-btn" id="newBtn" type="button" aria-label="Nový rozhovor" title="Nový rozhovor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Nastavenia" title="Nastavenia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side" id="sideLeft" aria-label="Prehľad"></aside>
+
+    <div class="center">
+      <main class="stage">
+        <span class="pill" id="statusPill" data-state="demo">Demo režim</span>
+        <div class="orb-wrap" id="orbWrap" role="button" tabindex="0" aria-label="Hovoriť s Jarvisom">
+          <canvas id="orb" aria-hidden="true"></canvas>
+        </div>
+        <div class="state" id="stateText" data-state="idle">Ťukni na guľu a hovor</div>
+        <div class="live" id="liveText" aria-live="polite"></div>
+      </main>
+
+      <section class="log" id="log" aria-live="polite" aria-label="Rozhovor"></section>
+
+      <div class="chips" id="chips"></div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <input id="input" type="text" enterkeyhint="send" placeholder="Napíš Jarvisovi…" aria-label="Správa pre Jarvisa">
+        <button class="send" id="sendBtn" type="submit" aria-label="Odoslať">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
+        <button class="mic" id="micBtn" type="button" aria-label="Hovoriť">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <aside class="side" id="sideRight" aria-label="Dáta"></aside>
+  </div>
+</div>
+
+<div class="modal" id="settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">Nastavenia</h2>
+    <p class="hint">Kľúč sa ukladá iba v tomto prehliadači. Bez kľúča beží Jarvis v demo režime s ukážkovými odpoveďami a dátami.</p>
+
+    <label for="setUrl">Adresa webhooku (Production URL z n8n)</label>
+    <input class="field" id="setUrl" type="url" inputmode="url" spellcheck="false">
+
+    <label for="setUser">Meno</label>
+    <input class="field" id="setUser" type="text" spellcheck="false" autocapitalize="off">
+
+    <label for="setKey">Kľúč</label>
+    <div class="key-row">
+      <input class="field" id="setKey" type="password" spellcheck="false" autocapitalize="off" autocomplete="off">
+      <button class="btn" id="toggleKey" type="button">Ukázať</button>
+    </div>
+
+    <label for="setVoice">Hlas</label>
+    <select class="field" id="setVoice"></select>
+
+    <label for="setRate">Rýchlosť reči</label>
+    <select class="field" id="setRate">
+      <option value="0.95">Pomalšia</option>
+      <option value="1.05">Normálna</option>
+      <option value="1.2">Rýchlejšia</option>
+    </select>
+
+    <label class="check"><input id="setSpeak" type="checkbox"> Čítať odpovede nahlas</label>
+    <label class="check"><input id="setBrief" type="checkbox"> Prehľad dňa pri prvom otvorení</label>
+    <label class="check"><input id="setConvo" type="checkbox"> Po odpovedi znova počúvať</label>
+
+    <div class="actions">
+      <button class="btn ghost-danger" id="forgetKey" type="button">Odstrániť kľúč</button>
+      <button class="btn" id="cancelSettings" type="button">Zrušiť</button>
+      <button class="btn primary" id="saveSettings" type="button">Uložiť</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  name: "Samco",
+  hudKind: "samco",
+  basicUser: "samco",
+  webhookUrl: "https://n8n.veltro.sk/webhook/jarvis-samco",
+  storageKey: "jarvis-samco",
+  accent: "#3ee0ff",
+  accentRgb: "62, 224, 255",
+  greeting: "Ahoj Samco. Čo potrebuješ?",
+  demoGreeting: "Ahoj Samco. Bežím v demo režime, takže odpovede aj dáta v paneloch sú len ukážkové. Kľúč zadáš cez ozubené koliesko vpravo hore.",
+  chips: ["Ranný brief", "Na čo som zabudol?", "Ako je na tom krypto?", "Čo ma dnes čaká?", "Padlo niečo v n8n?", "Aké mám plány?"],
+  demo: [
+    { match: /brief|prehľad|prehlad|ráno|rano|čo je nové|co je nove/i, reply: "Dobré ráno, Samco. Za noc v n8n nič nepadlo, z outboundu prišli dve odpovede a bitcoin je na 71 400 dolároch, mínus 3,6 percenta. Dnes ťa čaká call s klientom o desiatej a stretnutie o štvrtej. Spraviť máš dokončiť Jarvisa, termín je dnes o šiestej večer. A zabudol si zaplatiť faktúru za hosting, to malo byť včera. Čím začneme?" },
+    { match: /zabud|zmeškal|zmeskal|po termíne|po termine/i, reply: "Po termíne máš zaplatiť faktúru za hosting, to malo byť včera. A už týždeň ti bez termínu visí ponuka pre nového klienta. Chceš si na ňu dať termín?" },
+    { match: /hotovo|spravil som|spravené|spravene|vybavil|vybavené|vybavene|netreba/i, reply: "Super, označil som to ako hotové." },
+    { match: /krypto|bitcoin|btc|ethereum|eth|solana|sui/i, reply: "Bitcoin je na 71 400 dolároch, za deň mínus 3,6 percenta. Ethereum stojí 2 018, Solana 82 a Sui 0,80 dolára." },
+    { match: /akci|nvidia|nvda|etf|portf|zlato|mstr/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. Nasdaq 100 cez QQQ mínus 0,3 percenta a zlato cez GLD mínus 2,8 percenta." },
+    { match: /n8n|padl|chyb|workflow/i, reply: "Za posledných 24 hodín nepadol žiadny workflow. Všetko beží." },
+    { match: /zapamätaj|zapamataj|poznač|poznac|pridaj|pripomeň|pripomen/i, reply: "Jasné, uložil som to a pripomeniem ti to zajtra o deviatej." },
+    { match: /plán|plan|poznámk|poznamk/i, reply: "Máš tri otvorené plány: dokončiť Jarvisa, pripraviť ponuku pre nového klienta a pozrieť rozpočet na budúci mesiac." },
+    { match: /dnes|kalend|čaká|caka|zajtra|stretnut|meeting/i, reply: "Dnes máš dve udalosti, o desiatej call a o štvrtej poobede stretnutie. Večer máš voľno." }
+  ],
+  demoHud: {
+    kind: "samco", updatedAt: "08:00",
+    crypto: [
+      { symbol: "BTC", price: 71391, change: -3.6, currency: "USD" },
+      { symbol: "ETH", price: 2017.62, change: -1.9, currency: "USD" },
+      { symbol: "SOL", price: 81.67, change: -2.1, currency: "USD" },
+      { symbol: "SUI", price: 0.8049, change: -2.2, currency: "USD" }
+    ],
+    stocks: [
+      { symbol: "NVDA", ticker: "NVDA", price: 166.19, change: -4.3, currency: "USD" },
+      { symbol: "MSTR", ticker: "MSTR", price: 114.41, change: -6.5, currency: "USD" },
+      { symbol: "Nasdaq 100", ticker: "QQQ", price: 688.17, change: -0.3, currency: "USD" },
+      { symbol: "S&P 500", ticker: "SPY", price: 757.25, change: -0.3, currency: "USD" },
+      { symbol: "Zlato", ticker: "GLD", price: 354.87, change: -2.8, currency: "USD" }
+    ],
+    agenda: [ { time: "10:00", title: "Call s klientom" }, { time: "16:00", title: "Stretnutie" } ],
+    system: { failed24h: 0, failed: [] },
+    outbound: { sent: 22, replies: 2, bounces: 0, ready: 1200 },
+    notes: [ { text: "Zaplatiť faktúru za hosting", kind: "po termíne", overdue: true }, { text: "Dokončiť Jarvisa", kind: "dnes 18:00" }, { text: "Pripraviť ponuku pre nového klienta", kind: "úloha" } ]
+  }
+};
+
+(function () {
+  "use strict";
+
+  document.documentElement.style.setProperty("--accent", CONFIG.accent);
+  document.documentElement.style.setProperty("--accent-rgb", CONFIG.accentRgb);
+  document.title = "Jarvis · " + CONFIG.name;
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    who: $("who"), pill: $("statusPill"), pillTop: $("statusPillTop"), mute: $("muteBtn"), waveIcon: $("waveIcon"),
+    newBtn: $("newBtn"), settingsBtn: $("settingsBtn"), orbWrap: $("orbWrap"), canvas: $("orb"),
+    state: $("stateText"), live: $("liveText"), log: $("log"), chips: $("chips"),
+    form: $("composer"), input: $("input"), mic: $("micBtn"),
+    sideLeft: $("sideLeft"), sideRight: $("sideRight"),
+    modal: $("settings"), setUrl: $("setUrl"), setUser: $("setUser"), setKey: $("setKey"),
+    toggleKey: $("toggleKey"), setVoice: $("setVoice"), setRate: $("setRate"), setSpeak: $("setSpeak"),
+    setBrief: $("setBrief"), setConvo: $("setConvo"),
+    forgetKey: $("forgetKey"), cancelSettings: $("cancelSettings"), saveSettings: $("saveSettings")
+  };
+  els.who.textContent = CONFIG.name;
+
+  /* ---------- storage ---------- */
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = localStorage.getItem(CONFIG.storageKey + ":" + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(CONFIG.storageKey + ":" + key, JSON.stringify(value)); } catch (e) {}
+    }
+  };
+
+  const defaults = { url: CONFIG.webhookUrl, user: CONFIG.basicUser, key: "", voice: "", rate: "1.05", speak: true, autoBrief: true, convo: true };
+  let settings = Object.assign({}, defaults, store.get("settings", {}));
+
+  function newSessionId() {
+    try { if (crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+  }
+  let sessionId = store.get("session", null) || newSessionId();
+  store.set("session", sessionId);
+
+  const isDemo = () => !settings.key;
+
+  /* ---------- status ---------- */
+  let appState = "idle";
+  const stateLabels = {
+    idle: "Ťukni na guľu a hovor",
+    listening: "Počúvam",
+    thinking: "Premýšľam",
+    speaking: "Hovorím",
+    error: "Niečo sa pokazilo",
+    boot: "Inicializujem systémy"
+  };
+  function setState(state, label) {
+    appState = state;
+    els.state.dataset.state = state;
+    els.state.textContent = label || stateLabels[state];
+    els.mic.classList.toggle("active", state === "listening");
+    els.mic.setAttribute("aria-label", state === "listening" ? "Prestať počúvať" : "Hovoriť");
+  }
+  function setPill(kind) {
+    const labels = { demo: "Demo režim", ready: "Pripravený", online: "Online", error: "Chyba spojenia" };
+    [els.pill, els.pillTop].forEach((p) => { p.dataset.state = kind; p.textContent = labels[kind]; });
+  }
+  setPill(isDemo() ? "demo" : "ready");
+
+  /* ---------- conversation log ---------- */
+  let history = store.get("history", []);
+  function renderMessage(m) {
+    const div = document.createElement("div");
+    div.className = "msg " + m.role + (m.error ? " error" : "");
+    const meta = document.createElement("span");
+    meta.className = "meta";
+    meta.textContent = m.role === "user" ? CONFIG.name : (m.error ? "Chyba" : "Jarvis");
+    const body = document.createElement("span");
+    body.textContent = m.text;
+    div.appendChild(meta);
+    div.appendChild(body);
+    els.log.appendChild(div);
+    els.log.scrollTop = els.log.scrollHeight;
+  }
+  function addMessage(role, text, error) {
+    const m = { role, text, error: !!error };
+    history.push(m);
+    if (history.length > 30) history = history.slice(-30);
+    store.set("history", history.filter((x) => !x.error));
+    renderMessage(m);
+  }
+  function resetConversation() {
+    history = [];
+    store.set("history", history);
+    sessionId = newSessionId();
+    store.set("session", sessionId);
+    els.log.innerHTML = "";
+    addMessage("jarvis", isDemo() ? CONFIG.demoGreeting : CONFIG.greeting);
+  }
+  if (history.length) history.forEach(renderMessage);
+  else addMessage("jarvis", isDemo() ? CONFIG.demoGreeting : CONFIG.greeting);
+
+  /* ---------- chips ---------- */
+  CONFIG.chips.forEach((label) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = label;
+    b.addEventListener("click", () => { unlockSpeech(); send(label); });
+    els.chips.appendChild(b);
+  });
+
+  /* ---------- speech synthesis ---------- */
+  const synth = "speechSynthesis" in window ? window.speechSynthesis : null;
+  let voices = [];
+  let speechUnlocked = false;
+  let speechSeq = 0;          // každé nové hovorenie alebo stop zneplatní to predošlé
+  let convoActive = false;    // rozhovor hlasom: po odpovedi Jarvis znova počúva
+  let pendingSpeech = null;   // odpoveď, ktorú prehliadač ešte nedovolil prečítať (čaká na ťuknutie)
+  let briefLoading = false;
+
+  function loadVoices() {
+    if (!synth) return;
+    voices = synth.getVoices();
+    populateVoiceSelect();
+  }
+  if (synth) {
+    loadVoices();
+    if (typeof synth.addEventListener === "function") synth.addEventListener("voiceschanged", loadVoices);
+    else synth.onvoiceschanged = loadVoices;
+  }
+  function pickVoice() {
+    if (!voices.length) return null;
+    if (settings.voice) {
+      const saved = voices.find((v) => v.voiceURI === settings.voice);
+      if (saved) return saved;
+    }
+    return voices.find((v) => /^sk/i.test(v.lang)) || voices.find((v) => /^cs/i.test(v.lang)) || null;
+  }
+  function populateVoiceSelect() {
+    const sel = els.setVoice;
+    sel.innerHTML = "";
+    const auto = document.createElement("option");
+    auto.value = "";
+    auto.textContent = "Automaticky (slovenský, ak je)";
+    sel.appendChild(auto);
+    const rank = (v) => (/^sk/i.test(v.lang) ? 0 : /^cs/i.test(v.lang) ? 1 : 2);
+    voices.slice().sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name)).forEach((v) => {
+      const o = document.createElement("option");
+      o.value = v.voiceURI;
+      o.textContent = v.name + " (" + v.lang + ")";
+      sel.appendChild(o);
+    });
+    sel.value = settings.voice || "";
+  }
+  function unlockSpeech() {
+    if (!synth || speechUnlocked) return;
+    speechUnlocked = true;
+    try {
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      synth.speak(u);
+    } catch (e) {}
+  }
+  function splitForSpeech(text) {
+    const clean = String(text).replace(/\s+/g, " ").trim();
+    const parts = clean.match(/[^.!?…]+[.!?…]*\s*/g) || [clean];
+    const out = [];
+    let buf = "";
+    parts.forEach((p) => {
+      if ((buf + p).length > 220 && buf) { out.push(buf.trim()); buf = p; }
+      else buf += p;
+    });
+    if (buf.trim()) out.push(buf.trim());
+    return out;
+  }
+  function stopSpeaking() {
+    speechSeq++;
+    if (synth) { try { synth.cancel(); } catch (e) {} }
+  }
+  // Vráti true, keď Jarvis dohovoril sám; false, keď ho niečo prerušilo.
+  function speak(text) {
+    return new Promise((resolve) => {
+      if (!synth || !settings.speak || !text) return resolve(true);
+      stopSpeaking();
+      const my = speechSeq;
+      const chunks = splitForSpeech(text);
+      const voice = pickVoice();
+      let i = 0;
+      let finished = false;
+      const done = (natural) => { if (!finished) { finished = true; resolve(!!natural && my === speechSeq); } };
+      const next = () => {
+        if (my !== speechSeq) return done(false);
+        if (i >= chunks.length) return done(true);
+        const u = new SpeechSynthesisUtterance(chunks[i++]);
+        u.lang = voice ? voice.lang : "sk-SK";
+        if (voice) u.voice = voice;
+        u.rate = parseFloat(settings.rate) || 1.05;
+        u.pitch = 0.95;
+        u.onstart = () => { orb.pulse = 0.6; };
+        u.onboundary = () => { orb.pulse = Math.min(1, orb.pulse + 0.45); };
+        u.onend = next;
+        u.onerror = () => done(false);
+        synth.speak(u);
+      };
+      setState("speaking");
+      next();
+      const words = String(text).split(/\s+/).length;
+      setTimeout(() => done(my === speechSeq), Math.max(8000, words * 900));
+    });
+  }
+
+  /* ---------- speech recognition ---------- */
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null;
+  let finalText = "";
+  let micDenied = false;
+  let listenAuto = false;
+  const SLEEP_LABEL = "Ťukni na guľu, keď budeš chcieť";
+
+  // auto = true: Jarvis začal počúvať sám po svojej odpovedi (rozhovor)
+  function startListening(auto) {
+    if (rec) return;
+    if (!Recognition) {
+      convoActive = false;
+      setState("idle", "Tento prehliadač nevie rozpoznávať reč, napíš mi");
+      if (!auto) els.input.focus();
+      return;
+    }
+    if (micDenied) {
+      convoActive = false;
+      setState("error", "Povoľ mikrofón v nastaveniach prehliadača");
+      return;
+    }
+    stopSpeaking();
+    listenAuto = !!auto;
+    finalText = "";
+    els.live.textContent = "";
+    rec = new Recognition();
+    rec.lang = "sk-SK";
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.maxAlternatives = 1;
+    rec.onstart = () => setState("listening", listenAuto ? "Počúvam, môžeš odpovedať" : undefined);
+    rec.onresult = (event) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const r = event.results[i];
+        if (r.isFinal) finalText += r[0].transcript;
+        else interim += r[0].transcript;
+      }
+      orb.pulse = Math.min(1, orb.pulse + 0.35);
+      els.live.textContent = (finalText + " " + interim).trim();
+    };
+    rec.onerror = (event) => {
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        convoActive = false;
+        if (listenAuto) setState("idle", "Ťukni na guľu a hovor");
+        else { micDenied = true; setState("error", "Povoľ mikrofón v nastaveniach prehliadača"); }
+      } else if (event.error === "no-speech") {
+        if (convoActive) { convoActive = false; setState("idle", SLEEP_LABEL); }
+        else setState("idle", "Nič som nepočul, skús znova");
+      } else if (event.error !== "aborted") {
+        convoActive = false;
+        setState("error", "Rozpoznávanie reči zlyhalo");
+      }
+    };
+    rec.onend = () => {
+      rec = null;
+      const text = finalText.trim();
+      if (text) {
+        if (isStopPhrase(text)) endConversation(text);
+        else send(text);
+      } else if (appState === "listening") {
+        if (convoActive) { convoActive = false; setState("idle", SLEEP_LABEL); }
+        else setState("idle");
+      }
+    };
+    try { rec.start(); } catch (e) {
+      rec = null;
+      convoActive = false;
+      if (auto) setState("idle", "Ťukni na guľu a hovor");
+      else setState("error", "Mikrofón sa nepodarilo spustiť");
+    }
+  }
+  function stopListening() {
+    if (rec) { try { rec.stop(); } catch (e) {} }
+  }
+  function speakPending() {
+    const t = pendingSpeech;
+    pendingSpeech = null;
+    convoActive = true;
+    speak(t).then((natural) => { if (natural) afterReply(); });
+  }
+  function toggleListening() {
+    unlockSpeech();
+    if (pendingSpeech) { speakPending(); return; }
+    if (appState === "listening") {
+      if (!els.live.textContent.trim()) convoActive = false;
+      stopListening();
+      return;
+    }
+    if (busy || appState === "thinking") {
+      if (briefLoading) setState("thinking", "Pripravujem prehľad, hneď ti ho poviem");
+      return;
+    }
+    convoActive = true;
+    startListening(false);
+  }
+
+  // Po odpovedi: v rozhovore Jarvis znova počúva, inak čaká na ťuknutie.
+  function afterReply() {
+    if (busy || rec || appState === "listening") return;
+    if (convoActive && speechUnlocked && settings.convo && Recognition && !micDenied && !document.hidden) {
+      setState("idle", "Počúvam ďalej");
+      setTimeout(() => {
+        if (convoActive && !busy && !rec && appState !== "listening" && appState !== "speaking" && !document.hidden) startListening(true);
+      }, 350);
+    } else {
+      setState("idle");
+    }
+  }
+
+  const STOP_RE = /^(stop|stačí|staci|koniec|nie|nie ďakujem|nie dakujem|nie díky|nie diky|ďakujem|dakujem|ďakujem ti|dakujem ti|ďakujem pekne|dakujem pekne|vďaka|vdaka|dík|dik|díky|diky|to je všetko|to je vsetko|to je zatiaľ všetko|to je zatial vsetko|zatiaľ nič|zatial nic|nič|nic|nič viac|nic viac|čau|cau|maj sa|dobre ďakujem|dobre dakujem|ok ďakujem|ok dakujem|okej ďakujem|okej dakujem|super ďakujem|super dakujem)$/;
+  function isStopPhrase(t) {
+    const n = String(t).toLowerCase().replace(/[.,!?…]/g, " ").replace(/\s+/g, " ").trim();
+    return STOP_RE.test(n);
+  }
+  // Rozlúčka sa vybaví bez AI, nič nestojí.
+  function endConversation(text) {
+    convoActive = false;
+    addMessage("user", text);
+    const bye = "Jasné. Keď budeš niečo potrebovať, ťukni na guľu.";
+    addMessage("jarvis", bye);
+    speak(bye).then((natural) => { if (natural || appState === "speaking") setState("idle"); });
+  }
+  if (!Recognition) els.mic.title = "Rozpoznávanie reči funguje v Chrome a Safari";
+
+  /* ---------- talking to n8n ---------- */
+  function basicAuth(user, key) {
+    const bytes = new TextEncoder().encode(user + ":" + key);
+    let bin = "";
+    bytes.forEach((b) => { bin += String.fromCharCode(b); });
+    return "Basic " + btoa(bin);
+  }
+  async function callWebhook(payload, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(settings.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": basicAuth(settings.user, settings.key) },
+        body: JSON.stringify(Object.assign({ sessionId: sessionId }, payload)),
+        signal: controller.signal
+      });
+      if (res.status === 401 || res.status === 403) return { error: "Kľúč alebo meno nesedí. Skontroluj ich v nastaveniach." };
+      if (res.status === 404) return { error: "Webhook sa nenašiel. Je workflow v n8n publikovaný a adresa správna?" };
+      if (!res.ok) return { error: "n8n vrátilo chybu " + res.status + ". Pozri posledné spustenie workflowu." };
+      const raw = await res.text();
+      let data = {};
+      try { data = JSON.parse(raw); } catch (e) { data = { reply: raw }; }
+      if (Array.isArray(data)) data = data[0] || {};
+      return { data: data };
+    } catch (e) {
+      if (e.name === "AbortError") return { error: "Odpoveď trvá príliš dlho. Skús to znova." };
+      return { error: "Nepodarilo sa spojiť s n8n. Skontroluj adresu webhooku a pripojenie." };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  function demoReply(text) {
+    const hit = CONFIG.demo.find((d) => d.match.test(text));
+    return hit ? hit.reply : "V demo režime viem len pár ukážkových odpovedí. Keď zadáš kľúč v nastaveniach, odpoviem z tvojich skutočných dát.";
+  }
+  async function askJarvis(text) {
+    if (isDemo()) {
+      await new Promise((r) => setTimeout(r, 900 + Math.random() * 700));
+      return { reply: demoReply(text) };
+    }
+    const r = await callWebhook({ message: text }, 90000);
+    if (r.error) return r;
+    const reply = r.data.reply || r.data.output || r.data.text || "";
+    return reply ? { reply: String(reply) } : { error: "Jarvis vrátil prázdnu odpoveď." };
+  }
+
+  let busy = false;
+  async function send(text, opts) {
+    opts = opts || {};
+    text = String(text || "").trim();
+    if (!text || busy) return false;
+    busy = true;
+    stopListening();
+    stopSpeaking();
+    pendingSpeech = null;
+    els.input.value = "";
+    els.live.textContent = "";
+    addMessage("user", text);
+    setState("thinking", opts.thinking);
+    const result = await askJarvis(text);
+    busy = false;
+    if (result.error) {
+      convoActive = false;
+      addMessage("jarvis", result.error, true);
+      setPill("error");
+      setState("error");
+      return false;
+    }
+    if (!isDemo()) setPill("online");
+    addMessage("jarvis", result.reply);
+    // Prehliadač nedovolí hovoriť, kým sa stránky niekto nedotkne. Odpoveď počká na ťuknutie.
+    if (!speechUnlocked && synth && settings.speak) {
+      pendingSpeech = result.reply;
+      setState("idle", opts.brief ? "Ťukni na guľu a poviem ti prehľad" : "Ťukni na guľu a prečítam ti odpoveď");
+      return true;
+    }
+    if (opts.brief) convoActive = true;
+    const natural = await speak(result.reply);
+    if (natural) afterReply();
+    else if (appState === "speaking") setState("idle");
+    return true;
+  }
+
+  /* ---------- prehľad dňa ---------- */
+  function todayKey() {
+    try { return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Bratislava" }).format(new Date()); }
+    catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  // Raz denne pri otvorení si Jarvis sám pripraví prehľad. Povie ho po prvom ťuknutí.
+  async function autoBrief() {
+    if (!settings.autoBrief || briefLoading || busy || document.hidden) return;
+    const key = isDemo() ? "briefDayDemo" : "briefDay";
+    if (store.get(key, "") === todayKey()) return;
+    briefLoading = true;
+    const ok = await send("Prehľad dňa", { brief: true, thinking: "Pripravujem prehľad dňa" });
+    briefLoading = false;
+    if (ok) store.set(key, todayKey());
+  }
+
+  /* ---------- HUD panels (desktop) ---------- */
+  const wideQuery = window.matchMedia("(min-width: 1100px)");
+  const nf = (opts) => new Intl.NumberFormat("sk-SK", opts);
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function panel(title, note) {
+    const p = el("section", "panel");
+    const h = el("h3", "panel-title");
+    h.appendChild(el("span", "", title));
+    if (note) h.appendChild(el("small", "", note));
+    p.appendChild(h);
+    return p;
+  }
+  function fmtPrice(p, cur) {
+    if (p === null || p === undefined || isNaN(p)) return "–";
+    const opts = p >= 1000 ? { maximumFractionDigits: 0 } : p >= 1 ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { minimumFractionDigits: 3, maximumFractionDigits: 4 };
+    return nf(opts).format(p) + (cur === "USD" ? " $" : cur === "EUR" ? " €" : "");
+  }
+  function fmtChange(c) {
+    if (c === null || c === undefined || isNaN(c)) return "";
+    return (c > 0 ? "+" : "") + nf({ minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(c) + " %";
+  }
+  function fmtInt(n) { return n === null || n === undefined || isNaN(n) ? "–" : nf({ maximumFractionDigits: 0 }).format(n); }
+  function quoteRow(label, sub, price, cur, change) {
+    const r = el("div", "row");
+    const l = el("span", "row-l", label);
+    if (sub) l.appendChild(el("span", "sub", sub));
+    const right = el("span", "row-r", fmtPrice(price, cur));
+    const chg = el("span", "chg " + (change > 0 ? "up" : change < 0 ? "down" : ""), fmtChange(change));
+    right.appendChild(chg);
+    r.appendChild(l);
+    r.appendChild(right);
+    return r;
+  }
+  function kvRow(label, value, cls) {
+    const r = el("div", "row");
+    r.appendChild(el("span", "row-l", label));
+    r.appendChild(el("span", "row-r" + (cls ? " " + cls : ""), value));
+    return r;
+  }
+  function itemRow(time, text, sub, subCls) {
+    const r = el("div", "item");
+    if (time) r.appendChild(el("span", "time-col", time));
+    const t = el("div", "item-text", text);
+    if (sub) t.appendChild(el("span", "sub" + (subCls ? " " + subCls : ""), sub));
+    r.appendChild(t);
+    return r;
+  }
+  function stat(value, label) {
+    const s = el("div");
+    s.appendChild(el("div", "stat-v", value));
+    s.appendChild(el("div", "stat-l", label));
+    return s;
+  }
+
+  let clockEls = null;
+  function clockPanel() {
+    const p = panel("Čas", "Bratislava");
+    const t = el("div", "clock-time");
+    const hm = el("span");
+    const sec = el("span", "sec");
+    t.appendChild(hm);
+    t.appendChild(sec);
+    const d = el("div", "clock-date");
+    p.appendChild(t);
+    p.appendChild(d);
+    clockEls = { hm, sec, d };
+    tickClock();
+    return p;
+  }
+  function tickClock() {
+    if (!clockEls) return;
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat("sk-SK", { timeZone: "Europe/Bratislava", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
+    const get = (type) => (parts.find((x) => x.type === type) || {}).value || "00";
+    clockEls.hm.textContent = get("hour") + ":" + get("minute");
+    clockEls.sec.textContent = get("second");
+    clockEls.d.textContent = new Intl.DateTimeFormat("sk-SK", { timeZone: "Europe/Bratislava", weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(now);
+  }
+  setInterval(tickClock, 1000);
+
+  let hud = { data: null, error: null, loading: false, at: 0 };
+
+  function footer(side) {
+    const f = el("div", "hud-foot");
+    let txt = hud.loading ? "Načítavam dáta…" : hud.error ? hud.error : hud.data ? ("Aktualizované " + (hud.data.updatedAt || "")) : "";
+    if (isDemo()) txt = "Ukážkové dáta · demo režim";
+    f.appendChild(el("span", "", txt));
+    const b = el("button", "", "Obnoviť");
+    b.type = "button";
+    b.addEventListener("click", () => loadHud(true));
+    f.appendChild(b);
+    side.appendChild(f);
+  }
+
+  function renderSamco(d) {
+    const L = els.sideLeft, R = els.sideRight;
+    const agenda = panel("Dnes", (d.agenda || []).length ? (d.agenda.length + " " + (d.agenda.length === 1 ? "udalosť" : d.agenda.length < 5 ? "udalosti" : "udalostí")) : "");
+    if ((d.agenda || []).length) d.agenda.slice(0, 6).forEach((a) => agenda.appendChild(itemRow(a.time, a.title)));
+    else agenda.appendChild(el("div", "empty", "Kalendár je dnes voľný."));
+    L.appendChild(agenda);
+
+    const notes = panel("Plány a poznámky");
+    if ((d.notes || []).length) d.notes.forEach((n) => notes.appendChild(itemRow("", n.text, n.kind, n.overdue ? "late" : "")));
+    else notes.appendChild(el("div", "empty", "Zatiaľ nič. Povedz mi „zapamätaj si…“."));
+    L.appendChild(notes);
+
+    const mk = panel("Trhy", "USD");
+    (d.crypto || []).forEach((c) => mk.appendChild(quoteRow(c.symbol, "", c.price, c.currency, c.change)));
+    (d.stocks || []).forEach((s) => mk.appendChild(quoteRow(s.symbol, s.ticker && s.ticker !== s.symbol ? s.ticker : "", s.price, s.currency, s.change)));
+    if (!(d.crypto || []).length && !(d.stocks || []).length) mk.appendChild(el("div", "empty", "Ceny sa nepodarilo načítať."));
+    R.appendChild(mk);
+
+    const sys = panel("Systémy");
+    if (d.system) {
+      if (d.system.failed24h) {
+        sys.appendChild(kvRow("n8n · chyby za 24 h", fmtInt(d.system.failed24h), "down"));
+        (d.system.failed || []).forEach((f) => sys.appendChild(itemRow("", f.name, f.count > 1 ? f.count + "× zlyhal" : "1× zlyhal")));
+      } else {
+        sys.appendChild(kvRow("n8n · chyby za 24 h", "0", "up"));
+      }
+    } else sys.appendChild(kvRow("n8n", "nedostupné", "down"));
+    if (d.outbound) {
+      sys.appendChild(kvRow("Outbound · dnes odoslané", fmtInt(d.outbound.sent)));
+      sys.appendChild(kvRow("Outbound · odpovede dnes", fmtInt(d.outbound.replies)));
+      sys.appendChild(kvRow("Outbound · pripravené", fmtInt(d.outbound.ready)));
+    }
+    R.appendChild(sys);
+  }
+
+  function renderTomas(d) {
+    const L = els.sideLeft, R = els.sideRight;
+    const mt = panel("Meetingy", "Cal");
+    if (d.meetings === null || d.meetings === undefined) mt.appendChild(el("div", "empty", "Cal je nedostupný."));
+    else if (d.meetings.length) d.meetings.forEach((m) => mt.appendChild(itemRow(m.when, m.who || m.title, m.who ? m.title : "")));
+    else mt.appendChild(el("div", "empty", "Žiadne naplánované meetingy."));
+    L.appendChild(mt);
+
+    if ((d.crmMeetings || []).length) {
+      const cm = panel("Meetingy z CRM");
+      d.crmMeetings.forEach((m) => cm.appendChild(itemRow(m.when, m.firm)));
+      L.appendChild(cm);
+    }
+
+    const tk = panel("Úlohy");
+    if ((d.tasks || []).length) d.tasks.forEach((t) => tk.appendChild(itemRow("", t.text, t.kind, t.overdue ? "late" : "")));
+    else tk.appendChild(el("div", "empty", "Žiadne otvorené úlohy."));
+    L.appendChild(tk);
+
+    const pl = panel("Pipeline");
+    const ps = el("div", "stats");
+    ps.appendChild(stat(fmtInt(d.openDeals), "otvorené dealy"));
+    ps.appendChild(stat(fmtInt(d.pipeline) + " €", "odhad hodnoty"));
+    pl.appendChild(ps);
+    const fu = d.followUps || [];
+    if (fu.length) fu.forEach((f) => pl.appendChild(itemRow(f.overdue ? "mešká" : "dnes", f.firm, f.step, f.overdue ? "late" : "")));
+    else pl.appendChild(el("div", "empty", "Dnes sa nemusíš nikomu ozvať."));
+    R.appendChild(pl);
+
+    if (d.calls) {
+      const cc = panel("Cold calling", nf({ maximumFractionDigits: 1 }).format(d.calls.rate || 0) + " % na meeting");
+      const cs = el("div", "stats");
+      cs.appendChild(stat(fmtInt(d.calls.called), "obvolané"));
+      cs.appendChild(stat(fmtInt(d.calls.meetings), "meetingy"));
+      cs.appendChild(stat(fmtInt(d.calls.callbacks), "volať znova"));
+      cs.appendChild(stat(fmtInt(d.calls.remaining), "nevolané"));
+      cc.appendChild(cs);
+      R.appendChild(cc);
+    }
+
+    const ob = panel("Outbound a siete");
+    if (d.outbound) {
+      ob.appendChild(kvRow("Dnes odoslané", fmtInt(d.outbound.sent)));
+      ob.appendChild(kvRow("Odpovede dnes", fmtInt(d.outbound.replies)));
+      ob.appendChild(kvRow("Pripravené kontakty", fmtInt(d.outbound.ready)));
+    }
+    if ((d.posts || []).length) d.posts.forEach((p) => ob.appendChild(itemRow(p.when, p.topic, p.platforms)));
+    else ob.appendChild(el("div", "empty", "Na siete nie je nič naplánované."));
+    if (d.overduePosts) ob.appendChild(el("div", "warn", d.overduePosts + " naplánovaných postov je po termíne a nevyšlo."));
+    R.appendChild(ob);
+  }
+
+  function renderHud() {
+    if (!wideQuery.matches) return;
+    els.sideLeft.innerHTML = "";
+    els.sideRight.innerHTML = "";
+    els.sideLeft.appendChild(clockPanel());
+    const d = isDemo() ? CONFIG.demoHud : hud.data;
+    if (d) {
+      if (CONFIG.hudKind === "tomas") renderTomas(d);
+      else renderSamco(d);
+    } else {
+      const p = panel("Dáta");
+      p.appendChild(el("div", "empty", hud.loading ? "Načítavam…" : (hud.error || "Zatiaľ bez dát.")));
+      els.sideRight.appendChild(p);
+    }
+    footer(els.sideRight);
+  }
+
+  async function loadHud(force) {
+    if (!wideQuery.matches) return;
+    if (isDemo()) { hud = { data: null, error: null, loading: false, at: Date.now() }; renderHud(); return; }
+    if (hud.loading) return;
+    if (!force && hud.data && Date.now() - hud.at < 9 * 60 * 1000) { renderHud(); return; }
+    hud.loading = true;
+    renderHud();
+    const r = await callWebhook({ action: "hud" }, 45000);
+    hud.loading = false;
+    hud.at = Date.now();
+    if (r.error) hud.error = "Panel nedostupný";
+    else if (r.data && r.data.ok) { hud.data = r.data; hud.error = null; }
+    else hud.error = "Panel vrátil neplatné dáta";
+    renderHud();
+  }
+  setInterval(() => { if (!document.hidden) loadHud(false); }, 10 * 60 * 1000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) loadHud(false); });
+  const onWide = () => { if (wideQuery.matches) loadHud(false); };
+  if (typeof wideQuery.addEventListener === "function") wideQuery.addEventListener("change", onWide);
+  else if (typeof wideQuery.addListener === "function") wideQuery.addListener(onWide);
+
+  /* ---------- UI events ---------- */
+  els.form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    unlockSpeech();
+    convoActive = false;
+    send(els.input.value);
+  });
+  // Prvé ťuknutie kamkoľvek odomkne hlas, aby Jarvis mohol hovoriť aj sám (napríklad prehľad dňa).
+  const firstTouch = () => unlockSpeech();
+  document.addEventListener("click", firstTouch, { capture: true, once: true });
+  document.addEventListener("keydown", firstTouch, { capture: true, once: true });
+  // Ťuknutie na voľné miesto okolo gule spustí čakajúci prehľad.
+  document.querySelector(".stage").addEventListener("click", (e) => {
+    if (e.target.closest && e.target.closest("#orbWrap")) return;
+    if (pendingSpeech) { unlockSpeech(); speakPending(); }
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { convoActive = false; stopListening(); }
+    else autoBrief();
+  });
+  els.mic.addEventListener("click", toggleListening);
+  els.orbWrap.addEventListener("click", toggleListening);
+  els.orbWrap.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleListening(); }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!els.modal.hidden) {
+      if (e.key === "Escape") closeSettings();
+      return;
+    }
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    if (e.code === "Space" && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(tag) && document.activeElement !== els.orbWrap) {
+      e.preventDefault();
+      toggleListening();
+    }
+  });
+
+  function renderMute() {
+    const muted = !settings.speak;
+    els.mute.setAttribute("aria-pressed", muted ? "true" : "false");
+    els.mute.setAttribute("aria-label", muted ? "Zapnúť hlas" : "Vypnúť hlas");
+    els.waveIcon.style.display = muted ? "none" : "";
+  }
+  renderMute();
+  els.mute.addEventListener("click", () => {
+    settings.speak = !settings.speak;
+    if (!settings.speak) { stopSpeaking(); if (appState === "speaking") setState("idle"); }
+    store.set("settings", settings);
+    renderMute();
+  });
+  els.newBtn.addEventListener("click", () => {
+    convoActive = false;
+    pendingSpeech = null;
+    stopSpeaking();
+    stopListening();
+    resetConversation();
+    setState("idle");
+  });
+
+  function openSettings() {
+    els.setUrl.value = settings.url;
+    els.setUser.value = settings.user;
+    els.setKey.value = settings.key;
+    els.setKey.type = "password";
+    els.toggleKey.textContent = "Ukázať";
+    els.setRate.value = settings.rate;
+    els.setSpeak.checked = !!settings.speak;
+    els.setBrief.checked = !!settings.autoBrief;
+    els.setConvo.checked = !!settings.convo;
+    populateVoiceSelect();
+    els.modal.hidden = false;
+    setTimeout(() => (settings.key ? els.setUrl : els.setKey).focus(), 30);
+  }
+  function closeSettings() {
+    els.modal.hidden = true;
+    els.settingsBtn.focus();
+  }
+  els.settingsBtn.addEventListener("click", openSettings);
+  els.cancelSettings.addEventListener("click", closeSettings);
+  els.modal.addEventListener("click", (e) => { if (e.target === els.modal) closeSettings(); });
+  els.toggleKey.addEventListener("click", () => {
+    const show = els.setKey.type === "password";
+    els.setKey.type = show ? "text" : "password";
+    els.toggleKey.textContent = show ? "Skryť" : "Ukázať";
+  });
+  els.forgetKey.addEventListener("click", () => { els.setKey.value = ""; });
+  els.saveSettings.addEventListener("click", () => {
+    const wasDemo = isDemo();
+    settings.url = els.setUrl.value.trim() || CONFIG.webhookUrl;
+    settings.user = els.setUser.value.trim() || CONFIG.basicUser;
+    settings.key = els.setKey.value.trim();
+    settings.voice = els.setVoice.value;
+    settings.rate = els.setRate.value;
+    settings.speak = els.setSpeak.checked;
+    settings.autoBrief = els.setBrief.checked;
+    settings.convo = els.setConvo.checked;
+    store.set("settings", settings);
+    renderMute();
+    setPill(isDemo() ? "demo" : "ready");
+    closeSettings();
+    if (wasDemo !== isDemo()) resetConversation();
+    if (!busy) setState("idle");
+    hud = { data: null, error: null, loading: false, at: 0 };
+    loadHud(true);
+    autoBrief();
+  });
+
+  /* ---------- orb animation ---------- */
+  const orb = { level: 0.1, pulse: 0, rot: 0, t: 0 };
+  const ctx = els.canvas.getContext("2d");
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const speedScale = reduceMotion ? 0.3 : 1;
+  let dpr = 1, size = 0;
+
+  function resizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = els.canvas.getBoundingClientRect();
+    size = Math.max(1, Math.round(rect.width));
+    els.canvas.width = size * dpr;
+    els.canvas.height = size * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener("resize", () => { resizeCanvas(); });
+  resizeCanvas();
+
+  const rgb = CONFIG.accentRgb;
+  const a = (alpha) => "rgba(" + rgb + "," + Math.max(0, alpha).toFixed(3) + ")";
+
+  function frame() {
+    if (document.hidden) { requestAnimationFrame(frame); return; }
+    orb.t += 0.016 * speedScale;
+    const t = orb.t;
+    let base = 0.08 + Math.sin(t * 1.4) * 0.03;
+    let spin = 0.003;
+    if (appState === "listening") { base = 0.3 + Math.abs(Math.sin(t * 5)) * 0.12; spin = 0.006; }
+    else if (appState === "thinking" || appState === "boot") { base = 0.14; spin = 0.045; }
+    else if (appState === "speaking") { base = 0.32 + Math.abs(Math.sin(t * 7.3)) * 0.1; spin = 0.008; }
+    else if (appState === "error") { base = 0.05; spin = 0.001; }
+    orb.pulse *= 0.93;
+    const target = Math.min(1, base + orb.pulse * 0.6);
+    orb.level += (target - orb.level) * 0.12;
+    orb.rot += spin * speedScale;
+
+    const w = size, cx = w / 2, cy = w / 2, R = w * 0.44, L = orb.level;
+    ctx.clearRect(0, 0, w, w);
+
+    const glow = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 1.08);
+    glow.addColorStop(0, a(0.22 + L * 0.25));
+    glow.addColorStop(0.55, a(0.06 + L * 0.08));
+    glow.addColorStop(1, a(0));
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(cx, cy, R * 1.08, 0, Math.PI * 2); ctx.fill();
+
+    ctx.lineCap = "round";
+    for (let i = 0; i < 72; i++) {
+      const ang = (i / 72) * Math.PI * 2 + orb.rot * 0.25;
+      const long = i % 6 === 0;
+      const r1 = R * 0.97, r2 = R * (long ? 0.9 : 0.94);
+      ctx.strokeStyle = a(long ? 0.55 : 0.22);
+      ctx.lineWidth = long ? 1.6 : 1;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(ang) * r1, cy + Math.sin(ang) * r1);
+      ctx.lineTo(cx + Math.cos(ang) * r2, cy + Math.sin(ang) * r2);
+      ctx.stroke();
+    }
+
+    const arcs = [
+      { r: 0.83, len: 1.1, w: 2.2, dir: 1, sp: 1, al: 0.75 },
+      { r: 0.83, len: 0.35, w: 2.2, dir: 1, sp: 1, off: Math.PI, al: 0.5 },
+      { r: 0.76, len: 1.9, w: 1.4, dir: -1, sp: 1.5, al: 0.45 }
+    ];
+    if (appState === "thinking" || appState === "boot") arcs.push({ r: 0.69, len: 0.8, w: 2.6, dir: 1, sp: 2.6, al: 0.85 });
+    arcs.forEach((c) => {
+      const start = orb.rot * c.sp * c.dir + (c.off || 0);
+      ctx.strokeStyle = a(c.al);
+      ctx.lineWidth = c.w;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * c.r, start, start + c.len);
+      ctx.stroke();
+    });
+
+    for (let k = 0; k < 2; k++) {
+      ctx.beginPath();
+      const steps = 120;
+      for (let s = 0; s <= steps; s++) {
+        const th = (s / steps) * Math.PI * 2;
+        const ph = t * (k ? -2.2 : 2.6);
+        const d = (Math.sin(3 * th + ph) * 0.5 + Math.sin(5 * th - ph * 1.3) * 0.3 + Math.sin(9 * th + ph * 2) * 0.2) * L * R * 0.14;
+        const rr = R * (0.56 + k * 0.035) + d;
+        const x = cx + Math.cos(th) * rr, y = cy + Math.sin(th) * rr;
+        if (s === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = a(k ? 0.32 : 0.85);
+      ctx.lineWidth = k ? 1 : 1.8;
+      ctx.stroke();
+    }
+
+    const coreR = R * (0.3 + L * 0.07);
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+    core.addColorStop(0, "rgba(255,255,255,0.95)");
+    core.addColorStop(0.28, a(0.95));
+    core.addColorStop(0.7, a(0.28 + L * 0.2));
+    core.addColorStop(1, a(0));
+    ctx.fillStyle = core;
+    ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2); ctx.fill();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------- boot ---------- */
+  setState("boot");
+  setTimeout(() => { if (appState === "boot") setState("idle"); autoBrief(); }, reduceMotion ? 200 : 1400);
+  renderHud();
+  loadHud(true);
+})();
+</script>
+</body>
+</html>
