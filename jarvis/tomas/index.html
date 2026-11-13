@@ -533,6 +533,8 @@
 
     <label for="setVoice">Hlas</label>
     <select class="field" id="setVoice"></select>
+    <p class="hint">Najprirodzenejší hlas zadarmo: na počítači otvor Jarvisa v Microsoft Edge a vyber Lukáš alebo Viktória (Natural). Na iPhone si stiahni vylepšený slovenský hlas: Nastavenia → Prístupnosť → Hovorený obsah → Hlasy → Slovenčina.</p>
+    <label class="check" id="serverVoiceRow" hidden><input id="setServerVoice" type="checkbox"> Prirodzený AI hlas zo servera</label>
 
     <label for="setRate">Rýchlosť reči</label>
     <select class="field" id="setRate">
@@ -560,6 +562,7 @@ const CONFIG = {
   basicUser: "tomas",
   webhookUrl: "https://n8n.veltro.sk/webhook/jarvis-tomas",
   storageKey: "jarvis-tomas",
+  serverVoice: false,   // true, keď bude v n8n nastavený AI hlas (Azure alebo ElevenLabs)
   accent: "#ffb547",
   accentRgb: "255, 181, 71",
   greeting: "Ahoj Tomáš. Čo potrebuješ?",
@@ -606,7 +609,7 @@ const CONFIG = {
     sideLeft: $("sideLeft"), sideRight: $("sideRight"),
     modal: $("settings"), setUrl: $("setUrl"), setUser: $("setUser"), setKey: $("setKey"),
     toggleKey: $("toggleKey"), setVoice: $("setVoice"), setRate: $("setRate"), setSpeak: $("setSpeak"),
-    setBrief: $("setBrief"), setConvo: $("setConvo"),
+    setBrief: $("setBrief"), setConvo: $("setConvo"), setServerVoice: $("setServerVoice"), serverVoiceRow: $("serverVoiceRow"),
     forgetKey: $("forgetKey"), cancelSettings: $("cancelSettings"), saveSettings: $("saveSettings")
   };
   els.who.textContent = CONFIG.name;
@@ -624,7 +627,7 @@ const CONFIG = {
     }
   };
 
-  const defaults = { url: CONFIG.webhookUrl, user: CONFIG.basicUser, key: "", voice: "", rate: "1.05", speak: true, autoBrief: true, convo: true };
+  const defaults = { url: CONFIG.webhookUrl, user: CONFIG.basicUser, key: "", voice: "", rate: "1.05", speak: true, autoBrief: true, convo: true, serverVoice: true };
   let settings = Object.assign({}, defaults, store.get("settings", {}));
 
   function newSessionId() {
@@ -709,6 +712,7 @@ const CONFIG = {
   let speechSeq = 0;          // každé nové hovorenie alebo stop zneplatní to predošlé
   let convoActive = false;    // rozhovor hlasom: po odpovedi Jarvis znova počúva
   let pendingSpeech = null;   // odpoveď, ktorú prehliadač ešte nedovolil prečítať (čaká na ťuknutie)
+  let pendingAudio = null;    // k nej pripravený zvuk z AI hlasu (ak je zapnutý)
   let briefLoading = false;
 
   function loadVoices() {
@@ -721,31 +725,47 @@ const CONFIG = {
     if (typeof synth.addEventListener === "function") synth.addEventListener("voiceschanged", loadVoices);
     else synth.onvoiceschanged = loadVoices;
   }
+  // Čím vyššie skóre, tým prirodzenejší hlas. Edge má zadarmo hlasy „Natural“, iPhone a Mac „vylepšené“.
+  function voiceScore(v) {
+    const lang = String(v.lang || "").toLowerCase();
+    const name = String(v.name || "").toLowerCase();
+    let s;
+    if (/^sk/.test(lang)) s = 100;
+    else if (/^cs/.test(lang)) s = 40;
+    else return 0;
+    if (/natural|neural|online/.test(name)) s += 40;
+    if (/premium|enhanced|vylepšen|siri/.test(name)) s += 25;
+    if (/google/.test(name)) s += 10;
+    if (/lukas|lukáš/.test(name)) s += 3;
+    return s;
+  }
   function pickVoice() {
     if (!voices.length) return null;
     if (settings.voice) {
       const saved = voices.find((v) => v.voiceURI === settings.voice);
       if (saved) return saved;
     }
-    return voices.find((v) => /^sk/i.test(v.lang)) || voices.find((v) => /^cs/i.test(v.lang)) || null;
+    let best = null, bestScore = 0;
+    voices.forEach((v) => { const sc = voiceScore(v); if (sc > bestScore) { best = v; bestScore = sc; } });
+    return best;
   }
   function populateVoiceSelect() {
     const sel = els.setVoice;
     sel.innerHTML = "";
     const auto = document.createElement("option");
     auto.value = "";
-    auto.textContent = "Automaticky (slovenský, ak je)";
+    auto.textContent = "Automaticky (najprirodzenejší slovenský)";
     sel.appendChild(auto);
-    const rank = (v) => (/^sk/i.test(v.lang) ? 0 : /^cs/i.test(v.lang) ? 1 : 2);
-    voices.slice().sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name)).forEach((v) => {
+    voices.slice().sort((a, b) => voiceScore(b) - voiceScore(a) || a.name.localeCompare(b.name)).forEach((v) => {
       const o = document.createElement("option");
       o.value = v.voiceURI;
-      o.textContent = v.name + " (" + v.lang + ")";
+      o.textContent = v.name + " (" + v.lang + ")" + (voiceScore(v) >= 140 ? " · prirodzený" : "");
       sel.appendChild(o);
     });
     sel.value = settings.voice || "";
   }
   function unlockSpeech() {
+    unlockAudio();
     if (!synth || speechUnlocked) return;
     speechUnlocked = true;
     try {
@@ -769,9 +789,99 @@ const CONFIG = {
   function stopSpeaking() {
     speechSeq++;
     if (synth) { try { synth.cancel(); } catch (e) {} }
+    if (audioEl) { try { audioEl.pause(); } catch (e) {} }
+    if (audioDone) audioDone(false);
   }
   // Vráti true, keď Jarvis dohovoril sám; false, keď ho niečo prerušilo.
-  function speak(text) {
+  function speak(text, preAudio) {
+    if (!settings.speak || !text) return Promise.resolve(true);
+    if (useServerVoice()) return speakServer(text, preAudio);
+    return speakBrowser(text);
+  }
+
+  /* ---------- prirodzený AI hlas zo servera (Azure alebo ElevenLabs cez n8n) ---------- */
+  const audioEl = CONFIG.serverVoice && typeof Audio === "function" ? new Audio() : null;
+  if (audioEl) audioEl.preload = "auto";
+  const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
+  let audioUnlocked = false;
+  let serverVoiceOff = false;      // server hlásil, že hlas nemá nastavený
+  let audioDone = null;            // ukončí práve hrajúci zvuk
+  const audioCache = new Map();    // krátke vety (napríklad rozlúčka) sa generujú len raz
+  function useServerVoice() {
+    return !!(audioEl && !isDemo() && settings.serverVoice && !serverVoiceOff);
+  }
+  function unlockAudio() {
+    if (!audioEl || audioUnlocked) return;
+    audioUnlocked = true;
+    try { audioEl.src = SILENT_WAV; const p = audioEl.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+  }
+  async function fetchServerAudio(text) {
+    const key = String(text || "");
+    if (key.length <= 80 && audioCache.has(key)) return audioCache.get(key);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    try {
+      const res = await fetch(settings.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": basicAuth(settings.user, settings.key) },
+        body: JSON.stringify({ sessionId: sessionId, action: "tts", text: key.slice(0, 2500) }),
+        signal: controller.signal
+      });
+      if (res.status === 501 || res.status === 404) { serverVoiceOff = true; return null; }
+      const type = res.headers.get("content-type") || "";
+      if (!res.ok || !/audio|octet-stream/i.test(type)) return null;
+      const blob = await res.blob();
+      if (!blob.size) return null;
+      const url = URL.createObjectURL(blob);
+      if (key.length <= 80) audioCache.set(key, url);
+      return url;
+    } catch (e) {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  function speakServer(text, preAudio) {
+    stopSpeaking();
+    const my = speechSeq;
+    setState("speaking", "Pripravujem hlas");
+    return Promise.resolve(preAudio || fetchServerAudio(text)).then((url) => {
+      if (my !== speechSeq) return false;
+      if (!url) return speakBrowser(text);   // keď server hlas nedodá, prečíta to prehliadač
+      return new Promise((resolve) => {
+        let finished = false;
+        const pulse = setInterval(() => { orb.pulse = Math.min(1, orb.pulse + 0.2 + Math.random() * 0.35); }, 140);
+        const done = (natural) => {
+          if (finished) return;
+          finished = true;
+          clearInterval(pulse);
+          audioEl.onended = audioEl.onerror = audioEl.onplaying = null;
+          if (audioDone === done) audioDone = null;
+          resolve(!!natural && my === speechSeq);
+        };
+        audioDone = done;
+        audioEl.onplaying = () => { if (my === speechSeq) setState("speaking"); };
+        audioEl.onended = () => done(true);
+        audioEl.onerror = () => done(false);
+        audioEl.src = url;
+        let p;
+        try { p = audioEl.play(); } catch (e) { p = Promise.reject(e); }
+        if (p && p.catch) p.catch(() => {
+          if (finished) return;
+          // Prehliadač zablokoval zvuk bez ťuknutia: odpoveď počká na ťuknutie na guľu.
+          finished = true;
+          clearInterval(pulse);
+          if (audioDone === done) audioDone = null;
+          pendingSpeech = text;
+          pendingAudio = url;
+          setState("idle", "Ťukni na guľu a prečítam ti odpoveď");
+          resolve(false);
+        });
+      });
+    });
+  }
+
+  function speakBrowser(text) {
     return new Promise((resolve) => {
       if (!synth || !settings.speak || !text) return resolve(true);
       stopSpeaking();
@@ -880,9 +990,11 @@ const CONFIG = {
   }
   function speakPending() {
     const t = pendingSpeech;
+    const a = pendingAudio;
     pendingSpeech = null;
+    pendingAudio = null;
     convoActive = true;
-    speak(t).then((natural) => { if (natural) afterReply(); });
+    speak(t, a).then((natural) => { if (natural) afterReply(); });
   }
   function toggleListening() {
     unlockSpeech();
@@ -984,6 +1096,7 @@ const CONFIG = {
     stopListening();
     stopSpeaking();
     pendingSpeech = null;
+    pendingAudio = null;
     els.input.value = "";
     els.live.textContent = "";
     addMessage("user", text);
@@ -1002,6 +1115,7 @@ const CONFIG = {
     // Prehliadač nedovolí hovoriť, kým sa stránky niekto nedotkne. Odpoveď počká na ťuknutie.
     if (!speechUnlocked && synth && settings.speak) {
       pendingSpeech = result.reply;
+      pendingAudio = useServerVoice() ? fetchServerAudio(result.reply) : null;
       setState("idle", opts.brief ? "Ťukni na guľu a poviem ti prehľad" : "Ťukni na guľu a prečítam ti odpoveď");
       return true;
     }
@@ -1305,6 +1419,7 @@ const CONFIG = {
   els.newBtn.addEventListener("click", () => {
     convoActive = false;
     pendingSpeech = null;
+    pendingAudio = null;
     stopSpeaking();
     stopListening();
     resetConversation();
@@ -1321,6 +1436,8 @@ const CONFIG = {
     els.setSpeak.checked = !!settings.speak;
     els.setBrief.checked = !!settings.autoBrief;
     els.setConvo.checked = !!settings.convo;
+    els.serverVoiceRow.hidden = !CONFIG.serverVoice;
+    els.setServerVoice.checked = !!settings.serverVoice;
     populateVoiceSelect();
     els.modal.hidden = false;
     setTimeout(() => (settings.key ? els.setUrl : els.setKey).focus(), 30);
@@ -1348,6 +1465,8 @@ const CONFIG = {
     settings.speak = els.setSpeak.checked;
     settings.autoBrief = els.setBrief.checked;
     settings.convo = els.setConvo.checked;
+    settings.serverVoice = els.setServerVoice.checked;
+    serverVoiceOff = false;
     store.set("settings", settings);
     renderMute();
     setPill(isDemo() ? "demo" : "ready");
