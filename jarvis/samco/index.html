@@ -26,6 +26,7 @@
     --up: #4ee08f;
     --down: #ff7a7a;
     --danger: #ff7a7a;
+    --warn: #f2b84b;
     --accent: #3ee0ff;
     --accent-rgb: 62, 224, 255;
     --on-accent: #021118;
@@ -110,6 +111,13 @@
   }
   .pill[data-state="ready"]::before, .pill[data-state="online"]::before { background: var(--up); }
   .pill[data-state="error"]::before { background: var(--danger); }
+  .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 10px; }
+  .pill.sys { background: transparent; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .pill.sys:hover { color: var(--text); border-color: rgba(var(--accent-rgb), 0.4); }
+  .pill.sys[data-state="ok"]::before { background: var(--up); }
+  .pill.sys[data-state="bad"]::before { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+  .pill.sys[data-state="bad"] { color: var(--text); border-color: rgba(255, 122, 122, 0.45); }
+  .pill.sys[data-state="unk"]::before { background: var(--muted); }
   .icon-btn {
     width: 38px;
     height: 38px;
@@ -136,7 +144,6 @@
     justify-content: center;
     padding: 4px 0 8px;
   }
-  .stage .pill { margin-bottom: 10px; }
   .orb-wrap {
     width: min(60vw, 34vh, 300px);
     aspect-ratio: 1 / 1;
@@ -347,7 +354,31 @@
   .item-text .sub { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
   .item-text .sub.late { color: var(--danger); }
   .empty { color: var(--muted); font-size: 13px; padding: 4px 0; }
-  .warn { margin-top: 8px; font-size: 12px; color: #f2b84b; }
+  .warn { margin-top: 8px; font-size: 12px; color: var(--warn); }
+  .alerts { display: flex; flex-direction: column; gap: 6px; margin: 0 0 10px; padding: 8px 10px; border-left: 2px solid var(--danger); background: rgba(255, 122, 122, 0.08); font-size: 13px; line-height: 1.4; color: var(--text); }
+  .srow { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid rgba(130, 170, 230, 0.07); }
+  .srow.first { border-top: 0; }
+  .srow-l { min-width: 0; font-size: 14px; color: var(--text); }
+  .srow-l .sub { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st { flex: none; padding-top: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .st-ok { color: var(--up); }
+  .st-warn { color: var(--warn); }
+  .st-bad { color: var(--danger); }
+  .st-unk { color: var(--muted); }
+  .sys-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .sys-chip { display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 7px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+  .sys-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--up); }
+  .sys-chip.warn::before { background: var(--warn); }
+  .sys-chip.bad { color: var(--text); border-color: rgba(255, 122, 122, 0.45); }
+  .sys-chip.bad::before { background: var(--danger); }
+  .sys-chip.unk::before { background: var(--muted); }
+  .news { padding: 6px 0; border-top: 1px solid rgba(130, 170, 230, 0.07); }
+  .news.first { border-top: 0; }
+  .news-t { font-size: 13.5px; line-height: 1.35; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .news-m { margin-top: 3px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .news-m .hot { color: var(--warn); }
+  .stats.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .panel .stats:last-child { margin-bottom: 0; }
   .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
   .stat-v { font-family: var(--mono); font-size: 20px; color: var(--text); line-height: 1.2; }
   .stat-l { font-size: 12px; color: var(--muted); margin-top: 2px; }
@@ -387,7 +418,7 @@
     .side::-webkit-scrollbar { display: none; }
     .center { max-width: 760px; margin: 0 auto; }
     .orb-wrap { width: min(36vh, 360px); }
-    .stage .pill { display: none; }
+    .stage .pills { display: none; }
     .top .pill-top { display: inline-flex; }
     .chips { padding-right: 24px; }
   }
@@ -454,7 +485,8 @@
 
   @media (max-height: 640px) {
     .log { max-height: 28vh; }
-    .stage .pill { display: none; }
+    .stage .pills { margin-bottom: 6px; }
+    .stage .pill { height: 24px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .panel { animation: none; }
@@ -469,6 +501,7 @@
       <span class="who" id="who"></span>
     </div>
     <div class="top-actions">
+      <button class="pill pill-top sys" id="sysPillTop" type="button" data-state="unk" hidden>Systémy</button>
       <span class="pill pill-top" id="statusPillTop" data-state="demo">Demo režim</span>
       <button class="icon-btn" id="muteBtn" type="button" aria-label="Vypnúť hlas" aria-pressed="false" title="Hlas zapnutý / vypnutý">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path id="waveIcon" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
@@ -487,7 +520,10 @@
 
     <div class="center">
       <main class="stage">
-        <span class="pill" id="statusPill" data-state="demo">Demo režim</span>
+        <div class="pills">
+          <span class="pill" id="statusPill" data-state="demo">Demo režim</span>
+          <button class="pill sys" id="sysPill" type="button" data-state="unk" hidden>Systémy</button>
+        </div>
         <div class="orb-wrap" id="orbWrap" role="button" tabindex="0" aria-label="Hovoriť s Jarvisom">
           <canvas id="orb" aria-hidden="true"></canvas>
         </div>
@@ -567,14 +603,17 @@ const CONFIG = {
   accentRgb: "62, 224, 255",
   greeting: "Ahoj Samco. Čo potrebuješ?",
   demoGreeting: "Ahoj Samco. Bežím v demo režime, takže odpovede aj dáta v paneloch sú len ukážkové. Kľúč zadáš cez ozubené koliesko vpravo hore.",
-  chips: ["Ranný brief", "Na čo som zabudol?", "Ako je na tom krypto?", "Čo ma dnes čaká?", "Padlo niečo v n8n?", "Aké mám plány?"],
+  watch: true,          // dohľad nad systémami: stav, hlásenie nových problémov hlasom
+  chips: ["Ranný brief", "Bežia mi systémy?", "Čo nové v Stock News?", "Ako sú letenky?", "Ako je na tom Bitcoin?", "Na čo som zabudol?"],
   demo: [
-    { match: /brief|prehľad|prehlad|ráno|rano|čo je nové|co je nove/i, reply: "Dobré ráno, Samco. Za noc v n8n nič nepadlo, z outboundu prišli dve odpovede a bitcoin je na 71 400 dolároch, mínus 3,6 percenta. Dnes ťa čaká call s klientom o desiatej a stretnutie o štvrtej. Spraviť máš dokončiť Jarvisa, termín je dnes o šiestej večer. A zabudol si zaplatiť faktúru za hosting, to malo byť včera. Čím začneme?" },
+    { match: /brief|prehľad|prehlad|ráno|rano|čo je nové|co je nove/i, reply: "Dobré ráno, Samco. Všetky systémy bežia a krypto systémy sa v noci aktualizovali. Bitcoin je na 71 400 dolároch, mínus 3,6 percenta, a Nvidia na 166, mínus 4,3 percenta. Zo Stock News je najdôležitejšie, že Fed naznačil pomalšie znižovanie sadzieb. Dnes ťa čaká call s klientom o desiatej a stretnutie o štvrtej. Spraviť máš dokončiť Jarvisa do šiestej a zabudol si zaplatiť faktúru za hosting. Čím začneme?" },
     { match: /zabud|zmeškal|zmeskal|po termíne|po termine/i, reply: "Po termíne máš zaplatiť faktúru za hosting, to malo byť včera. A už týždeň ti bez termínu visí ponuka pre nového klienta. Chceš si na ňu dať termín?" },
     { match: /hotovo|spravil som|spravené|spravene|vybavil|vybavené|vybavene|netreba/i, reply: "Super, označil som to ako hotové." },
-    { match: /krypto|bitcoin|btc|ethereum|eth|solana|sui/i, reply: "Bitcoin je na 71 400 dolároch, za deň mínus 3,6 percenta. Ethereum stojí 2 018, Solana 82 a Sui 0,80 dolára." },
-    { match: /akci|nvidia|nvda|etf|portf|zlato|mstr/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. Nasdaq 100 cez QQQ mínus 0,3 percenta a zlato cez GLD mínus 2,8 percenta." },
-    { match: /n8n|padl|chyb|workflow/i, reply: "Za posledných 24 hodín nepadol žiadny workflow. Všetko beží." },
+    { match: /systém|system|beží|bezi|bežia|bezia|padl|chyb|n8n|workflow|záloh|zaloh|aktualiz/i, reply: "Všetko beží. Krypto systémy LTPI, MTPI, SOL SUI, RSPS, Market Regime aj SDCA sa dnes aktualizovali, Stock News zbiera správy a nočná záloha prebehla o tretej. Za posledných 24 hodín nepadol žiadny workflow." },
+    { match: /stock|správ|sprav|news|novink/i, reply: "Najdôležitejšie zo Stock News: Fed naznačil pomalšie znižovanie sadzieb, skóre 9. Nvidia predstavila nové čipy pre dátové centrá, skóre 8. A zlato kleslo na mesačné minimum." },
+    { match: /letenk|letov|lety|let do|dovolenk/i, reply: "Najlacnejšie je teraz Lisabon za 89 eur na osobu. Dubaj vychádza na 320 a Bali na 590 eur. Ceny som skontroloval dnes ráno o šiestej." },
+    { match: /krypto|bitcoin|btc/i, reply: "Bitcoin je na 71 400 dolároch, za deň mínus 3,6 percenta." },
+    { match: /akci|nvidia|nvda|etf|portf|zlato|mstr|nasdaq/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. MSTR mínus 6,5 percenta, Nasdaq 100 cez QQQ mínus 0,3 percenta a zlato cez GLD mínus 2,8 percenta." },
     { match: /zapamätaj|zapamataj|poznač|poznac|pridaj|pripomeň|pripomen/i, reply: "Jasné, uložil som to a pripomeniem ti to zajtra o deviatej." },
     { match: /plán|plan|poznámk|poznamk/i, reply: "Máš tri otvorené plány: dokončiť Jarvisa, pripraviť ponuku pre nového klienta a pozrieť rozpočet na budúci mesiac." },
     { match: /dnes|kalend|čaká|caka|zajtra|stretnut|meeting/i, reply: "Dnes máš dve udalosti, o desiatej call a o štvrtej poobede stretnutie. Večer máš voľno." }
@@ -582,10 +621,7 @@ const CONFIG = {
   demoHud: {
     kind: "samco", updatedAt: "08:00",
     crypto: [
-      { symbol: "BTC", price: 71391, change: -3.6, currency: "USD" },
-      { symbol: "ETH", price: 2017.62, change: -1.9, currency: "USD" },
-      { symbol: "SOL", price: 81.67, change: -2.1, currency: "USD" },
-      { symbol: "SUI", price: 0.8049, change: -2.2, currency: "USD" }
+      { symbol: "BTC", price: 71391, change: -3.6, currency: "USD" }
     ],
     stocks: [
       { symbol: "NVDA", ticker: "NVDA", price: 166.19, change: -4.3, currency: "USD" },
@@ -597,7 +633,37 @@ const CONFIG = {
     agenda: [ { time: "10:00", title: "Call s klientom" }, { time: "16:00", title: "Stretnutie" } ],
     system: { failed24h: 0, failed: [] },
     outbound: { sent: 22, replies: 2, bounces: 0, ready: 1200 },
-    notes: [ { text: "Zaplatiť faktúru za hosting", kind: "po termíne", overdue: true }, { text: "Dokončiť Jarvisa", kind: "dnes 18:00" }, { text: "Pripraviť ponuku pre nového klienta", kind: "úloha" } ]
+    notes: [ { text: "Zaplatiť faktúru za hosting", kind: "po termíne", overdue: true }, { text: "Dokončiť Jarvisa", kind: "dnes 18:00" }, { text: "Pripraviť ponuku pre nového klienta", kind: "úloha" } ],
+    watch: {
+      ok: true, checkedAt: "08:00", summary: "Všetko beží", problems: [],
+      items: [
+        { key: "krypto", label: "Krypto systémy", status: "ok", detail: "všetkých 6 aktualizovaných", systems: [
+          { key: "ltpi", name: "LTPI", status: "ok", detail: "aktualizované dnes 01:05" },
+          { key: "mtpi", name: "MTPI", status: "ok", detail: "aktualizované dnes 01:10" },
+          { key: "solsui", name: "SOL/SUI TPI", status: "ok", detail: "aktualizované dnes 01:15" },
+          { key: "rsps", name: "RSPS", status: "ok", detail: "aktualizované dnes 01:20" },
+          { key: "regime", name: "Market Regime", status: "ok", detail: "aktualizované dnes 01:25" },
+          { key: "sdca", name: "SDCA", status: "ok", detail: "aktualizované dnes 06:10" }
+        ] },
+        { key: "stock", label: "Stock News", status: "ok", detail: "zber dnes 07:45" },
+        { key: "letenky", label: "Letenky", status: "ok", detail: "4 sledovania, kontrola dnes 06:07" },
+        { key: "chatboty", label: "AI chatboty", status: "ok", detail: "žiadne hlásenia za 24 h" },
+        { key: "n8n", label: "n8n workflowy", status: "ok", detail: "žiadne chyby za 24 h" },
+        { key: "zaloha", label: "Nočná záloha", status: "ok", detail: "záloha dnes 03:00" }
+      ],
+      news: [
+        { title: "Fed signals a slower pace of rate cuts into next year", asset: "MACRO", score: 9, when: "dnes 07:10" },
+        { title: "Nvidia unveils new data center chips at its developer event", asset: "NVDA", score: 8, when: "včera 22:40" },
+        { title: "Gold slips to a one-month low as the dollar firms", asset: "GOLD", score: 7, when: "včera 18:05" }
+      ],
+      flights: [
+        { name: "Bali", price: 590, info: "VIE→DPS 12. 1.–28. 1. · spolu 1 180 €", checked: "dnes 06:07", stale: false },
+        { name: "Lisabon", price: 89, info: "BTS→LIS 6. 3.–10. 3. · spolu 178 €", checked: "dnes 06:07", stale: false },
+        { name: "Dubaj", price: 320, info: "VIE→DXB 14. 2.–21. 2. · spolu 640 €", checked: "dnes 06:07", stale: false },
+        { name: "Tokio", price: 655, info: "VIE→NRT 2. 4.–16. 4. · spolu 1 310 €", checked: "dnes 06:07", stale: false }
+      ],
+      incidents: [], failed: []
+    }
   }
 };
 
@@ -610,7 +676,8 @@ const CONFIG = {
 
   const $ = (id) => document.getElementById(id);
   const els = {
-    who: $("who"), pill: $("statusPill"), pillTop: $("statusPillTop"), mute: $("muteBtn"), waveIcon: $("waveIcon"),
+    who: $("who"), pill: $("statusPill"), pillTop: $("statusPillTop"), sysPill: $("sysPill"), sysPillTop: $("sysPillTop"),
+    mute: $("muteBtn"), waveIcon: $("waveIcon"),
     newBtn: $("newBtn"), settingsBtn: $("settingsBtn"), orbWrap: $("orbWrap"), canvas: $("orb"),
     state: $("stateText"), live: $("liveText"), log: $("log"), chips: $("chips"),
     form: $("composer"), input: $("input"), mic: $("micBtn"),
@@ -786,8 +853,16 @@ const CONFIG = {
       synth.speak(u);
     } catch (e) {}
   }
+  // Emoji a značky formátovania sa nečítajú nahlas.
+  const EMOJI_RE = (function () {
+    try { return new RegExp("\\p{Extended_Pictographic}|\\p{Regional_Indicator}|\\uFE0F|\\u200D", "gu"); }
+    catch (e) { return /[☀-➿️‍]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g; }
+  })();
+  function cleanText(text) {
+    return String(text || "").replace(EMOJI_RE, "").replace(/\s+/g, " ").replace(/\s+([,.;:!?])/g, "$1").trim();
+  }
   function splitForSpeech(text) {
-    const clean = String(text).replace(/\s+/g, " ").trim();
+    const clean = cleanText(String(text).replace(/[*_#`]+/g, ""));
     const parts = clean.match(/[^.!?…]+[.!?…]*\s*/g) || [clean];
     const out = [];
     let buf = "";
@@ -1339,9 +1414,85 @@ const CONFIG = {
     side.appendChild(f);
   }
 
+  const plural = (n, one, few, many) => (n === 1 ? one : n >= 2 && n <= 4 ? few : many);
+  const STATUS = { ok: ["OK", "st-ok"], pozor: ["Pozor", "st-warn"], neznamy: ["Neznáme", "st-unk"], nebezal: ["Nebeží", "st-bad"], chyba: ["Chyba", "st-bad"] };
+  const CHIP = { ok: "", pozor: " warn", neznamy: " unk", nebezal: " bad", chyba: " bad" };
+  const QUOTE_NAMES = { BTC: "Bitcoin", NVDA: "Nvidia" };
+  function problemList(w) {
+    return w && Array.isArray(w.problems) ? w.problems.filter((p) => p && p.key && p.text) : [];
+  }
+
+  // Dohľad: krypto systémy, Stock News, letenky, chatboty, n8n a záloha
+  function watchPanel(w) {
+    const p = panel("Dohľad", w.checkedAt ? "kontrola " + w.checkedAt : "");
+    const probs = problemList(w);
+    if (probs.length) {
+      const box = el("div", "alerts");
+      probs.slice(0, 4).forEach((x) => box.appendChild(el("div", "", cleanText(x.text))));
+      if (probs.length > 4) box.appendChild(el("div", "", "a ďalšie " + (probs.length - 4)));
+      p.appendChild(box);
+    }
+    (w.items || []).forEach((it, i) => {
+      const r = el("div", "srow" + (i === 0 ? " first" : ""));
+      const l = el("div", "srow-l", it.label);
+      if (it.detail) l.appendChild(el("span", "sub", it.detail));
+      if (it.key === "krypto" && Array.isArray(it.systems) && it.systems.length) {
+        const g = el("div", "sys-grid");
+        it.systems.forEach((s) => {
+          const c = el("span", "sys-chip" + (CHIP[s.status] === undefined ? " unk" : CHIP[s.status]), s.name);
+          c.title = s.detail || "";
+          g.appendChild(c);
+        });
+        l.appendChild(g);
+      }
+      const st = STATUS[it.status] || ["–", "st-unk"];
+      r.appendChild(l);
+      r.appendChild(el("span", "st " + st[1], st[0]));
+      p.appendChild(r);
+      if (it.key === "n8n") (w.failed || []).slice(0, 4).forEach((f) => p.appendChild(itemRow("", f.name, f.count + "× · naposledy " + f.last, "late")));
+    });
+    return p;
+  }
+  function newsPanel(w) {
+    const p = panel("Stock News", "najdôležitejšie");
+    const list = w.news || [];
+    if (!list.length) p.appendChild(el("div", "empty", "Za posledný deň žiadne správy."));
+    list.forEach((n, i) => {
+      const it = el("div", "news" + (i === 0 ? " first" : ""));
+      it.appendChild(el("div", "news-t", cleanText(n.title)));
+      const m = el("div", "news-m");
+      if (n.asset) m.appendChild(el("span", "", n.asset + " · "));
+      m.appendChild(el("span", Number(n.score) >= 8 ? "hot" : "", "skóre " + (n.score === null || n.score === undefined ? "–" : n.score)));
+      if (n.when) m.appendChild(el("span", "", " · " + n.when));
+      it.appendChild(m);
+      p.appendChild(it);
+    });
+    return p;
+  }
+  function flightsPanel(w) {
+    const fl = (w.flights || []).filter((f) => f && f.name);
+    const p = panel("Letenky", fl.length && fl[0].checked ? "kontrola " + fl[0].checked : "");
+    if (!fl.length) { p.appendChild(el("div", "empty", "Žiadne aktívne sledovanie.")); return p; }
+    const price = (f) => (f.price === null || f.price === undefined || isNaN(f.price) ? Infinity : Number(f.price));
+    fl.slice().sort((a, b) => price(a) - price(b)).slice(0, 8).forEach((f) => {
+      const r = el("div", "row");
+      const info = cleanText(f.info);
+      r.title = info;
+      const l = el("span", "row-l", cleanText(f.name));
+      const route = info.split(" ")[0];
+      if (route && route.indexOf("→") > 0) l.appendChild(el("span", "sub", route));
+      r.appendChild(l);
+      r.appendChild(el("span", "row-r" + (f.stale ? " down" : ""), isFinite(price(f)) ? fmtInt(price(f)) + " €" : "–"));
+      p.appendChild(r);
+    });
+    if (fl.length > 8) p.appendChild(el("div", "empty", "a " + (fl.length - 8) + " " + plural(fl.length - 8, "ďalšie sledovanie", "ďalšie sledovania", "ďalších sledovaní") + ", spýtaj sa ma na ne"));
+    return p;
+  }
+
   function renderSamco(d) {
     const L = els.sideLeft, R = els.sideRight;
-    const agenda = panel("Dnes", (d.agenda || []).length ? (d.agenda.length + " " + (d.agenda.length === 1 ? "udalosť" : d.agenda.length < 5 ? "udalosti" : "udalostí")) : "");
+    const w = d.watch || null;
+    const agenda = panel("Dnes", (d.agenda || []).length ? (d.agenda.length + " " + plural(d.agenda.length, "udalosť", "udalosti", "udalostí")) : "");
     if ((d.agenda || []).length) d.agenda.slice(0, 6).forEach((a) => agenda.appendChild(itemRow(a.time, a.title)));
     else agenda.appendChild(el("div", "empty", "Kalendár je dnes voľný."));
     L.appendChild(agenda);
@@ -1351,27 +1502,37 @@ const CONFIG = {
     else notes.appendChild(el("div", "empty", "Zatiaľ nič. Povedz mi „zapamätaj si…“."));
     L.appendChild(notes);
 
+    if (w) L.appendChild(flightsPanel(w));
+
+    if (d.outbound) {
+      const ob = panel("Outbound");
+      const s = el("div", "stats three");
+      s.appendChild(stat(fmtInt(d.outbound.sent), "dnes odoslané"));
+      s.appendChild(stat(fmtInt(d.outbound.replies), "dnes odpovede"));
+      s.appendChild(stat(fmtInt(d.outbound.ready), "pripravené"));
+      ob.appendChild(s);
+      L.appendChild(ob);
+    }
+
+    if (w) R.appendChild(watchPanel(w));
+    else {
+      const sys = panel("Dohľad");
+      sys.appendChild(el("div", "empty", "Dohľad je teraz nedostupný."));
+      if (d.system) sys.appendChild(kvRow("n8n · chyby za 24 h", fmtInt(d.system.failed24h || 0), d.system.failed24h ? "down" : "up"));
+      R.appendChild(sys);
+    }
+
     const mk = panel("Trhy", "USD");
-    (d.crypto || []).forEach((c) => mk.appendChild(quoteRow(c.symbol, "", c.price, c.currency, c.change)));
-    (d.stocks || []).forEach((s) => mk.appendChild(quoteRow(s.symbol, s.ticker && s.ticker !== s.symbol ? s.ticker : "", s.price, s.currency, s.change)));
+    (d.crypto || []).forEach((c) => mk.appendChild(quoteRow(QUOTE_NAMES[c.symbol] || c.symbol, QUOTE_NAMES[c.symbol] ? c.symbol : "", c.price, c.currency, c.change)));
+    (d.stocks || []).forEach((s) => {
+      const name = QUOTE_NAMES[s.symbol] || s.symbol;
+      const sub = s.ticker && s.ticker !== name ? s.ticker : "";
+      mk.appendChild(quoteRow(name, sub, s.price, s.currency, s.change));
+    });
     if (!(d.crypto || []).length && !(d.stocks || []).length) mk.appendChild(el("div", "empty", "Ceny sa nepodarilo načítať."));
     R.appendChild(mk);
 
-    const sys = panel("Systémy");
-    if (d.system) {
-      if (d.system.failed24h) {
-        sys.appendChild(kvRow("n8n · chyby za 24 h", fmtInt(d.system.failed24h), "down"));
-        (d.system.failed || []).forEach((f) => sys.appendChild(itemRow("", f.name, f.count > 1 ? f.count + "× zlyhal" : "1× zlyhal")));
-      } else {
-        sys.appendChild(kvRow("n8n · chyby za 24 h", "0", "up"));
-      }
-    } else sys.appendChild(kvRow("n8n", "nedostupné", "down"));
-    if (d.outbound) {
-      sys.appendChild(kvRow("Outbound · dnes odoslané", fmtInt(d.outbound.sent)));
-      sys.appendChild(kvRow("Outbound · odpovede dnes", fmtInt(d.outbound.replies)));
-      sys.appendChild(kvRow("Outbound · pripravené", fmtInt(d.outbound.ready)));
-    }
-    R.appendChild(sys);
+    if (w) R.appendChild(newsPanel(w));
   }
 
   function renderTomas(d) {
@@ -1443,11 +1604,13 @@ const CONFIG = {
     footer(els.sideRight);
   }
 
+  // Samco: dáta sa načítavajú aj na mobile kvôli stavu systémov a hláseniam (bez AI, nič nestojí).
+  const watchOn = !!CONFIG.watch;
   async function loadHud(force) {
-    if (!wideQuery.matches) return;
-    if (isDemo()) { hud = { data: null, error: null, loading: false, at: Date.now() }; renderHud(); return; }
+    if (!wideQuery.matches && !watchOn) return;
+    if (isDemo()) { hud = { data: null, error: null, loading: false, at: Date.now() }; renderHud(); renderSysPill(); return; }
     if (hud.loading) return;
-    if (!force && hud.data && Date.now() - hud.at < 9 * 60 * 1000) { renderHud(); return; }
+    if (!force && hud.data && Date.now() - hud.at < 9 * 60 * 1000) { renderHud(); renderSysPill(); return; }
     hud.loading = true;
     renderHud();
     const r = await callWebhook({ action: "hud" }, 45000);
@@ -1457,7 +1620,91 @@ const CONFIG = {
     else if (r.data && r.data.ok) { hud.data = r.data; hud.error = null; }
     else hud.error = "Panel vrátil neplatné dáta";
     renderHud();
+    renderSysPill();
+    if (!r.error && r.data && r.data.ok && !isDemo()) checkAlerts(r.data.watch);
   }
+
+  /* ---------- dohľad: stav systémov a hlásenia nových problémov ---------- */
+  function currentWatch() {
+    const d = isDemo() ? CONFIG.demoHud : hud.data;
+    return d && d.watch ? d.watch : null;
+  }
+  function renderSysPill() {
+    if (!watchOn) return;
+    const w = currentWatch();
+    let state = "unk", label = "Systémy", title = "";
+    if (w) {
+      const n = problemList(w).length;
+      state = n ? "bad" : "ok";
+      label = n ? n + " " + plural(n, "problém", "problémy", "problémov") : "Systémy OK";
+      title = (n ? "Ťukni a poviem ti, čo nebeží" : "Všetko beží, ťukni pre podrobnosti") + (w.checkedAt ? " · kontrola " + w.checkedAt : "");
+    } else if (hud.error || (hud.data && !hud.data.watch)) {
+      label = "Dohľad nedostupný";
+    } else return;
+    [els.sysPill, els.sysPillTop].forEach((p) => {
+      p.hidden = false;
+      p.dataset.state = state;
+      p.textContent = label;
+      p.title = title;
+    });
+  }
+  // Text pre hlas: časy, „h“ a znaky prečíta po slovensky.
+  function speechify(text) {
+    return String(text)
+      .replace(/(\d+)\s?h\b/g, "$1 hodín")
+      .replace(/(\d+)×/g, "$1 krát")
+      .replace(/→/g, " do ")
+      .replace(/\b(\d{1,2}):(\d{2})\b/g, (m, h, mm) => String(Number(h)) + (mm === "00" ? "" : " " + mm));
+  }
+  function watchText(w) {
+    if (!w) return "Dohľad je teraz nedostupný, stav systémov neviem zistiť.";
+    const probs = problemList(w);
+    if (probs.length) {
+      const head = probs.length === 1 ? "Mám jeden problém." : "Mám " + probs.length + " " + plural(probs.length, "problém", "problémy", "problémov") + ".";
+      return head + " " + probs.slice(0, 5).map((p) => cleanText(p.text)).join(" ");
+    }
+    return "Všetky systémy bežia. " + (w.items || []).map((i) => i.label + ": " + i.detail + ".").join(" ");
+  }
+  function sayLocal(text, waitLabel) {
+    addMessage("jarvis", text);
+    if (!settings.speak || busy || rec || appState === "listening" || appState === "thinking" || appState === "speaking") return;
+    if (!speechUnlocked && synth) {
+      if (!pendingSpeech) {
+        pendingSpeech = speechify(text);
+        pendingAudio = null;
+        setState("idle", waitLabel);
+      }
+      return;
+    }
+    speak(speechify(text)).then((natural) => { if (natural || appState === "speaking") setState("idle"); });
+  }
+  function onSysPill() {
+    unlockSpeech();
+    if (busy || appState === "listening" || appState === "thinking") return;
+    stopSpeaking();
+    pendingSpeech = null;
+    pendingAudio = null;
+    convoActive = false;
+    sayLocal(watchText(currentWatch()), "");
+    if (!isDemo() && Date.now() - hud.at > 2 * 60 * 1000) loadHud(true);
+  }
+  // Nové problémy povie hneď, keď prídu. Pri prvom načítaní dňa ich povie ranný prehľad.
+  let watchFirst = true;
+  function checkAlerts(w) {
+    if (!watchOn || !w) return;
+    const probs = problemList(w);
+    const seen = store.get("seenProblems", []) || [];
+    const fresh = probs.filter((p) => seen.indexOf(p.key) === -1);
+    if (fresh.length) store.set("seenProblems", seen.concat(fresh.map((p) => p.key)).slice(-300));
+    const first = watchFirst;
+    watchFirst = false;
+    if (!fresh.length) return;
+    if (first && settings.autoBrief && store.get("briefDay", "") !== todayKey()) return;
+    const n = fresh.length;
+    const head = n === 1 ? "Pozor, nový problém." : "Pozor, " + n + " " + plural(n, "nový problém", "nové problémy", "nových problémov") + ".";
+    sayLocal(head + " " + fresh.slice(0, 4).map((p) => cleanText(p.text)).join(" "), "Ťukni na guľu, mám pre teba hlásenie");
+  }
+  [els.sysPill, els.sysPillTop].forEach((p) => p.addEventListener("click", onSysPill));
   setInterval(() => { if (!document.hidden) loadHud(false); }, 10 * 60 * 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) loadHud(false); });
   const onWide = () => { if (wideQuery.matches) loadHud(false); };
