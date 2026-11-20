@@ -378,6 +378,23 @@
   .news-m { margin-top: 3px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .news-m .hot { color: var(--warn); }
   .stats.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .demo-link { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(var(--accent-rgb), 0.5); }
+  .demo-link:hover { color: var(--accent); }
+  .trip-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 2px 0 4px; }
+  .trip-price { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--text); line-height: 1.1; }
+  .trip-per { font-size: 12.5px; color: var(--muted); }
+  .trip-trend { font-size: 12.5px; line-height: 1.4; margin-bottom: 6px; }
+  .trip-trend.good { color: var(--up); }
+  .trip-trend.meh { color: var(--warn); }
+  .trip-route { margin: 6px 0 2px; font-family: var(--mono); font-size: 12px; color: var(--text); overflow-wrap: anywhere; }
+  .trip-carriers { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .trip-sub { margin-top: 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .row-r.flash-up { animation: flashUp 1.6s ease-out; }
+  .row-r.flash-down { animation: flashDown 1.6s ease-out; }
+  @keyframes flashUp { from { background: rgba(78, 224, 143, 0.28); } to { background: transparent; } }
+  @keyframes flashDown { from { background: rgba(255, 122, 122, 0.28); } to { background: transparent; } }
+  .demo-banner { width: 100%; max-width: 560px; margin: 0 auto 10px; padding: 8px 12px; border: 1px solid rgba(242, 184, 75, 0.45); border-radius: 10px; background: rgba(242, 184, 75, 0.10); color: var(--text); font-size: 13px; line-height: 1.4; text-align: center; }
+  .demo-banner b { color: var(--warn); font-weight: 600; }
   .panel .stats:last-child { margin-bottom: 0; }
   .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
   .stat-v { font-family: var(--mono); font-size: 20px; color: var(--text); line-height: 1.2; }
@@ -520,6 +537,7 @@
 
     <div class="center">
       <main class="stage">
+        <div class="demo-banner" id="demoBanner" hidden></div>
         <div class="pills">
           <span class="pill" id="statusPill" data-state="demo">Demo režim</span>
           <button class="pill sys" id="sysPill" type="button" data-state="unk" hidden>Systémy</button>
@@ -604,19 +622,21 @@ const CONFIG = {
   greeting: "Ahoj Samco. Čo potrebuješ?",
   demoGreeting: "Ahoj Samco. Bežím v demo režime, takže odpovede aj dáta v paneloch sú len ukážkové. Kľúč zadáš cez ozubené koliesko vpravo hore.",
   watch: true,          // dohľad nad systémami: stav, hlásenie nových problémov hlasom
-  chips: ["Ranný brief", "Bežia mi systémy?", "Čo nové v Stock News?", "Ako sú letenky?", "Ako je na tom Bitcoin?", "Na čo som zabudol?"],
+  marketsLive: true,    // panel Trhy sa obnovuje každú minútu (bez AI)
+  chips: ["Ranný brief", "Aké demá ma čakajú?", "Bežia mi systémy?", "Čo nové v Stock News?", "Ako je na tom výlet do Ázie?", "Na čo som zabudol?"],
   demo: [
-    { match: /brief|prehľad|prehlad|ráno|rano|čo je nové|co je nove/i, reply: "Dobré ráno, Samco. Všetky systémy bežia a krypto systémy sa v noci aktualizovali. Bitcoin je na 71 400 dolároch, mínus 3,6 percenta, a Nvidia na 166, mínus 4,3 percenta. Zo Stock News je najdôležitejšie, že Fed naznačil pomalšie znižovanie sadzieb. Dnes ťa čaká call s klientom o desiatej a stretnutie o štvrtej. Spraviť máš dokončiť Jarvisa do šiestej a zabudol si zaplatiť faktúru za hosting. Čím začneme?" },
+    { match: /brief|prehľad|prehlad|ráno|rano|čo je nové|co je nove/i, reply: "Dobré ráno, Samco. Všetky systémy bežia. Demo pre eshop-a.sk na dnes o desiatej je hotové. V pondelok ťa čakajú dve demá: eshop-b.sk o desiatej je hotové a eshop-c.sk o jednej ešte treba pripraviť. Zabudol si zaplatiť faktúru za hosting. Zo Stock News je dôležité, že Fed naznačil pomalšie znižovanie sadzieb. Čím začneme?" },
+    { match: /dem[oaá]/i, reply: "Na najbližšie dva pracovné dni máš tri demá. eshop-a.sk dnes o desiatej je hotové a eshop-b.sk v pondelok o desiatej tiež. eshop-c.sk v pondelok o jednej ešte treba pripraviť." },
     { match: /zabud|zmeškal|zmeskal|po termíne|po termine/i, reply: "Po termíne máš zaplatiť faktúru za hosting, to malo byť včera. A už týždeň ti bez termínu visí ponuka pre nového klienta. Chceš si na ňu dať termín?" },
     { match: /hotovo|spravil som|spravené|spravene|vybavil|vybavené|vybavene|netreba/i, reply: "Super, označil som to ako hotové." },
     { match: /systém|system|beží|bezi|bežia|bezia|padl|chyb|n8n|workflow|záloh|zaloh|aktualiz/i, reply: "Všetko beží. Krypto systémy LTPI, MTPI, SOL SUI, RSPS, Market Regime aj SDCA sa dnes aktualizovali, Stock News zbiera správy a nočná záloha prebehla o tretej. Za posledných 24 hodín nepadol žiadny workflow." },
     { match: /stock|správ|sprav|news|novink/i, reply: "Najdôležitejšie zo Stock News: Fed naznačil pomalšie znižovanie sadzieb, skóre 9. Nvidia predstavila nové čipy pre dátové centrá, skóre 8. A zlato kleslo na mesačné minimum." },
-    { match: /letenk|letov|lety|let do|dovolenk/i, reply: "Najlacnejšie je teraz Lisabon za 89 eur na osobu. Dubaj vychádza na 320 a Bali na 590 eur. Ceny som skontroloval dnes ráno o šiestej." },
+    { match: /letenk|letov|lety|let do|dovolenk|výlet|vylet|ázi|azi/i, reply: "Na výlet do Ázie je teraz najlepšia cena 790 eur na osobu, spolu 2 370 eur za troch, termín 12. februára až 5. marca. Za posledný týždeň bolo minimum 771 eur. Ceny sa kontrolovali dnes ráno o šiestej." },
     { match: /krypto|bitcoin|btc/i, reply: "Bitcoin je na 71 400 dolároch, za deň mínus 3,6 percenta." },
     { match: /akci|nvidia|nvda|etf|portf|zlato|mstr|nasdaq/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. MSTR mínus 6,5 percenta, Nasdaq 100 mínus 0,3 percenta na 27 390 bodoch, S&P 500 tiež mínus 0,3 percenta a zlato mínus 2,8 percenta na 3 843 dolároch za uncu." },
     { match: /zapamätaj|zapamataj|poznač|poznac|pridaj|pripomeň|pripomen/i, reply: "Jasné, uložil som to a pripomeniem ti to zajtra o deviatej." },
     { match: /plán|plan|poznámk|poznamk/i, reply: "Máš tri otvorené plány: dokončiť Jarvisa, pripraviť ponuku pre nového klienta a pozrieť rozpočet na budúci mesiac." },
-    { match: /dnes|kalend|čaká|caka|zajtra|stretnut|meeting/i, reply: "Dnes máš dve udalosti, o desiatej call a o štvrtej poobede stretnutie. Večer máš voľno." }
+    { match: /dnes|kalend|čaká|caka|zajtra|stretnut|meeting/i, reply: "Dnes máš v kalendári len demo pre eshop-a.sk o desiatej a to je hotové. Ďalšie demá máš až v pondelok." }
   ],
   demoHud: {
     kind: "samco", updatedAt: "08:00",
@@ -630,7 +650,18 @@ const CONFIG = {
       { symbol: "S&P 500", ticker: "SPY ETF", price: 757.25, change: -0.3, currency: "USD" },
       { symbol: "Zlato", ticker: "unca", price: 3842.6, change: -2.8, currency: "USD" }
     ],
-    agenda: [ { time: "10:00", title: "Call s klientom" }, { time: "16:00", title: "Stretnutie" } ],
+    agenda: [],
+    demos: [
+      { when: "dnes 10:00", name: "eshop-a.sk", done: true, overdue: false, web: "" },
+      { when: "po 23. 11. 10:00", name: "eshop-b.sk", done: true, overdue: false, web: "" },
+      { when: "po 23. 11. 13:00", name: "eshop-c.sk", done: false, overdue: false, web: "" }
+    ],
+    trip: {
+      title: "Ázia", price: 790, total: 2370, adults: 3, dates: "12. 2.–5. 3. 2027",
+      route: "VIE → BKK → HKT → KUL → VIE", carriers: "Ukážkové aerolinky", checked: "dnes 06:07",
+      min7: { price: 771, dates: "18. 2.–11. 3." }, max7: 812,
+      alternatives: [ { dates: "18. 2.–11. 3.", price: 785 }, { dates: "24. 2.–17. 3.", price: 803 } ]
+    },
     system: { failed24h: 0, failed: [] },
     outbound: { sent: 22, replies: 2, bounces: 0, ready: 1200 },
     notes: [ { text: "Zaplatiť faktúru za hosting", kind: "po termíne", overdue: true }, { text: "Dokončiť Jarvisa", kind: "dnes 18:00" }, { text: "Pripraviť ponuku pre nového klienta", kind: "úloha" } ],
@@ -676,7 +707,7 @@ const CONFIG = {
 
   const $ = (id) => document.getElementById(id);
   const els = {
-    who: $("who"), pill: $("statusPill"), pillTop: $("statusPillTop"), sysPill: $("sysPill"), sysPillTop: $("sysPillTop"),
+    who: $("who"), pill: $("statusPill"), pillTop: $("statusPillTop"), sysPill: $("sysPill"), sysPillTop: $("sysPillTop"), demoBanner: $("demoBanner"),
     mute: $("muteBtn"), waveIcon: $("waveIcon"),
     newBtn: $("newBtn"), settingsBtn: $("settingsBtn"), orbWrap: $("orbWrap"), canvas: $("orb"),
     state: $("stateText"), live: $("liveText"), log: $("log"), chips: $("chips"),
@@ -747,6 +778,10 @@ const CONFIG = {
   function setPill(kind) {
     const labels = { demo: "Demo režim", ready: "Pripravený", online: "Online", error: "Chyba spojenia" };
     [els.pill, els.pillTop].forEach((p) => { p.dataset.state = kind; p.textContent = labels[kind]; });
+    if (els.demoBanner) {
+      els.demoBanner.hidden = kind !== "demo";
+      els.demoBanner.innerHTML = "<b>Ukážka s vymyslenými dátami.</b> Živé dáta ukazuje len stránka veltro.sk/jarvis/" + CONFIG.hudKind + "/ so zadaným kľúčom.";
+    }
   }
   setPill(isDemo() ? "demo" : "ready");
 
@@ -1506,20 +1541,97 @@ const CONFIG = {
     return p;
   }
 
+  // Demá na prípravu: z udalostí „Pripraviť demo – …“ v kalendári, dnes a najbližšie 2 pracovné dni
+  function demosPanel(d) {
+    const list = Array.isArray(d.demos) ? d.demos : null;
+    const open = (list || []).filter((x) => !x.done).length;
+    const note = !list || !list.length ? "2 pracovné dni" : open ? open + " na prípravu" : "všetky hotové";
+    const p = panel("Demá", note);
+    if (!list) { p.appendChild(el("div", "empty", "Demá sa nepodarilo načítať z kalendára.")); return p; }
+    if (!list.length) { p.appendChild(el("div", "empty", "Na najbližšie dva pracovné dni nemáš žiadne demo.")); return p; }
+    list.forEach((x, i) => {
+      const r = el("div", "srow" + (i === 0 ? " first" : ""));
+      const l = el("div", "srow-l");
+      if (x.web && /^https?:\/\//i.test(x.web)) {
+        const a = el("a", "demo-link", x.name);
+        a.href = x.web;
+        a.target = "_blank";
+        a.rel = "noopener";
+        l.appendChild(a);
+      } else l.appendChild(document.createTextNode(x.name));
+      l.appendChild(el("span", "sub", x.when || ""));
+      const st = x.done ? ["Hotové", "st-ok"] : x.overdue ? ["Po termíne", "st-bad"] : ["Pripraviť", "st-warn"];
+      r.appendChild(l);
+      r.appendChild(el("span", "st " + st[1], st[0]));
+      p.appendChild(r);
+    });
+    return p;
+  }
+
+  // Výlet do Ázie: najlepšia cena zo sledovača leteniek, týždenný vývoj a iné termíny
+  function tripPanel(t) {
+    const p = panel("Výlet do Ázie", t.checked ? "kontrola " + t.checked : "");
+    const head = el("div", "trip-head");
+    head.appendChild(el("div", "trip-price", fmtInt(t.price) + " €"));
+    head.appendChild(el("div", "trip-per", "na osobu" + (t.total ? " · spolu " + fmtInt(t.total) + " €" + (t.adults ? " za " + t.adults + " os." : "") : "")));
+    p.appendChild(head);
+    if (t.min7 && t.price !== null && t.price !== undefined) {
+      const diff = t.price - t.min7.price;
+      p.appendChild(el("div", "trip-trend " + (diff <= 0 ? "good" : "meh"), diff <= 0
+        ? "Najnižšia cena za posledný týždeň."
+        : "O " + fmtInt(diff) + " € viac ako týždenné minimum " + fmtInt(t.min7.price) + " € (" + t.min7.dates + ")."));
+    }
+    p.appendChild(kvRow("Termín", t.dates || "–"));
+    if (t.route) p.appendChild(el("div", "trip-route", cleanText(t.route)));
+    if (t.carriers) p.appendChild(el("div", "trip-carriers", t.carriers));
+    if ((t.alternatives || []).length) {
+      p.appendChild(el("div", "trip-sub", "Iné termíny"));
+      t.alternatives.forEach((a) => p.appendChild(kvRow(a.dates, fmtInt(a.price) + " €")));
+    }
+    return p;
+  }
+
+  // Trhy: obnovujú sa každú minútu, zmena ceny krátko zasvieti
+  const lastQuotes = {};
+  function marketsPanel(d, flash) {
+    const mk = panel("Trhy", d.marketsAt ? "naživo " + d.marketsAt : "USD");
+    mk.id = "mkPanel";
+    const rows = [];
+    (d.crypto || []).forEach((c) => rows.push({ key: c.symbol, label: QUOTE_NAMES[c.symbol] || c.symbol, sub: QUOTE_NAMES[c.symbol] ? c.symbol : "", price: c.price, cur: c.currency, change: c.change }));
+    (d.stocks || []).forEach((s) => {
+      const name = QUOTE_NAMES[s.symbol] || s.symbol;
+      rows.push({ key: s.symbol, label: name, sub: s.ticker && s.ticker !== name ? s.ticker : "", price: s.price, cur: s.currency, change: s.change });
+    });
+    rows.forEach((q) => {
+      const row = quoteRow(q.label, q.sub, q.price, q.cur, q.change);
+      const prev = lastQuotes[q.key];
+      if (flash && typeof prev === "number" && typeof q.price === "number" && prev !== q.price) {
+        row.querySelector(".row-r").classList.add(q.price > prev ? "flash-up" : "flash-down");
+      }
+      lastQuotes[q.key] = q.price;
+      mk.appendChild(row);
+    });
+    if (!rows.length) mk.appendChild(el("div", "empty", "Ceny sa nepodarilo načítať."));
+    return mk;
+  }
+
   function renderSamco(d) {
     const L = els.sideLeft, R = els.sideRight;
     const w = d.watch || null;
-    const agenda = panel("Dnes", (d.agenda || []).length ? (d.agenda.length + " " + plural(d.agenda.length, "udalosť", "udalosti", "udalostí")) : "");
-    if ((d.agenda || []).length) d.agenda.slice(0, 6).forEach((a) => agenda.appendChild(itemRow(a.time, a.title)));
-    else agenda.appendChild(el("div", "empty", "Kalendár je dnes voľný."));
-    L.appendChild(agenda);
+    L.appendChild(demosPanel(d));
+    if ((d.agenda || []).length) {
+      const ag = panel("Kalendár", "dnes");
+      d.agenda.slice(0, 4).forEach((a) => ag.appendChild(itemRow(a.time, a.title)));
+      L.appendChild(ag);
+    }
 
     const notes = panel("Plány a poznámky");
     if ((d.notes || []).length) d.notes.forEach((n) => notes.appendChild(itemRow("", n.text, n.kind, n.overdue ? "late" : "")));
     else notes.appendChild(el("div", "empty", "Zatiaľ nič. Povedz mi „zapamätaj si…“."));
     L.appendChild(notes);
 
-    if (w) L.appendChild(flightsPanel(w));
+    if (d.trip) L.appendChild(tripPanel(d.trip));
+    else if (w) L.appendChild(flightsPanel(w));
 
     if (d.outbound) {
       const ob = panel("Outbound");
@@ -1539,15 +1651,7 @@ const CONFIG = {
       R.appendChild(sys);
     }
 
-    const mk = panel("Trhy", "USD");
-    (d.crypto || []).forEach((c) => mk.appendChild(quoteRow(QUOTE_NAMES[c.symbol] || c.symbol, QUOTE_NAMES[c.symbol] ? c.symbol : "", c.price, c.currency, c.change)));
-    (d.stocks || []).forEach((s) => {
-      const name = QUOTE_NAMES[s.symbol] || s.symbol;
-      const sub = s.ticker && s.ticker !== name ? s.ticker : "";
-      mk.appendChild(quoteRow(name, sub, s.price, s.currency, s.change));
-    });
-    if (!(d.crypto || []).length && !(d.stocks || []).length) mk.appendChild(el("div", "empty", "Ceny sa nepodarilo načítať."));
-    R.appendChild(mk);
+    R.appendChild(marketsPanel(d, false));
 
     if (w) R.appendChild(newsPanel(w));
   }
@@ -1627,7 +1731,7 @@ const CONFIG = {
     if (!wideQuery.matches && !watchOn) return;
     if (isDemo()) { hud = { data: null, error: null, loading: false, at: Date.now() }; renderHud(); renderSysPill(); return; }
     if (hud.loading) return;
-    if (!force && hud.data && Date.now() - hud.at < 9 * 60 * 1000) { renderHud(); renderSysPill(); return; }
+    if (!force && hud.data && Date.now() - hud.at < 4.5 * 60 * 1000) { renderHud(); renderSysPill(); return; }
     hud.loading = true;
     renderHud();
     const r = await callWebhook({ action: "hud" }, 45000);
@@ -1722,7 +1826,23 @@ const CONFIG = {
     sayLocal(head + " " + fresh.slice(0, 4).map((p) => cleanText(p.text)).join(" "), "Ťukni na guľu, mám pre teba hlásenie");
   }
   [els.sysPill, els.sysPillTop].forEach((p) => p.addEventListener("click", onSysPill));
-  setInterval(() => { if (!document.hidden) loadHud(false); }, 10 * 60 * 1000);
+  setInterval(() => { if (!document.hidden) loadHud(false); }, 5 * 60 * 1000);
+
+  // Trhy naživo: rýchly dopyt len na ceny každú minútu (bez AI, nič nestojí)
+  let marketsBusy = false;
+  async function loadMarkets() {
+    if (!CONFIG.marketsLive || isDemo() || !wideQuery.matches || document.hidden || marketsBusy || !hud.data || hud.loading) return;
+    marketsBusy = true;
+    const r = await callWebhook({ action: "trhy" }, 20000);
+    marketsBusy = false;
+    if (r.error || !r.data || !r.data.ok || !hud.data) return;
+    if (Array.isArray(r.data.crypto) && r.data.crypto.length) hud.data.crypto = r.data.crypto;
+    if (Array.isArray(r.data.stocks) && r.data.stocks.length) hud.data.stocks = r.data.stocks;
+    hud.data.marketsAt = r.data.updatedAt || "";
+    const old = document.getElementById("mkPanel");
+    if (old) old.replaceWith(marketsPanel(hud.data, true));
+  }
+  setInterval(loadMarkets, 60 * 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) loadHud(false); });
   const onWide = () => { if (wideQuery.matches) loadHud(false); };
   if (typeof wideQuery.addEventListener === "function") wideQuery.addEventListener("change", onWide);
