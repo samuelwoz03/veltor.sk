@@ -613,7 +613,7 @@ const CONFIG = {
     { match: /stock|správ|sprav|news|novink/i, reply: "Najdôležitejšie zo Stock News: Fed naznačil pomalšie znižovanie sadzieb, skóre 9. Nvidia predstavila nové čipy pre dátové centrá, skóre 8. A zlato kleslo na mesačné minimum." },
     { match: /letenk|letov|lety|let do|dovolenk/i, reply: "Najlacnejšie je teraz Lisabon za 89 eur na osobu. Dubaj vychádza na 320 a Bali na 590 eur. Ceny som skontroloval dnes ráno o šiestej." },
     { match: /krypto|bitcoin|btc/i, reply: "Bitcoin je na 71 400 dolároch, za deň mínus 3,6 percenta." },
-    { match: /akci|nvidia|nvda|etf|portf|zlato|mstr|nasdaq/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. MSTR mínus 6,5 percenta, Nasdaq 100 cez QQQ mínus 0,3 percenta a zlato cez GLD mínus 2,8 percenta." },
+    { match: /akci|nvidia|nvda|etf|portf|zlato|mstr|nasdaq/i, reply: "Nvidia včera zavrela na 166 dolároch, mínus 4,3 percenta. MSTR mínus 6,5 percenta, Nasdaq 100 mínus 0,3 percenta na 27 390 bodoch, S&P 500 tiež mínus 0,3 percenta a zlato mínus 2,8 percenta na 3 843 dolároch za uncu." },
     { match: /zapamätaj|zapamataj|poznač|poznac|pridaj|pripomeň|pripomen/i, reply: "Jasné, uložil som to a pripomeniem ti to zajtra o deviatej." },
     { match: /plán|plan|poznámk|poznamk/i, reply: "Máš tri otvorené plány: dokončiť Jarvisa, pripraviť ponuku pre nového klienta a pozrieť rozpočet na budúci mesiac." },
     { match: /dnes|kalend|čaká|caka|zajtra|stretnut|meeting/i, reply: "Dnes máš dve udalosti, o desiatej call a o štvrtej poobede stretnutie. Večer máš voľno." }
@@ -626,9 +626,9 @@ const CONFIG = {
     stocks: [
       { symbol: "NVDA", ticker: "NVDA", price: 166.19, change: -4.3, currency: "USD" },
       { symbol: "MSTR", ticker: "MSTR", price: 114.41, change: -6.5, currency: "USD" },
-      { symbol: "Nasdaq 100", ticker: "QQQ", price: 688.17, change: -0.3, currency: "USD" },
-      { symbol: "S&P 500", ticker: "SPY", price: 757.25, change: -0.3, currency: "USD" },
-      { symbol: "Zlato", ticker: "GLD", price: 354.87, change: -2.8, currency: "USD" }
+      { symbol: "Nasdaq 100", ticker: "NDX", price: 27390.42, change: -0.3, currency: "" },
+      { symbol: "S&P 500", ticker: "SPY ETF", price: 757.25, change: -0.3, currency: "USD" },
+      { symbol: "Zlato", ticker: "unca", price: 3842.6, change: -2.8, currency: "USD" }
     ],
     agenda: [ { time: "10:00", title: "Call s klientom" }, { time: "16:00", title: "Stretnutie" } ],
     system: { failed24h: 0, failed: [] },
