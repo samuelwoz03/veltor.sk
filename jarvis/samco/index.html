@@ -705,6 +705,19 @@ const CONFIG = {
   const defaults = { url: CONFIG.webhookUrl, user: CONFIG.basicUser, key: "", voice: "", rate: "1.05", speak: true, autoBrief: true, convo: true, serverVoice: true };
   let settings = Object.assign({}, defaults, store.get("settings", {}));
 
+  // Jednorazový odkaz …/#kluc=XYZ uloží kľúč v tomto prehliadači a z adresy ho hneď zmaže.
+  let keyFromLink = false;
+  (function () {
+    try {
+      const m = /^#kluc=([A-Za-z0-9]{16,128})$/.exec(location.hash || "");
+      if (!m) return;
+      settings = Object.assign({}, settings, { key: m[1], url: settings.url || CONFIG.webhookUrl, user: settings.user || CONFIG.basicUser });
+      store.set("settings", settings);
+      keyFromLink = true;
+      window.history.replaceState(null, "", location.pathname + location.search);
+    } catch (e) {}
+  })();
+
   function newSessionId() {
     try { if (crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
     return "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
@@ -769,6 +782,10 @@ const CONFIG = {
   }
   if (history.length) history.forEach(renderMessage);
   else addMessage("jarvis", isDemo() ? CONFIG.demoGreeting : CONFIG.greeting);
+  if (keyFromLink) {
+    resetConversation();
+    addMessage("jarvis", "Kľúč je uložený v tomto prehliadači, odteraz beriem živé dáta.");
+  }
 
   /* ---------- chips ---------- */
   CONFIG.chips.forEach((label) => {
