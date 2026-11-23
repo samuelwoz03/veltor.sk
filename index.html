@@ -1676,12 +1676,12 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;font-size:14.5px;col
   'use strict';
 
   /* ================= NASTAVENIA =================
-     CHAT_WEBHOOK: n8n workflow „Veltro web – AI asistent“ (POST {message, sessionId, lang, page} → {reply}).
-     LEAD_WEBHOOK: n8n workflow „Veltro web – dopyty“ (kontaktný formulár aj test).
+     CHAT_WEBHOOK: n8n workflow „Veltro web“, vetva chat (POST {message, sessionId, lang, page} → {reply}).
+     LEAD_WEBHOOK: n8n workflow „Veltro web“, vetva dopyty (kontaktný formulár aj test).
      Keď webhook neodpovie (napr. workflow je vypnutý), web sa automaticky prepne na náhradné riešenie:
      chat odpovedá z pravidiel nižšie a formuláre otvoria e-mail s pripravenou správou. */
   const CHAT_WEBHOOK = 'https://n8n.veltro.sk/webhook/39281732-c7ab-41c9-9253-5b5743f3d7d2/veltro-web-chat';
-  const LEAD_WEBHOOK = 'https://n8n.veltro.sk/webhook/33052291-59f7-40da-b946-90ec560ad697/veltro-web-dopyt';
+  const LEAD_WEBHOOK = 'https://n8n.veltro.sk/webhook/866cdb50-dfbd-4a09-8313-57b88b25586e/veltro-web-dopyt';
   const CONTACT_EMAIL = 'tomas@veltro.sk';
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
